@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "stdint.h": "c",
+        "cycleflash.h": "c",
+        "cycleflash_define.h": "c",
+        "type_traits": "c"
+    }
+}
