@@ -1,5 +1,5 @@
 /*
- * This file is part of the CycleFlash Library.
+ * This file is part of the cycle_flash_system Library.
  *
  * Copyright (c) 2024, YeYunXiang, <poetrycloud@foxmail.com>
  *
@@ -25,15 +25,22 @@
  * Function: It is the definitions head file for this library.
  * Created on: 2024-7-26
  */
-// Encoding:GB2312
+// Encoding:UTF-8
 
-#ifndef __CYCLEFLASH_PORT_H__
-#define __CYCLEFLASH_PORT_H__
+#ifndef __CYCLE_FLASH_SYSTEM_H__
+#define __CYCLE_FLASH_SYSTEM_H__
 
-// �����ʼ���ڴ�ķ�ʽ
-#define CFS_MALLOC      malloc 
-#define CFS_FREE        free
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include "cfs_system_define.h"
 
-bool cfs_filesystem_variable_length_object_init(cfs_variable_system *temp_object);
+/** 初始化文件管理系统对象
+ *
+ * \param cfs_system 初始化结构体指针
+ * \return 初始化后的句柄，如果初始化失败返回 false。
+ */
+cfs_system_handle_t cfs_filesystem_object_init( \
+	cfs_system *temp_object, const char * const name);
 
-#endif /* __CYCLEFLASH_PORT_H__ */
+#endif /* __CYCLE_FLASH_SYSTEM_H__ */

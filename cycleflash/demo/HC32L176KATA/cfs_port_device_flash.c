@@ -1,5 +1,5 @@
 /*
- * This file is part of the CycleFlash Library.
+ * This file is part of the cycle_flash_system Library.
  *
  * Copyright (c) 2024, YeYunXiang, <poetrycloud@foxmail.com>
  *
@@ -25,15 +25,46 @@
  * Function: It is the definitions head file for this library.
  * Created on: 2024-7-26
  */
-// Encoding:GB2312
+// Encoding:UTF-8
 
-#ifndef __CYCLEFLASH_H__
-#define __CYCLEFLASH_H__
+#include "cfs_system_define.h"
+#include "cfs_port_device_flash.h"
 
-#include <stdbool.h>
-#include <stdint.h>
-#include "cycleflash_define.h"
+static bool cfs_port_flash_init_flag = false;
 
 
+bool cfs_port_system_flash_init(void)
+{
+    if(cfs_port_flash_init_flag == true)
+    {
+        return true;
+    }
 
-#endif /* __CYCLEFLASH_H__ */
+    /*User initialization code*/
+
+    cfs_port_flash_init_flag = true;
+    return true;
+}
+
+bool cfs_port_system_flash_write_data( \
+    const uint32_t addr, const uint8_t * data, const uint16_t len)
+{
+    /*User initialization code*/
+
+    return true;
+}
+
+bool cfs_port_system_flash_read_data( \
+    const uint32_t addr, uint8_t * buffer, const uint16_t len)
+{
+    /*User initialization code*/
+
+    return true;
+}
+
+bool cfs_port_system_flash_erasing_page(const uint32_t addr, const uint16_t len)
+{
+    /*User initialization code*/
+
+    return true;
+}
