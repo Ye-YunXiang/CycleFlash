@@ -5,7 +5,9 @@
         "cfs_system_define.h": "c",
         "type_traits": "c",
         "cfs_port_device_flash.h": "c",
-        "cfs_system_oc.h": "c"
+        "cfs_system_oc.h": "c",
+        "cfs_system_utils.h": "c",
+        "limits.h": "c"
     },
     "files.encoding": "utf8"
 }

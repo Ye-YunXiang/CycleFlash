@@ -32,7 +32,7 @@
 
 #include "cfs_system_oc.h"
 #include "cfs_port_device_flash.h"
-
+#include "cfs_system_utils.h"
 
 /*数据对象的头指针*/
 static cfs_object_linked_list *cfs_system_object_head = NULL;
@@ -42,34 +42,54 @@ static cfs_object_linked_list *cfs_system_object_tail = NULL;
 // 遍历数据页，初始化ID值
 uint32_t cfs_system_oc_traverse_data_page_id_init(uint32_t temp_cfs_handle)
 {
-    cfs_object_linked_list * cfs_handle = (cfs_object_linked_list *)temp_cfs_handle;
-    assert(cfs_handle->object_handle->struct_type == CYCLE_FLASH_FILESYSTEM_OBJECT_TYPE_FIXED_LENGTH);
-
     // 创建和初始化待会要用到的变量
+    cfs_object_linked_list * cfs_handle = (cfs_object_linked_list *)temp_cfs_handle;
     cfs_system *object_handle = cfs_handle->object_handle;
+    // 存储数据的起始地址
+    volatile uint32_t data_addr = object_handle->addr_handle;
+
     assert(object_handle->data_size != 0);
+
     // 初始化缓冲数据块
     cfs_data_block data_block;
+    // 包头包尾的长度
+    uint16_t info_len = sizeof(cfs_data_block) - sizeof(data_block.data_pointer);
+    // 检测块大小，因为光包头包尾就很大了
+    assert(cfs_handle->object_handle->data_size > info_len);
+
     memset(&data_block, NULL, sizeof(cfs_data_block));   
-    data_block.data_pointer = (uint8_t *)CFS_MALLOC(cfs_system->data_size - 1);
-    data_block.data_block_len = object_handle->data_size;
+    // 数据块内容去除包头包尾的长度，保留数据长度
+    data_block.data_len = object_handle->data_size - info_len;
+    data_block.data_pointer = (uint8_t *)CFS_MALLOC(object_handle->data_size - info_len);
 
-    // 开始遍历
-    if(cfs_handle->object_handle->data_sector_count <= 2)
-    {
-        // ID遍历算法~~~~~~~~~~~~~~~~~~~~~
-    }
-    else
-    {
-        // ID遍历算法~~~~~~~~~~~~~~~~~~~~~
-    }
+//    while (/* condition */)
+//    {
+//        /* code */
+//    }
+    
+        // 开始遍历
+        if(cfs_handle->object_handle->data_sector_count <= 2)
+        {
+            
+            // ID遍历算法~~~~~~~~~~~~~~~~~~~~~
 
-    CFS_FREE(data_block);
+            //cfs_system_oc_read_flash_data();
+        }
+        else
+        {
+            // ID遍历算法~~~~~~~~~~~~~~~~~~~~~
+            //cfs_system_oc_read_flash_data();
+        }
+
+    CFS_FREE(data_block.data_pointer);
     return cfs_handle->data_id;
 }
 
 // 遍历目录页，初始化ID值
-uint32_t cfs_system_oc_traverse_list_page_id_init(uint32_t temp_cfs_handle);
+uint32_t cfs_system_oc_traverse_list_page_id_init(uint32_t temp_cfs_handle)
+{
+	return 0;
+}
 
 // 读取内存中的数据,会验证crc8
 bool cfs_system_oc_read_flash_data(const uint32_t addr, cfs_data_block * buffer)
@@ -78,15 +98,22 @@ bool cfs_system_oc_read_flash_data(const uint32_t addr, cfs_data_block * buffer)
     
     bool result = false;
     volatile uint8_t i = 2;
-    uint8_t *buffer_read = (uint8_t *)CFS_MALLOC(buffer->data_len);
+    uint16_t info_block_len = \
+        sizeof(cfs_data_block) - sizeof(buffer->data_pointer) + buffer->data_len;
+
+    // 创建读取整条数据的缓存
+    uint8_t *buffer_read = (uint8_t *)CFS_MALLOC(info_block_len);
     while(i--)
     {
-        cfs_port_system_flash_read_data(addr, buffer_read, buffer->data_len);
-        uint8_t check_crc = cfs_system_crc_8_check(buffer_read, (buffer->data_len - 1));
-        uint8_t read_crc = *(buffer_read + buffer->data_len - 1);
+        cfs_port_system_flash_read_data(addr, buffer_read, info_block_len);
+        uint8_t check_crc = cfs_system_utils_crc_8_check( \
+            buffer_read, (info_block_len - sizeof(buffer->data_crc8)));
+        uint8_t read_crc = *(buffer_read + (info_block_len - sizeof(buffer->data_crc8)));
+
         if(check_crc == read_crc)
         {
-            memcpy(buffer->data_pointer, buffer_read, (buffer->data_len - 1));
+            memcpy(buffer->data_pointer, buffer_read, (buffer->data_len));
+            memcpy(&(buffer->data_id), buffer_read, sizeof(buffer->data_id));
             buffer->data_crc8 = read_crc;
             result = true;
             break;
@@ -100,7 +127,7 @@ bool cfs_system_oc_read_flash_data(const uint32_t addr, cfs_data_block * buffer)
 /*设置数据数据对象的ID*/
 bool cfs_system_oc_object_id_set(uint32_t temp_cfs_handle, uint32_t temp_id)
 {
-    (cfs_object_linked_list *)temp_cfs_handle->data_id = temp_id;
+    ((cfs_object_linked_list *)temp_cfs_handle)->data_id = temp_id;
     return true;
 }
 
@@ -108,14 +135,14 @@ bool cfs_system_oc_object_id_set(uint32_t temp_cfs_handle, uint32_t temp_id)
 // 得到数据数据对象的ID
 uint32_t cfs_system_oc_object_id_get(uint32_t temp_cfs_handle)
 {
-    return (cfs_object_linked_list *)temp_cfs_handle->data_id;
+    return ((cfs_object_linked_list *)temp_cfs_handle)->data_id;
 } 
 
 
-// 验证链表数据数据对象的crc-8
+// 得到系统数据对象指针
 cfs_system *cfs_system_oc_system_object_get(const uint32_t temp_object)
 {
-    return (cfs_system *)((cfs_object_linked_list *)temp_object->object_handle);
+    return ((cfs_object_linked_list *)temp_object)->object_handle;
 }
 
 
@@ -123,7 +150,7 @@ cfs_system *cfs_system_oc_system_object_get(const uint32_t temp_object)
 bool cfs_system_oc_object_linked_crc_8_verify(\
     const uint32_t temp_object, const uint8_t temp_crc_8)
 {
-    if((cfs_object_linked_list *)temp_object->crc_8 == temp_crc_8)
+    if(((cfs_object_linked_list *)temp_object)->this_linked_addr_crc_8 == temp_crc_8)
     {
         return true;
     }
@@ -154,15 +181,14 @@ cfs_object_linked_list *cfs_system_oc_add_object(\
         temp_len = strlen(name) + 1;
     }
 
-    new_node->object_name_len = temp_len;
-    new_node->object_name = (char *)CFS_MALLOC(new_node->object_name_len);
+    new_node->object_name = (char *)CFS_MALLOC(temp_len);
     if (new_node->object_name == NULL) 
     {
         CFS_FREE(new_node);
         /* Allocation failure */
         return NULL;
     }
-    memcpy(new_node->object_name, name, new_node->object_name_len);
+    memcpy(new_node->object_name, name, temp_len);
 
     if (cfs_system_object_head == NULL)
     {
@@ -176,7 +202,7 @@ cfs_object_linked_list *cfs_system_oc_add_object(\
     new_node->object_handle = object_pointer;
     new_node->data_id = 0;
     new_node->this_linked_addr_crc_8  = \
-        cfs_system_crc_8_check((uint8_t *)((uint32_t)new_node), sizeof(uint32_t));
+        cfs_system_utils_crc_8_check((uint8_t *)((uint32_t)new_node), sizeof(uint32_t));
     cfs_system_object_tail = new_node;
 
     return new_node;
@@ -220,19 +246,3 @@ bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object)
     return false;
 }
 
-// CRC校验 // CRC-8 多项式：x^8 + x^2 + x^1 + x^0 (0x07)
-uint8_t cfs_system_crc_8_check(const uint8_t *data, uint32_t data_length)
-{
-    uint8_t crc = 0;
-    for (size_t i = 0; i < data_length; i++) {
-        crc ^= data[i];
-        for (uint8_t j = 0; j < 8; j++) {
-            if (crc & 0x80) {
-                crc = (crc << 1) ^ 0x07;
-            } else {
-                crc <<= 1;
-            }
-        }
-    }
-    return crc;
-}

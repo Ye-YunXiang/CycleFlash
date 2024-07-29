@@ -56,9 +56,9 @@ bool flash_filesystem_init(void)
         return true;
     }
 
-    // 存储不定长nexus的信息对象
-    memset(&cfs_system_init, 0, sizeof(cfs_system));
-    cfs_system_init.struct_type = CYCLE_FLASH_FILESYSTEM_OBJECT_TYPE_VARIABLE_LENGTH;
+    // 循环存储数据，不定长，nexus信息对象
+    memset(&cfs_system_init, NULL, sizeof(cfs_system));
+    cfs_system_init.struct_type = CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH;
     cfs_system_init.addr_handle = FLASH_ADDR_NEXUS_NV_START;
     cfs_system_init.sector_size = 512;
     cfs_system_init.list_sector_count = 2;
@@ -69,9 +69,9 @@ bool flash_filesystem_init(void)
         return false;
     }
     
-    // 存储不定长product的信息对象
-    memset(&cfs_system_init, 0, sizeof(cfs_system));
-    cfs_system_init.struct_type = CYCLE_FLASH_FILESYSTEM_OBJECT_TYPE_VARIABLE_LENGTH;
+    // 循环存储数据，不定长，product信息对象
+    memset(&cfs_system_init, NULL, sizeof(cfs_system));
+    cfs_system_init.struct_type = CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH;
     cfs_system_init.addr_handle = FLASH_ADDR_PRODUCT_NV_PAYG_MANAGER_CREDIT_REMAINING;
     cfs_system_init.sector_size = 512;
     cfs_system_init.list_sector_count = 2;
@@ -83,8 +83,8 @@ bool flash_filesystem_init(void)
     }
 
     // 存储定长identity的信息对象
-    memset(&cfs_system_init, 0, sizeof(cfs_system));
-    cfs_system_init.struct_type = CYCLE_FLASH_FILESYSTEM_OBJECT_TYPE_FIXED_LENGTH;
+    memset(&cfs_system_init, NULL, sizeof(cfs_system));
+    cfs_system_init.struct_type = CFS_FILESYSTEM_OBJECT_TYPE_FIXED_DATA_STORAGE;
     cfs_system_init.addr_handle = FLASH_ADDR_PRODUCT_NV_ID_MANAGER;
     cfs_system_init.sector_size = 512;
     cfs_system_init.data_sector_count = 1;

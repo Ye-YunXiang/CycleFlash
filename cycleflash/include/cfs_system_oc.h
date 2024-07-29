@@ -69,7 +69,6 @@ cfs_object_linked_list *cfs_system_oc_add_object(\
 
 bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object);
 
-uint8_t cfs_system_oc_cfs_system_crc_8_check(const uint8_t *data, uint32_t data_length);
 
 
 #endif /* __CFS_SYSTEM_OC_H__ */
