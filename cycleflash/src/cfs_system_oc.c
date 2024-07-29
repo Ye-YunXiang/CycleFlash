@@ -39,58 +39,6 @@ static cfs_object_linked_list *cfs_system_object_head = NULL;
 static cfs_object_linked_list *cfs_system_object_tail = NULL;
 
 
-// 遍历数据页，初始化ID值
-uint32_t cfs_system_oc_traverse_data_page_id_init(uint32_t temp_cfs_handle)
-{
-    // 创建和初始化待会要用到的变量
-    cfs_object_linked_list * cfs_handle = (cfs_object_linked_list *)temp_cfs_handle;
-    cfs_system *object_handle = cfs_handle->object_handle;
-    // 存储数据的起始地址
-    volatile uint32_t data_addr = object_handle->addr_handle;
-
-    assert(object_handle->data_size != 0);
-
-    // 初始化缓冲数据块
-    cfs_data_block data_block;
-    // 包头包尾的长度
-    uint16_t info_len = sizeof(cfs_data_block) - sizeof(data_block.data_pointer);
-    // 检测块大小，因为光包头包尾就很大了
-    assert(cfs_handle->object_handle->data_size > info_len);
-
-    memset(&data_block, NULL, sizeof(cfs_data_block));   
-    // 数据块内容去除包头包尾的长度，保留数据长度
-    data_block.data_len = object_handle->data_size - info_len;
-    data_block.data_pointer = (uint8_t *)CFS_MALLOC(object_handle->data_size - info_len);
-
-//    while (/* condition */)
-//    {
-//        /* code */
-//    }
-    
-        // 开始遍历
-        if(cfs_handle->object_handle->data_sector_count <= 2)
-        {
-            
-            // ID遍历算法~~~~~~~~~~~~~~~~~~~~~
-
-            //cfs_system_oc_read_flash_data();
-        }
-        else
-        {
-            // ID遍历算法~~~~~~~~~~~~~~~~~~~~~
-            //cfs_system_oc_read_flash_data();
-        }
-
-    CFS_FREE(data_block.data_pointer);
-    return cfs_handle->data_id;
-}
-
-// 遍历目录页，初始化ID值
-uint32_t cfs_system_oc_traverse_list_page_id_init(uint32_t temp_cfs_handle)
-{
-	return 0;
-}
-
 // 读取内存中的数据,会验证crc8
 bool cfs_system_oc_read_flash_data(const uint32_t addr, cfs_data_block * buffer)
 {

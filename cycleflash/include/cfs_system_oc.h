@@ -36,11 +36,6 @@
 
 #include "cfs_system_define.h"
 
-// 遍历数据页，初始化ID值
-uint32_t cfs_system_oc_traverse_data_page_id_init(uint32_t temp_cfs_handle);
-
-// 遍历目录页，初始化ID值
-uint32_t cfs_system_oc_traverse_list_page_id_init(uint32_t temp_cfs_handle);
 
 // 读取内存中的数据
 bool cfs_system_oc_read_flash_data(const uint32_t addr, cfs_data_block * buffer);

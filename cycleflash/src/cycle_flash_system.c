@@ -36,8 +36,67 @@
 #include "cfs_port_device_flash.h" 
 
 
+// 遍历数据页，初始化ID值
+static uint32_t cfs_filesystem_traverse_data_page_id_init(uint32_t temp_cfs_handle)
+{
+    // 创建和初始化待会要用到的变量
+    cfs_system *object_handle = cfs_system_oc_object_id_get(temp_cfs_handle);
+    assert(object_handle->data_size != 0);
+
+    // 初始化缓冲数据块
+    cfs_data_block data_block;
+    // 包头包尾的长度
+    uint16_t info_len = sizeof(cfs_data_block) - sizeof(data_block.data_pointer);
+    // 检测块大小，因为光包头包尾就很大了
+    assert(cfs_handle->object_handle->data_size > info_len);
+
+    memset(&data_block, NULL, sizeof(cfs_data_block));   
+    // 数据块内容去除包头包尾的长度，保留数据长度
+    data_block.data_len = object_handle->data_size - info_len;
+    data_block.data_pointer = (uint8_t *)CFS_MALLOC(data_block.data_len);
+    
+    // 存储数据的起始地址，和记录最大ID
+    volatile uint32_t data_addr = object_handle->addr_handle;
+    uint32_t temp_data_MAX_id = 0;
+    for(uint8_t i = 0; i < object_handle->data_sector_count; i++)
+    {
+        memset(data_block.data_pointer, NULL, data_block.data_len);
+        bool read_result = false;
+        uint8_t temp_count = 0;
+        while(read_result == false)
+        {
+            read_result = cfs_system_oc_read_flash_data(\ 
+                data_addr + (object_handle->data_size * temp_count), &data_block);
+            
+            if(temp_count >=3 && read_result == false)
+            {
+                
+            }
+
+            temp_count++;
+        }
 
 
+        if(data_block.data_id > temp_data_MAX_id && read_result == true)
+        {
+            temp_data_MAX_id = data_block.data_id;
+        }
+
+        data_addr = data_addr + object_handle->data_size;
+    }
+
+
+    CFS_FREE(data_block.data_pointer);
+    return cfs_handle->data_id;
+}
+
+// 遍历目录页，初始化ID值
+static uint32_t cfs_filesystem_traverse_list_page_id_init(uint32_t temp_cfs_handle)
+{
+	return 0;
+}
+
+// 检查重复地址
 bool cfs_filesystem_check_flash_repeat_address(const cfs_system *temp_object)
 {
     // 肯定不能超过uint32类型最大值
