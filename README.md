@@ -8,7 +8,7 @@ It is used to circulate data into the specified area of falsh in MCU to ensure d
 
 Created: 2024.7.29
 
-> 存入目录结构：`ID(4byte) | 数据长度(2byte) | 数据地址(4byte) | CRC8(1byte)`
+> 存入目录结构：`ID(4byte) | 数据长度(2byte) | 数据地址(4byte) | CRC8(1byte)`  
 > 存入数据结构：`ID(4byte) | 数据长度(2byte) | 数据(最大为1页大小-7) | CRC8(1byte)`
 
 存入的ID从1开始，0代表内存中没有数据。
