@@ -39,9 +39,6 @@ typedef uint64_t cfs_system_handle_t;
 #define CFS_MALLOC      malloc 
 #define CFS_FREE        free
 
-#define CFS_LIST_FUNCTION_DISABLE           0
-#define CFS_FIXED_LENGTH_FUNCTION_DISABLE   0
-
 /*允许的最长对象名,不许超过255*/
 #define CFS_CONFIG_MAX_OBJECT_NAME_LEN   16
 
@@ -49,9 +46,9 @@ enum cycle_object_type
 {
     // 没有数据类型
     CFS_FILESYSTEM_OBJECT_TYPE_NULL                 = 0,
-    // 存储固定数据，不能随意更改，必须定长
+    // 存储固定数据
     CFS_FILESYSTEM_OBJECT_TYPE_FIXED_DATA_STORAGE   = 1,
-    // 循环存储数据，随意长度
+    // 循环存储数据
     CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH    = 2,
     // OTA升级缓存区
     CFS_FILESYSTEM_OBJECT_TYPE_OTA_BUFFER           = 3,
@@ -62,9 +59,8 @@ typedef struct cfs_filesystem_object
 {
     uint32_t addr_handle;                   // 文件系统在flash中的句柄
     uint16_t sector_size;                   // 扇区大小
+    uint16_t sector_count;                  // 扇区数量，建议至少3页
     uint16_t data_size;                     // 数据大小, 只有定长有效，包含验证的crc8
-    uint8_t list_sector_count;              // 目录页数,建议至少2页
-    uint8_t data_sector_count;              // 扇区数量，建议至少3页
     enum cycle_object_type struct_type :8;  // 结构体类型
 }cfs_system;
 
@@ -76,7 +72,7 @@ typedef struct cfs_linked_list
     uint32_t data_id;                      	        // 数据块ID
     struct cfs_linked_list *next;                   // 链表下一个节点
     uint16_t valid_id_number;                       // 有效ID个数
-    uint8_t this_linked_addr_crc_8;                 // 这个链表对象地址的crc-8值
+    uint16_t this_linked_addr_crc_16;               // 这个链表对象地址的crc-16-xmodem值
 }cfs_object_linked_list;
 
 
@@ -87,18 +83,8 @@ typedef struct
     uint32_t data_id;               // 数据块ID
     uint8_t *data_pointer;          // 存入数据的指针
     uint16_t data_len;              // 存入数据的长度
-    uint8_t data_crc8;              // 数据的crc8校验码
+    uint16_t data_crc_16;              // 数据的crc8校验码
 }cfs_data_block;
-
-/*系统存入内存的目录块*/
-// 存入数据： 数据ID-数据地址-数据长度-crc校验码
-typedef struct 
-{
-    uint32_t data_id;               // 存入的数据ID
-    uint32_t data_addr;             // 对应的数据块地址
-    uint16_t data_len;              // 数据块长度
-    uint8_t  list_crc8;             // 上面的数据块包含（id、地址、长度）的CRC8校验码
-}cfs_list_block;
 
 
 #endif /* __CFS_SYSTEM_DEFINE_H__ */

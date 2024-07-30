@@ -61,21 +61,25 @@ static uint32_t cfs_filesystem_traverse_data_page_id_init(uint32_t temp_cfs_hand
     for(uint8_t i = 0; i < object_handle->data_sector_count; i++)
     {
         memset(data_block.data_pointer, NULL, data_block.data_len);
-        bool read_result = false;
+        cfs_oc_read_data_result read_result = CFS_OC_READ_DATA_RESULT_NULL;
         uint8_t temp_count = 0;
-        while(read_result == false)
+        while(read_result != CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
         {
             read_result = cfs_system_oc_read_flash_data(\ 
                 data_addr + (object_handle->data_size * temp_count), &data_block);
             
-            if(temp_count >=3 && read_result == false)
+            if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED || \
+                (temp_count >=2 && read_result != CFS_OC_READ_DATA_RESULT_DATA_SUCCEED))
             {
-                
+                break;
+            }
+            else if(read_result == CFS_OC_READ_DATA_RESULT_NULL)
+            {
+                break;
             }
 
             temp_count++;
         }
-
 
         if(data_block.data_id > temp_data_MAX_id && read_result == true)
         {
@@ -85,6 +89,12 @@ static uint32_t cfs_filesystem_traverse_data_page_id_init(uint32_t temp_cfs_hand
         data_addr = data_addr + object_handle->data_size;
     }
 
+    if(temp_data_MAX_id > 0)
+    {
+        
+    }
+
+    cfs_system_oc_object_id_set(temp_cfs_handle, temp_data_MAX_id);
 
     CFS_FREE(data_block.data_pointer);
     return cfs_handle->data_id;

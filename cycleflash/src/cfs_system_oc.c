@@ -29,6 +29,7 @@
 
 #include <string.h>
 #include <assert.h>
+#include <limits.h>
 
 #include "cfs_system_oc.h"
 #include "cfs_port_device_flash.h"
@@ -40,11 +41,12 @@ static cfs_object_linked_list *cfs_system_object_tail = NULL;
 
 
 // 读取内存中的数据,会验证crc8
-bool cfs_system_oc_read_flash_data(const uint32_t addr, cfs_data_block * buffer)
+cfs_oc_read_data_result \
+    cfs_system_oc_read_flash_data(const uint32_t addr, cfs_data_block * buffer)
 {
     assert(buffer->data_pointer != NULL || buffer->data_len > 1);
     
-    bool result = false;
+    cfs_oc_read_data_result result = CFS_OC_READ_DATA_RESULT_NULL;
     volatile uint8_t i = 2;
     uint16_t info_block_len = \
         sizeof(cfs_data_block) - sizeof(buffer->data_pointer) + buffer->data_len;
@@ -57,14 +59,24 @@ bool cfs_system_oc_read_flash_data(const uint32_t addr, cfs_data_block * buffer)
         uint8_t check_crc = cfs_system_utils_crc_8_check( \
             buffer_read, (info_block_len - sizeof(buffer->data_crc8)));
         uint8_t read_crc = *(buffer_read + (info_block_len - sizeof(buffer->data_crc8)));
+        uint32_t temp_id = 0;
+        memcpy(&temp_id, buffer_read, sizeod(temp_id));
 
-        if(check_crc == read_crc)
+        if(temp_id == UINT_MAX)
+        {
+            result = CFS_OC_READ_DATA_RESULT_NULL;
+        }
+        else if(check_crc == read_crc)
         {
             memcpy(buffer->data_pointer, buffer_read, (buffer->data_len));
             memcpy(&(buffer->data_id), buffer_read, sizeof(buffer->data_id));
             buffer->data_crc8 = read_crc;
-            result = true;
+            result = CFS_OC_READ_DATA_RESULT_DATA_SUCCEED;
             break;
+        }
+        else
+        {
+            result = CFS_OC_READ_DATA_RESULT_DATA_ERROE;
         }
     }
 

@@ -36,9 +36,21 @@
 
 #include "cfs_system_define.h"
 
+typedef enum
+{
+    // cfs读取的数据为空
+    CFS_OC_READ_DATA_RESULT_NULL            = 0,
+    // cfs读取的数据CRC验证错误
+    CFS_OC_READ_DATA_RESULT_DATA_ERROE      = 1,
+    // cfs读取的数据有效
+    CFS_OC_READ_DATA_RESULT_DATA_SUCCEED    = 2,
+}cfs_oc_read_data_result;
+
+
 
 // 读取内存中的数据
-bool cfs_system_oc_read_flash_data(const uint32_t addr, cfs_data_block * buffer);
+cfs_oc_read_data_result \
+    cfs_system_oc_read_flash_data(const uint32_t addr, cfs_data_block * buffer);
 
 // 得到内部系统数据对象指针
 cfs_system *cfs_system_oc_system_object_get(const uint32_t temp_object);
