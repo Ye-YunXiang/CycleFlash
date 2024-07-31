@@ -35,7 +35,9 @@
 #include "cycle_flash_system.h"
 #include "cfs_port_device_flash.h" 
 
-// 非紧密存储遍历内存ID初始化
+/**/
+
+// 非紧密存储遍历内存ID初始化  感觉需要在分一层嵌出来，考虑内部可以复用嘛
 static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs_handle)
 {
     uint32_t temp_data_MAX_id = 0;
@@ -136,7 +138,6 @@ static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs
     }
 
     CFS_FREE(data_block.data_pointer);
-
     return  temp_data_MAX_id;
 }
 
