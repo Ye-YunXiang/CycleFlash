@@ -40,10 +40,12 @@ typedef enum
 {
     // cfs读取的数据为空
     CFS_OC_READ_DATA_RESULT_NULL            = 0,
+    // cfs数据页非空
+    CFS_OC_READ_DATA_RESULT_NONEMPTY        = 1,
     // cfs读取的数据CRC验证错误
-    CFS_OC_READ_DATA_RESULT_DATA_ERROE      = 1,
+    CFS_OC_READ_DATA_RESULT_DATA_ERROE      = 2,
     // cfs读取的数据有效
-    CFS_OC_READ_DATA_RESULT_DATA_SUCCEED    = 2,
+    CFS_OC_READ_DATA_RESULT_DATA_SUCCEED    = 3,
 }cfs_oc_read_data_result;
 
 
@@ -67,9 +69,9 @@ bool cfs_system_oc_object_id_set(uint32_t temp_cfs_handle, uint32_t temp_id);
 // 得到数据数据对象的ID
 uint32_t cfs_system_oc_object_id_get(uint32_t temp_cfs_handle);
 
-/*铜鼓crc-8标识验证链表对象是否存在*/
-bool cfs_system_oc_object_linked_crc_8_verify(\
-    const uint32_t temp_object, const uint8_t temp_crc_8);
+/*crc-16-xmodem标识验证链表对象是否存在*/
+bool cfs_system_oc_object_linked_crc_16_verify(\
+    const uint32_t temp_object, const uint16_t temp_crc_16);
 
 cfs_object_linked_list *cfs_system_oc_add_object(\
     cfs_system *object_pointer, const char * const name);

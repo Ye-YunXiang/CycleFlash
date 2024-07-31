@@ -39,9 +39,6 @@ typedef uint64_t cfs_system_handle_t;
 #define CFS_MALLOC      malloc 
 #define CFS_FREE        free
 
-/*允许的最长对象名,不许超过255*/
-#define CFS_CONFIG_MAX_OBJECT_NAME_LEN   16
-
 enum cycle_object_type
 {
     // 没有数据类型
@@ -60,9 +57,13 @@ typedef struct cfs_filesystem_object
     uint32_t addr_handle;                   // 文件系统在flash中的句柄
     uint16_t sector_size;                   // 扇区大小
     uint16_t sector_count;                  // 扇区数量，建议至少3页
-    uint16_t data_size;                     // 数据大小, 只有定长有效，包含验证的crc8
+    uint16_t data_size;                     // 存入的数据大小
     enum cycle_object_type struct_type :8;  // 结构体类型
 }cfs_system;
+
+
+/*允许的最长对象名,不许超过255*/
+#define CFS_CONFIG_MAX_OBJECT_NAME_LEN   16
 
 /*存储对象 - 对象类型 - 数据ID 单链表键值对*/
 typedef struct cfs_linked_list
@@ -75,9 +76,15 @@ typedef struct cfs_linked_list
     uint16_t this_linked_addr_crc_16;               // 这个链表对象地址的crc-16-xmodem值
 }cfs_object_linked_list;
 
+/*不算数据长度，通过数据块算包头包尾的长度*/
+// SIZEOF(data_id) + SIZEOF(data_len) + SIZEOF(data_crc_16)
+#define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN  8
+// 读取数据块的偏移长度
+// SIZEOF(data_id) + SIZEOF(data_len)
+#define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN    6
 
 /*系统存入内存的数据块*/
-// 存入数据：数据-crc校验码
+// 存入数据结构：`ID(4byte) | 数据长度(2byte) | 数据(最大为1页大小-7) | CRC16(2byte)`
 typedef struct 
 {
     uint32_t data_id;               // 数据块ID

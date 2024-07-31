@@ -35,42 +35,45 @@
 #include "cycle_flash_system.h"
 #include "cfs_port_device_flash.h" 
 
-
-// 遍历数据页，初始化ID值
-static uint32_t cfs_filesystem_traverse_data_page_id_init(uint32_t temp_cfs_handle)
+// 非紧密存储遍历内存ID初始化
+static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs_handle)
 {
-    // 创建和初始化待会要用到的变量
-    cfs_system *object_handle = cfs_system_oc_object_id_get(temp_cfs_handle);
-    assert(object_handle->data_size != 0);
+    uint32_t temp_data_MAX_id = 0;
 
     // 初始化缓冲数据块
     cfs_data_block data_block;
     // 包头包尾的长度
-    uint16_t info_len = sizeof(cfs_data_block) - sizeof(data_block.data_pointer);
-    // 检测块大小，因为光包头包尾就很大了
-    assert(cfs_handle->object_handle->data_size > info_len);
+    uint16_t read_data_block_total_len = \
+        CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN + temp_cfs_handle->data_size;
 
     memset(&data_block, NULL, sizeof(cfs_data_block));   
-    // 数据块内容去除包头包尾的长度，保留数据长度
-    data_block.data_len = object_handle->data_size - info_len;
+    // 用户存储数据空间申请
     data_block.data_pointer = (uint8_t *)CFS_MALLOC(data_block.data_len);
     
     // 存储数据的起始地址，和记录最大ID
-    volatile uint32_t data_addr = object_handle->addr_handle;
-    uint32_t temp_data_MAX_id = 0;
-    for(uint8_t i = 0; i < object_handle->data_sector_count; i++)
+    volatile uint32_t data_addr = temp_cfs_handle->addr_handle;
+    volatile uint32_t data_max_addr = NULL;
+    for(uint16_t i = 0; i < temp_cfs_handle->sector_count; i++)
     {
-        memset(data_block.data_pointer, NULL, data_block.data_len);
-        cfs_oc_read_data_result read_result = CFS_OC_READ_DATA_RESULT_NULL;
         uint8_t temp_count = 0;
+        cfs_oc_read_data_result read_result = CFS_OC_READ_DATA_RESULT_NULL;
+
         while(read_result != CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
         {
+            memset(data_block.data_pointer, NULL, data_block.data_len);
             read_result = cfs_system_oc_read_flash_data(\ 
-                data_addr + (object_handle->data_size * temp_count), &data_block);
+                (temp_cfs_handle->addr_handle + i * temp_cfs_handle->data_size) + \
+                (temp_cfs_handle->data_size * temp_count), &data_block);
             
+            // 读错就在往后读一数据块，读空直接退出
             if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED || \
-                (temp_count >=2 && read_result != CFS_OC_READ_DATA_RESULT_DATA_SUCCEED))
+                (temp_count ==2 && read_result != CFS_OC_READ_DATA_RESULT_DATA_SUCCEED))
             {
+                data_addr = \
+                    (temp_cfs_handle->addr_handle + i * temp_cfs_handle->data_size) + \
+                    (temp_cfs_handle->data_size * temp_count);
+                data_max_addr = \
+                    (temp_cfs_handle->addr_handle + (i+1) * temp_cfs_handle->data_size);
                 break;
             }
             else if(read_result == CFS_OC_READ_DATA_RESULT_NULL)
@@ -78,26 +81,70 @@ static uint32_t cfs_filesystem_traverse_data_page_id_init(uint32_t temp_cfs_hand
                 break;
             }
 
-            temp_count++;
+            if(temp_count <= \
+                (temp_cfs_handle->sector_size / temp_cfs_handle->data_size - 1))
+            {
+                temp_count++;
+            }
+            else
+            {
+                break;
+            }
         }
 
-        if(data_block.data_id > temp_data_MAX_id && read_result == true)
+        if((data_block.data_id > temp_data_MAX_id) && \
+            read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
         {
             temp_data_MAX_id = data_block.data_id;
         }
-
-        data_addr = data_addr + object_handle->data_size;
     }
 
     if(temp_data_MAX_id > 0)
     {
-        
+        uint8_t temp_count = 0;
+        cfs_oc_read_data_result read_result = CFS_OC_READ_DATA_RESULT_NULL;
+        while(read_result != CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
+        {
+            memset(data_block.data_pointer, NULL, data_block.data_len);
+            read_result = cfs_system_oc_read_flash_data(\ 
+                data_addr + (temp_cfs_handle->data_size * temp_count), &data_block);
+            
+            // 读错就在往前读一数据块，读空直接退出
+            if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
+            {
+                if((data_block.data_id > temp_data_MAX_id) && \
+                    read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
+                {
+                    temp_data_MAX_id = data_block.data_id;
+                } 
+            }
+            else if(read_result == CFS_OC_READ_DATA_RESULT_NULL)
+            {
+                break;
+            }
+
+            if((data_addr + \
+                (temp_cfs_handle->data_size * (temp_count + 1))) <= data_max_addr)
+            {
+                temp_count++;
+            }
+            else
+            {
+                break;
+            }
+        }
     }
 
-    cfs_system_oc_object_id_set(temp_cfs_handle, temp_data_MAX_id);
-
     CFS_FREE(data_block.data_pointer);
-    return cfs_handle->data_id;
+
+    return  temp_data_MAX_id;
+}
+
+// 紧密存储遍历内存ID初始化
+static uint32_t cfs_filesystem_tight_data_page_id_init(cfs_system * temp_cfs_handle)
+{
+    uint32_t temp_data_MAX_id = 0;
+    return temp_data_MAX_id;
 }
 
 // 遍历目录页，初始化ID值
@@ -110,9 +157,8 @@ static uint32_t cfs_filesystem_traverse_list_page_id_init(uint32_t temp_cfs_hand
 bool cfs_filesystem_check_flash_repeat_address(const cfs_system *temp_object)
 {
     // 肯定不能超过uint32类型最大值
-    assert((temp_object->addr_handle + (temp_object->sector_size * \
-        (temp_object->list_sector_count + temp_object->data_sector_count)\
-        )) <= UINT_MAX);
+    assert((temp_object->addr_handle + \
+        (temp_object->sector_size * temp_object->sector_count)) <= UINT_MAX);
 
     if(cfs_system_oc_flash_repeat_address(temp_object) == true)
     {
@@ -126,23 +172,29 @@ bool cfs_filesystem_check_flash_repeat_address(const cfs_system *temp_object)
 bool cfs_filesystem_object_id_init( cfs_system_handle_t temp_cfs_handle)
 {
     uint32_t temp_object = (uint32_t)(temp_cfs_handle >> 1);
-    uint8_t temp_crc_8 = (uint8_t)temp_cfs_handle;
+    uint16_t temp_crc_16 = (uint16_t)temp_cfs_handle;
+    uint32_t temp_data_max_id = 0;
 
-    assert(cfs_system_oc_object_linked_crc_8_verify(temp_object, temp_crc_8) == true);
+    assert(cfs_system_oc_object_linked_crc_16_verify(temp_object, temp_crc_16) == true);
     
     cfs_system *temp_cfs_system = cfs_system_oc_system_object_get(temp_object);
 
-    if(temp_cfs_system->list_sector_count == CFS_LIST_FUNCTION_DISABLE)
+    // 固定数据长度遍历数据
+    assert(temp_cfs_system->data_size != 0);
+
+    if(temp_cfs_system->struct_type == CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH && \
+        temp_cfs_system->sector_count <= 2)
     {
-        // 固定数据长度遍历数据
-        assert(temp_cfs_system->data_size != 0);
-        cfs_system_oc_traverse_data_page_id_init(temp_object);
+        // 非紧密存储数据
+        temp_data_max_id = cfs_filesystem_not_tight_data_page_id_init(temp_cfs_system);
     }
     else
     {
-        cfs_system_oc_traverse_list_page_id_init(temp_object);
+        // 紧密存储数据
+        temp_data_max_id = cfs_filesystem_tight_data_page_id_init(temp_cfs_system);
     }
 
+    cfs_system_oc_object_id_set(temp_cfs_handle, temp_data_max_id);
 
     return true;
 }
@@ -160,7 +212,8 @@ cfs_system_handle_t cfs_filesystem_object_add_oc_object( \
     }
 
     cfs_system_handle_t cfs_object_handle = \
-        ((uint32_t)(temp_linked_object) << 1) & temp_linked_object->this_linked_addr_crc_8;
+        ((uint32_t)(temp_linked_object) << (temp_linked_object->this_linked_addr_crc_16)) & \
+        temp_linked_object->this_linked_addr_crc_16;
     
     return cfs_object_handle;
 }
@@ -170,24 +223,36 @@ cfs_system_handle_t cfs_filesystem_object_init( \
 {
     // 判断参数有效性
     assert(temp_object->sector_size % 64 == 0);
+
     assert((temp_object->struct_type != CFS_FILESYSTEM_OBJECT_TYPE_NULL) ||\
-        (temp_object->data_sector_count != 0) || \
+        (temp_object->sector_count != 0) || \
         (temp_object->addr_handle != 0) || \
-        (temp_object->sector_size != 0));
-    if(temp_object->struct_type == CFS_FILESYSTEM_OBJECT_TYPE_FIXED_DATA_STORAGE || \
-        temp_object->list_sector_count == NULL )
+        (temp_object->sector_size != 0) || \
+        (temp_object->data_size != 0));
+
+    if((temp_object->struct_type == CFS_FILESYSTEM_OBJECT_TYPE_NULL) ||\
+        (temp_object->sector_count == 0) || \
+        (temp_object->addr_handle == 0) || \
+        (temp_object->sector_size == 0) || \
+        (temp_object->data_size == 0))
     {
-        /*定长的情况下，数据大小肯定不能为0*/
-        assert(temp_object->data_size != 0);
+        // 检查参数
+        return false;
+    }
+
+    if(temp_object->struct_type == CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH || \
+        temp_object->sector_count < 2 )
+    {
+        // 如果使用的循环存储，分配的页数必须要 >= 2
+        assert(false);
         return false;
     }
 
     // 在判断地址有没有重复
-    bool verify_addr = cfs_filesystem_check_flash_repeat_address(temp_object);
-    if(verify_addr == true)
+    if(true == cfs_filesystem_check_flash_repeat_address(temp_object))
     {
         /*内存参数交叉了！*/
-        assert(verify_addr != true);
+        assert(false);
         return false;
     }
 

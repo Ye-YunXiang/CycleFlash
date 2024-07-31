@@ -44,33 +44,39 @@ static cfs_object_linked_list *cfs_system_object_tail = NULL;
 cfs_oc_read_data_result \
     cfs_system_oc_read_flash_data(const uint32_t addr, cfs_data_block * buffer)
 {
-    assert(buffer->data_pointer != NULL || buffer->data_len > 1);
+    assert(buffer->data_pointer != NULL || buffer->data_len >= 1);
     
     cfs_oc_read_data_result result = CFS_OC_READ_DATA_RESULT_NULL;
-    volatile uint8_t i = 2;
+
     uint16_t info_block_len = \
-        sizeof(cfs_data_block) - sizeof(buffer->data_pointer) + buffer->data_len;
+        CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN + buffer->data_len;
 
     // 创建读取整条数据的缓存
     uint8_t *buffer_read = (uint8_t *)CFS_MALLOC(info_block_len);
+    volatile uint8_t i = 2;
     while(i--)
     {
-        cfs_port_system_flash_read_data(addr, buffer_read, info_block_len);
-        uint8_t check_crc = cfs_system_utils_crc_8_check( \
-            buffer_read, (info_block_len - sizeof(buffer->data_crc8)));
-        uint8_t read_crc = *(buffer_read + (info_block_len - sizeof(buffer->data_crc8)));
         uint32_t temp_id = 0;
-        memcpy(&temp_id, buffer_read, sizeod(temp_id));
+        cfs_port_system_flash_read_data(addr, buffer_read, info_block_len);
+        uint16_t check_crc_16 = cfs_system_utils_crc16_xmodem_check( \
+            buffer_read, (info_block_len - sizeof(buffer->data_crc_16)));
+        uint16_t read_crc_16 = *(buffer_read + (info_block_len - sizeof(buffer->data_crc_16)));
+
+        memcpy(&temp_id, buffer_read, sizeof(temp_id));
 
         if(temp_id == UINT_MAX)
         {
             result = CFS_OC_READ_DATA_RESULT_NULL;
         }
-        else if(check_crc == read_crc)
+        else if(check_crc_16 == read_crc_16)
         {
-            memcpy(buffer->data_pointer, buffer_read, (buffer->data_len));
+            // 读取数据块ID
             memcpy(&(buffer->data_id), buffer_read, sizeof(buffer->data_id));
-            buffer->data_crc8 = read_crc;
+            // 读取用户数据
+            memcpy(buffer->data_pointer, \
+                buffer_read + CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN, \
+                (buffer->data_len));
+            buffer->data_crc_16 = read_crc_16;
             result = CFS_OC_READ_DATA_RESULT_DATA_SUCCEED;
             break;
         }
@@ -108,9 +114,9 @@ cfs_system *cfs_system_oc_system_object_get(const uint32_t temp_object)
 
 // 验证链有没有表数据数据对象
 bool cfs_system_oc_object_linked_crc_8_verify(\
-    const uint32_t temp_object, const uint8_t temp_crc_8)
+    const uint32_t temp_object, const uint16_t temp_crc_16)
 {
-    if(((cfs_object_linked_list *)temp_object)->this_linked_addr_crc_8 == temp_crc_8)
+    if(((cfs_object_linked_list *)temp_object)->this_linked_addr_crc_16 == temp_crc_16)
     {
         return true;
     }
@@ -161,8 +167,8 @@ cfs_object_linked_list *cfs_system_oc_add_object(\
 
     new_node->object_handle = object_pointer;
     new_node->data_id = 0;
-    new_node->this_linked_addr_crc_8  = \
-        cfs_system_utils_crc_8_check((uint8_t *)((uint32_t)new_node), sizeof(uint32_t));
+    new_node->this_linked_addr_crc_16  = \
+        cfs_system_utils_crc16_xmodem_check((uint8_t *)((uint32_t)new_node), sizeof(uint32_t));
     cfs_system_object_tail = new_node;
 
     return new_node;
@@ -177,8 +183,8 @@ bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object)
     {
         uint32_t head_1 = temp_object->addr_handle;
 
-        uint32_t tail_1 = temp_object->addr_handle + (temp_object->sector_size * \
-            (temp_object->list_sector_count + temp_object->data_sector_count));
+        uint32_t tail_1 = temp_object->addr_handle + \
+            (temp_object->sector_size * temp_object->sector_count);
 
         cfs_object_linked_list *temp_pointer = cfs_system_object_head->next;
         
@@ -187,8 +193,7 @@ bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object)
             uint32_t head_2 = temp_pointer->object_handle->addr_handle;
             uint32_t tail_2 = temp_pointer->object_handle->addr_handle + \
                 (temp_pointer->object_handle->sector_size * \
-                (temp_pointer->object_handle->list_sector_count + \
-                temp_pointer->object_handle->data_sector_count));
+                temp_pointer->object_handle->sector_count);
 
             if((head_1 <= tail_2 && tail_1 >= head_2) || \
                 (head_2 <= tail_1 && tail_2 >= head_1) || \

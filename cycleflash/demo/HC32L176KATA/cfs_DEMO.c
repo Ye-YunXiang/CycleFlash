@@ -56,26 +56,26 @@ bool flash_filesystem_init(void)
         return true;
     }
 
-    // 循环存储数据，不定长，nexus信息对象
+    // 循环存储数据，nexus信息对象
     memset(&cfs_system_init, NULL, sizeof(cfs_system));
     cfs_system_init.struct_type = CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH;
     cfs_system_init.addr_handle = FLASH_ADDR_NEXUS_NV_START;
     cfs_system_init.sector_size = 512;
-    cfs_system_init.list_sector_count = 2;
-    cfs_system_init.data_sector_count = 4;
+    cfs_system_init.sector_count = 4;
+    cfs_system_init.data_size = 40;
     nexus_filesystem = cfs_filesystem_object_init(&cfs_system_init, "nexus");
     if(nexus_filesystem == false)
     {
         return false;
     }
     
-    // 循环存储数据，不定长，product信息对象
+    // 循环存储数据，product信息对象
     memset(&cfs_system_init, NULL, sizeof(cfs_system));
     cfs_system_init.struct_type = CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH;
     cfs_system_init.addr_handle = FLASH_ADDR_PRODUCT_NV_PAYG_MANAGER_CREDIT_REMAINING;
     cfs_system_init.sector_size = 512;
-    cfs_system_init.list_sector_count = 2;
-    cfs_system_init.data_sector_count = 4;
+    cfs_system_init.sector_count = 4;
+    cfs_system_init.data_size = 4;
     product_filesystem = cfs_filesystem_object_init(&cfs_system_init, "product");
     if(product_filesystem == false)
     {
@@ -87,7 +87,7 @@ bool flash_filesystem_init(void)
     cfs_system_init.struct_type = CFS_FILESYSTEM_OBJECT_TYPE_FIXED_DATA_STORAGE;
     cfs_system_init.addr_handle = FLASH_ADDR_PRODUCT_NV_ID_MANAGER;
     cfs_system_init.sector_size = 512;
-    cfs_system_init.data_sector_count = 1;
+    cfs_system_init.sector_count = 1;
     cfs_system_init.data_size = 20;
     identity_filesystem = cfs_filesystem_object_init(&cfs_system_init, "identity");
     if(identity_filesystem == false)
