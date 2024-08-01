@@ -38,6 +38,7 @@
 /**/
 
 // 非紧密存储遍历内存ID初始化  感觉需要在分一层嵌出来，考虑内部可以复用嘛
+// 偷懒，后续在优化吧
 static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs_handle)
 {
     uint32_t temp_data_MAX_id = 0;
@@ -55,6 +56,7 @@ static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs
     // 存储数据的起始地址，和记录最大ID
     volatile uint32_t data_addr = temp_cfs_handle->addr_handle;
     volatile uint32_t data_max_addr = NULL;
+    // 遍历每一页第一位的值，考虑到如果第一位数据存储错误的情况
     for(uint16_t i = 0; i < temp_cfs_handle->sector_count; i++)
     {
         uint8_t temp_count = 0;
@@ -64,7 +66,7 @@ static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs
         {
             memset(data_block.data_pointer, NULL, data_block.data_len);
             read_result = cfs_system_oc_read_flash_data(\ 
-                (temp_cfs_handle->addr_handle + i * temp_cfs_handle->data_size) + \
+                (temp_cfs_handle->addr_handle + i * temp_cfs_handle->sector_size) + \
                 (temp_cfs_handle->data_size * temp_count), &data_block);
             
             // 读错就在往后读一数据块，读空直接退出
@@ -72,10 +74,10 @@ static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs
                 (temp_count ==2 && read_result != CFS_OC_READ_DATA_RESULT_DATA_SUCCEED))
             {
                 data_addr = \
-                    (temp_cfs_handle->addr_handle + i * temp_cfs_handle->data_size) + \
+                    (temp_cfs_handle->addr_handle + i * temp_cfs_handle->sector_size) + \
                     (temp_cfs_handle->data_size * temp_count);
                 data_max_addr = \
-                    (temp_cfs_handle->addr_handle + (i+1) * temp_cfs_handle->data_size);
+                    (temp_cfs_handle->addr_handle + (i+1) * temp_cfs_handle->sector_size);
                 break;
             }
             else if(read_result == CFS_OC_READ_DATA_RESULT_NULL)
@@ -101,6 +103,7 @@ static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs
         }
     }
 
+    // 如果读出来的结果是有ID的，遍历ID最大的这一页，寻找ID的最大值
     if(temp_data_MAX_id > 0)
     {
         uint8_t temp_count = 0;
@@ -142,10 +145,115 @@ static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs
 }
 
 // 紧密存储遍历内存ID初始化
+// 偷懒，后续在优化吧
 static uint32_t cfs_filesystem_tight_data_page_id_init(cfs_system * temp_cfs_handle)
 {
     uint32_t temp_data_MAX_id = 0;
-    return temp_data_MAX_id;
+
+    // 初始化缓冲数据块
+    cfs_data_block data_block;
+    // 包头包尾的长度
+    uint16_t read_data_block_total_len = \
+        CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN + temp_cfs_handle->data_size;
+
+    memset(&data_block, NULL, sizeof(cfs_data_block));   
+    // 用户存储数据空间申请
+    data_block.data_pointer = (uint8_t *)CFS_MALLOC(data_block.data_len);
+    
+    // 存储数据的起始地址，和记录最大ID
+    volatile uint32_t data_addr = temp_cfs_handle->addr_handle;
+    volatile uint32_t data_max_addr = NULL;
+    // 遍历每一页第一位的值，考虑到如果第一位数据存储错误的情况
+    for(uint16_t i = 0; i < temp_cfs_handle->sector_count; i++)
+    {
+        uint8_t temp_count = 0;
+        cfs_oc_read_data_result read_result = CFS_OC_READ_DATA_RESULT_NULL;
+
+        while(read_result != CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
+        {
+            uint32_t temp_addr = \
+                ((i + 1) * temp_cfs_handle->sector_size) / temp_cfs_handle->data_size;
+
+            temp_addr = temp_addr
+            
+            memset(data_block.data_pointer, NULL, data_block.data_len);
+            read_result = cfs_system_oc_read_flash_data(\ 
+                (temp_cfs_handle->addr_handle + i * temp_cfs_handle->sector_size) + \
+                (temp_cfs_handle->data_size * temp_count), &data_block);
+            
+            // 读错就在往后读一数据块，读空直接退出
+            if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED || \
+                (temp_count ==2 && read_result != CFS_OC_READ_DATA_RESULT_DATA_SUCCEED))
+            {
+                data_addr = \
+                    (temp_cfs_handle->addr_handle + i * temp_cfs_handle->data_size) + \
+                    (temp_cfs_handle->data_size * temp_count);
+                data_max_addr = \
+                    (temp_cfs_handle->addr_handle + (i+1) * temp_cfs_handle->data_size);
+                break;
+            }
+            else if(read_result == CFS_OC_READ_DATA_RESULT_NULL)
+            {
+                break;
+            }
+
+            if(temp_count <= \
+                (temp_cfs_handle->sector_size / temp_cfs_handle->data_size - 1))
+            {
+                temp_count++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if((data_block.data_id > temp_data_MAX_id) && \
+            read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
+        {
+            temp_data_MAX_id = data_block.data_id;
+        }
+    }
+
+    // 如果读出来的结果是有ID的，遍历ID最大的这一页，寻找ID的最大值
+    if(temp_data_MAX_id > 0)
+    {
+        uint8_t temp_count = 0;
+        cfs_oc_read_data_result read_result = CFS_OC_READ_DATA_RESULT_NULL;
+        while(read_result != CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
+        {
+            memset(data_block.data_pointer, NULL, data_block.data_len);
+            read_result = cfs_system_oc_read_flash_data(\ 
+                data_addr + (temp_cfs_handle->data_size * temp_count), &data_block);
+            
+            // 读错就在往前读一数据块，读空直接退出
+            if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
+            {
+                if((data_block.data_id > temp_data_MAX_id) && \
+                    read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
+                {
+                    temp_data_MAX_id = data_block.data_id;
+                } 
+            }
+            else if(read_result == CFS_OC_READ_DATA_RESULT_NULL)
+            {
+                break;
+            }
+
+            if((data_addr + \
+                (temp_cfs_handle->data_size * (temp_count + 1))) <= data_max_addr)
+            {
+                temp_count++;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+    CFS_FREE(data_block.data_pointer);
+    return  temp_data_MAX_id;
 }
 
 // 遍历目录页，初始化ID值
