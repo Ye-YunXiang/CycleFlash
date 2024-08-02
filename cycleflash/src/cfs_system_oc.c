@@ -91,17 +91,18 @@ cfs_oc_read_data_result \
 }
 
 /*设置数据数据对象的ID*/
-bool cfs_system_oc_object_id_set(uint32_t temp_cfs_handle, uint32_t temp_id)
+bool cfs_system_oc_object_id_set( \
+    cfs_object_linked_list * temp_cfs_handle, uint32_t temp_id)
 {
-    ((cfs_object_linked_list *)temp_cfs_handle)->data_id = temp_id;
+    temp_cfs_handle->data_id = temp_id;
     return true;
 }
 
 
 // 得到数据数据对象的ID
-uint32_t cfs_system_oc_object_id_get(uint32_t temp_cfs_handle)
+uint32_t cfs_system_oc_object_id_get(cfs_object_linked_list *temp_cfs_handle)
 {
-    return ((cfs_object_linked_list *)temp_cfs_handle)->data_id;
+    return temp_cfs_handle->data_id;
 } 
 
 
@@ -113,7 +114,7 @@ cfs_system *cfs_system_oc_system_object_get(const uint32_t temp_object)
 
 
 // 验证链有没有表数据数据对象
-bool cfs_system_oc_object_linked_crc_8_verify(\
+bool cfs_system_oc_object_linked_crc_16_verify(\
     const uint32_t temp_object, const uint16_t temp_crc_16)
 {
     if(((cfs_object_linked_list *)temp_object)->this_linked_addr_crc_16 == temp_crc_16)

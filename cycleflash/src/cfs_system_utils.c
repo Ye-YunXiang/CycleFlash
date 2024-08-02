@@ -50,7 +50,7 @@ uint8_t cfs_system_utils_crc_8_check(const uint8_t *data, uint32_t data_length)
  * 参数： uint8_t * 起始指针
  *       uint32_t  数据
 */
-uint16_t crc16_xmodem_check(const uint8_t *data, uint32_t data_length)
+uint16_t cfs_system_utils_crc16_xmodem_check(const uint8_t *data, uint32_t data_length)
 {
     uint8_t temp_char = 0;
     uint16_t crc_int = 0;

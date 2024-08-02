@@ -64,10 +64,11 @@ uint32_t cfs_system_oc_traverse_data_page_id_init(uint32_t temp_cfs_handle);
 uint32_t cfs_system_oc_traverse_list_page_id_init(uint32_t temp_cfs_handle);
 
 /*设置数据数据对象的ID*/
-bool cfs_system_oc_object_id_set(uint32_t temp_cfs_handle, uint32_t temp_id);
+bool cfs_system_oc_object_id_set( \
+    cfs_object_linked_list *temp_cfs_handle, uint32_t temp_id);
 
 // 得到数据数据对象的ID
-uint32_t cfs_system_oc_object_id_get(uint32_t temp_cfs_handle);
+uint32_t cfs_system_oc_object_id_get(cfs_object_linked_list *temp_cfs_handle);
 
 /*crc-16-xmodem标识验证链表对象是否存在*/
 bool cfs_system_oc_object_linked_crc_16_verify(\
