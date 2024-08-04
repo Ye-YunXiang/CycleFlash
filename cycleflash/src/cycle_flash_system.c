@@ -279,11 +279,13 @@ bool cfs_filesystem_check_flash_repeat_address(const cfs_system *temp_object)
 }
 
 
+// 进行ID初始化操作
 bool cfs_filesystem_object_id_init( cfs_system_handle_t temp_cfs_handle)
 {
-    uint32_t temp_object = (uint32_t)(temp_cfs_handle >> 1);
+    cfs_object_linked_list *temp_object = \
+		(cfs_object_linked_list *)((uint32_t)(temp_cfs_handle >> 1));
     uint16_t temp_crc_16 = (uint16_t)temp_cfs_handle;
-    uint32_t temp_data_max_id = 0;
+    uint32_t temp_data_id = 0;
 
     assert(cfs_system_oc_object_linked_crc_16_verify(temp_object, temp_crc_16) == true);
     
@@ -296,17 +298,21 @@ bool cfs_filesystem_object_id_init( cfs_system_handle_t temp_cfs_handle)
         temp_cfs_system->sector_count <= 2)
     {
         // 非紧密存储数据
-        temp_data_max_id = cfs_filesystem_not_tight_data_page_id_init(temp_cfs_system);
+        temp_data_id = cfs_filesystem_not_tight_data_page_id_init(temp_cfs_system);
     }
     else
     {
         // 紧密存储数据
-        temp_data_max_id = cfs_filesystem_tight_data_page_id_init(temp_cfs_system);
+        temp_data_id = cfs_filesystem_tight_data_page_id_init(temp_cfs_system);
     }
 
 	// 设置遍历好的ID值
-    cfs_system_oc_object_id_set( \
-		(cfs_object_linked_list *)temp_cfs_handle, temp_data_max_id);
+    cfs_system_oc_object_id_set(temp_object, temp_data_id);
+
+    // 设置目前可用的ID数量
+    temp_data_id = \
+        cfs_system_oc_valid_data_number(temp_object);
+    cfs_system_oc_object_valid_id_number_set(temp_object, temp_data_id);
 
     return true;
 }
@@ -317,7 +323,8 @@ cfs_system_handle_t cfs_filesystem_object_add_oc_object( \
     assert((strlen(name) + 1) <= CFS_CONFIG_MAX_OBJECT_NAME_LEN || \
         CFS_CONFIG_MAX_OBJECT_NAME_LEN <= UCHAR_MAX);
 
-    cfs_object_linked_list *temp_linked_object = cfs_system_oc_add_object(temp_object, name);
+    cfs_object_linked_list *temp_linked_object = \
+		cfs_system_oc_add_object(temp_object, (uint8_t *)name);
     if(temp_linked_object == NULL)
     {
         return false;
@@ -382,12 +389,10 @@ cfs_system_handle_t cfs_filesystem_object_init( \
         return false;
     }
 
+    // 初始化对象的各种ID
     cfs_filesystem_object_id_init(new_cfs_object_handle);
 
-
-
-    
-
-    return 0;
+    /*初始化工作结束，返回初始化的句柄*/
+    return new_cfs_object_handle;
 }
 

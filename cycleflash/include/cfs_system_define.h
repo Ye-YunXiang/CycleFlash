@@ -51,6 +51,7 @@ enum cycle_object_type
     CFS_FILESYSTEM_OBJECT_TYPE_OTA_BUFFER           = 3,
 };
 
+
 /*系统的存储对象，不定长对象记录每个存储区对象的内容*/
 typedef struct cfs_filesystem_object 
 {
@@ -64,17 +65,17 @@ typedef struct cfs_filesystem_object
 
 /*允许的最长对象名,不许超过255*/
 #define CFS_CONFIG_MAX_OBJECT_NAME_LEN   16
-
 /*存储对象 - 对象类型 - 数据ID 单链表键值对*/
 typedef struct cfs_linked_list
 {
-    struct cfs_filesystem_object *object_handle;    // 存储对象
-    char *object_name;                              // 对象名字
-    uint32_t data_id;                      	        // 数据块ID
-    struct cfs_linked_list *next;                   // 链表下一个节点
-    uint16_t valid_id_number;                       // 有效ID个数
-    uint16_t this_linked_addr_crc_16;               // 这个链表对象地址的crc-16-xmodem值
+    struct cfs_filesystem_object *object_handle;            // 存储对象
+    uint32_t data_id;                      	                // 数据块ID
+    struct cfs_linked_list *next;                           // 链表下一个节点
+    uint16_t valid_id_number;                               // 有效ID个数
+    uint16_t this_linked_addr_crc_16;                       // 这个链表对象地址的crc-16-xmodem值
+    uint8_t object_name[CFS_CONFIG_MAX_OBJECT_NAME_LEN];    // 对象名字
 }cfs_object_linked_list;
+
 
 /*不算数据长度，通过数据块算包头包尾的长度*/
 // SIZEOF(data_id) + SIZEOF(data_len) + SIZEOF(data_crc_16)
@@ -82,7 +83,6 @@ typedef struct cfs_linked_list
 // 读取数据块的偏移长度
 // SIZEOF(data_id) + SIZEOF(data_len)
 #define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN    6
-
 /*系统存入内存的数据块*/
 // 存入数据结构：`ID(4byte) | 数据长度(2byte) | 数据(最大为1页大小-7) | CRC16(2byte)`
 typedef struct 
@@ -90,7 +90,7 @@ typedef struct
     uint32_t data_id;               // 数据块ID
     uint8_t *data_pointer;          // 存入数据的指针
     uint16_t data_len;              // 存入数据的长度
-    uint16_t data_crc_16;              // 数据的crc8校验码
+    uint16_t data_crc_16;           // 数据的crc8校验码
 }cfs_data_block;
 
 

@@ -90,34 +90,56 @@ cfs_oc_read_data_result \
     return result;
 }
 
-/*设置数据数据对象的ID*/
-bool cfs_system_oc_object_id_set( \
-    cfs_object_linked_list * temp_cfs_handle, uint32_t temp_id)
+
+// 根据ID计算有效数据个数
+uint32_t cfs_system_oc_valid_data_number(cfs_object_linked_list *temp_linked_object)
 {
-    temp_cfs_handle->data_id = temp_id;
-    return true;
+    uint32_t result_id = 0;
+    uint32_t all_data = 0; 
+    uint32_t data_pages = 0;
+    uint32_t data_cycle = 0;
+    cfs_system *temp_system_object = temp_linked_object->object_handle;
+
+    if(temp_linked_object->data_id <= 2)
+    {
+        all_data = temp_system_object->sector_size / temp_system_object->data_size;
+        data_pages = temp_linked_object->data_id % all_data;
+        if(data_pages >= temp_system_object->sector_count)
+        {
+            result_id = ((temp_linked_object->data_id % all_data) == 0) ? \
+                (all_data * temp_system_object->sector_count) : \
+                (all_data * (temp_system_object->sector_count - 1) + data_pages);
+        }
+        else
+        {
+            result_id = temp_linked_object->data_id;
+        }
+    }
+    else
+    {
+        all_data = (temp_system_object->sector_size * temp_system_object->sector_count) \
+            / temp_system_object->data_size;
+        data_cycle = temp_linked_object->data_id % all_data;
+
+        if(data_cycle > 0)
+        {
+            result_id = all_data - \
+                ( temp_system_object->sector_size / temp_system_object->data_size) - 1;
+        }
+        else
+        {
+            result_id = temp_linked_object->data_id;
+        }
+    }
+
+    return result_id;
 }
-
-
-// 得到数据数据对象的ID
-uint32_t cfs_system_oc_object_id_get(cfs_object_linked_list *temp_cfs_handle)
-{
-    return temp_cfs_handle->data_id;
-} 
-
-
-// 得到系统数据对象指针
-cfs_system *cfs_system_oc_system_object_get(const uint32_t temp_object)
-{
-    return ((cfs_object_linked_list *)temp_object)->object_handle;
-}
-
 
 // 验证链有没有表数据数据对象
 bool cfs_system_oc_object_linked_crc_16_verify(\
-    const uint32_t temp_object, const uint16_t temp_crc_16)
+    const cfs_object_linked_list * temp_object, const uint16_t temp_crc_16)
 {
-    if(((cfs_object_linked_list *)temp_object)->this_linked_addr_crc_16 == temp_crc_16)
+    if(temp_object->this_linked_addr_crc_16 == temp_crc_16)
     {
         return true;
     }
@@ -127,7 +149,7 @@ bool cfs_system_oc_object_linked_crc_16_verify(\
 
 // 链表添加一个数据对象
 cfs_object_linked_list *cfs_system_oc_add_object(\
-    cfs_system *object_pointer, const char * const name) 
+    cfs_system *object_pointer, const uint8_t * const name) 
 {
     cfs_object_linked_list *new_node = 
         (cfs_object_linked_list *)CFS_MALLOC(sizeof(cfs_object_linked_list));
@@ -137,25 +159,22 @@ cfs_object_linked_list *cfs_system_oc_add_object(\
         return NULL;
     }
 
-    /*控制名字长度*/
-    uint8_t temp_len = 0;
-    if((strlen(name) + 1) > CFS_CONFIG_MAX_OBJECT_NAME_LEN)
+	uint8_t temp_len = strlen((char *)name) + 1;
+    /*写入名字*/
+    while(temp_len != CFS_CONFIG_MAX_OBJECT_NAME_LEN)
     {
-        temp_len = CFS_CONFIG_MAX_OBJECT_NAME_LEN;
-    }
-    else
-    {
-        temp_len = strlen(name) + 1;
-    }
+        if(name[temp_len] == '\0' || temp_len >= (CFS_CONFIG_MAX_OBJECT_NAME_LEN - 1))
+        {
+            new_node->object_name[temp_len] = '0';
+            break;
+        }
+        else
+        {
+            new_node->object_name[temp_len] = name[temp_len];
+        }
 
-    new_node->object_name = (char *)CFS_MALLOC(temp_len);
-    if (new_node->object_name == NULL) 
-    {
-        CFS_FREE(new_node);
-        /* Allocation failure */
-        return NULL;
+        temp_len++;
     }
-    memcpy(new_node->object_name, name, temp_len);
 
     if (cfs_system_object_head == NULL)
     {
@@ -210,5 +229,47 @@ bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object)
     }
     /*No object name*/
     return false;
+}
+
+
+// *****************************************************************************************************
+// 设置和获取对象接口
+
+/*设置数据数据对象的ID*/
+bool cfs_system_oc_object_id_set( \
+    cfs_object_linked_list * temp_cfs_handle, uint32_t temp_id)
+{
+    temp_cfs_handle->data_id = temp_id;
+    return true;
+}
+
+
+// 得到数据数据对象的ID
+uint32_t cfs_system_oc_object_id_get(cfs_object_linked_list *temp_cfs_handle)
+{
+    return temp_cfs_handle->data_id;
+} 
+
+/*设置数据数据对象的可用ID*/
+bool cfs_system_oc_object_valid_id_number_set( \
+    cfs_object_linked_list * temp_cfs_handle, uint32_t temp_id)
+{
+    temp_cfs_handle->valid_id_number = temp_id;
+    return true;
+}
+
+
+// 得到数据数据对象的ID
+uint32_t cfs_system_oc_object_valid_id_number_get( \
+    cfs_object_linked_list *temp_cfs_handle)
+{
+    return temp_cfs_handle->valid_id_number;
+} 
+
+
+// 得到系统数据对象指针
+cfs_system *cfs_system_oc_system_object_get(const cfs_object_linked_list *temp_object)
+{
+    return temp_object->object_handle;
 }
 

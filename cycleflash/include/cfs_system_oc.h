@@ -50,18 +50,32 @@ typedef enum
 
 
 
+// 根据ID计算有效数据个数
+uint32_t cfs_system_oc_valid_data_number(cfs_object_linked_list *temp_linked_object);
+
 // 读取内存中的数据
 cfs_oc_read_data_result \
     cfs_system_oc_read_flash_data(const uint32_t addr, cfs_data_block * buffer);
-
-// 得到内部系统数据对象指针
-cfs_system *cfs_system_oc_system_object_get(const uint32_t temp_object);
 
 /*遍历数据页，初始化ID值*/
 uint32_t cfs_system_oc_traverse_data_page_id_init(uint32_t temp_cfs_handle);
 
 /*遍历目录页，初始化ID值*/
 uint32_t cfs_system_oc_traverse_list_page_id_init(uint32_t temp_cfs_handle);
+
+
+/*crc-16-xmodem标识验证链表对象是否存在*/
+bool cfs_system_oc_object_linked_crc_16_verify(\
+    const cfs_object_linked_list *temp_object, const uint16_t temp_crc_16);
+
+cfs_object_linked_list *cfs_system_oc_add_object(\
+    cfs_system *object_pointer, const uint8_t * const name);
+
+bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object);
+
+
+// *****************************************************************************************************
+// 设置和获取对象接口
 
 /*设置数据数据对象的ID*/
 bool cfs_system_oc_object_id_set( \
@@ -70,15 +84,16 @@ bool cfs_system_oc_object_id_set( \
 // 得到数据数据对象的ID
 uint32_t cfs_system_oc_object_id_get(cfs_object_linked_list *temp_cfs_handle);
 
-/*crc-16-xmodem标识验证链表对象是否存在*/
-bool cfs_system_oc_object_linked_crc_16_verify(\
-    const uint32_t temp_object, const uint16_t temp_crc_16);
+/*设置数据数据对象的可用ID*/
+bool cfs_system_oc_object_valid_id_number_set( \
+    cfs_object_linked_list * temp_cfs_handle, uint32_t temp_id);
 
-cfs_object_linked_list *cfs_system_oc_add_object(\
-    cfs_system *object_pointer, const char * const name);
+// 得到数据数据对象的可用ID
+uint32_t cfs_system_oc_object_valid_id_numbe_get( \
+    cfs_object_linked_list *temp_cfs_handle);
 
-bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object);
-
+// 得到内部系统数据对象指针
+cfs_system *cfs_system_oc_system_object_get(const cfs_object_linked_list *temp_object);
 
 
 #endif /* __CFS_SYSTEM_OC_H__ */
