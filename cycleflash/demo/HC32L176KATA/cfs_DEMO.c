@@ -42,11 +42,11 @@
 #define FLASH_ADDR_NEXUS_NV_START								(0x0001C000u)
 
 // 用于管理存储nexus的信息，专门用与Nexus的NV读写操作的空间。
-static cfs_system_handle_t nexus_filesystem;
+static cfs_system_handle_t nexus_filesystem = NULL;
 // 用于管理存储信用量的信息，比如剩余信用量，和总共信用量之类的。
-static cfs_system_handle_t product_filesystem;
+static cfs_system_handle_t product_filesystem = NULL;
 // 用于管理存储设备的身份信息，专门用与存储设备ID之类。
-static cfs_system_handle_t identity_filesystem;
+static cfs_system_handle_t identity_filesystem = NULL;
 
 // how many entries in flash to examine if the most recent entry is
 // corrupted (such as if the most recent entry was a partially-completed flash
@@ -72,7 +72,7 @@ bool flash_filesystem_init(void)
     cfs_system_init.sector_size = 512;
     cfs_system_init.sector_count = 4;
     cfs_system_init.data_size = 40;
-    nexus_filesystem = cfs_filesystem_object_init(&cfs_system_init, "nexus");
+    nexus_filesystem = cfs_nv_system(&cfs_system_init, "nexus");
     if(nexus_filesystem == false)
     {
         return false;
@@ -85,7 +85,7 @@ bool flash_filesystem_init(void)
     cfs_system_init.sector_size = 512;
     cfs_system_init.sector_count = 4;
     cfs_system_init.data_size = 4;
-    product_filesystem = cfs_filesystem_object_init(&cfs_system_init, "product");
+    product_filesystem = cfs_nv_system(&cfs_system_init, "product");
     if(product_filesystem == false)
     {
         return false;
@@ -98,7 +98,7 @@ bool flash_filesystem_init(void)
     cfs_system_init.sector_size = 512;
     cfs_system_init.sector_count = 1;
     cfs_system_init.data_size = 20;
-    identity_filesystem = cfs_filesystem_object_init(&cfs_system_init, "identity");
+    identity_filesystem = cfs_nv_system(&cfs_system_init, "identity");
     if(identity_filesystem == false)
     {
         return false;
@@ -110,7 +110,7 @@ bool flash_filesystem_init(void)
 
 // 产品和Nexus NV *write*功能使用的通用代码
 static bool _internal_flash_filesystem_write_nv( \
-    cfs_system_handle_t fs, uint32_t id, const void* data, size_t len)
+    cfs_system_handle_t fs, uint32_t id, const void* data, uint32_t len)
 {
     if (!filesystem_success_init)
     {
@@ -121,16 +121,16 @@ static bool _internal_flash_filesystem_write_nv( \
         return false;
     }
 
-    assert((fs == &nexus_filesystem) || (fs == &product_filesystem));
-    const ssize_t bytes_written = nvs_write(fs, id, data, len);
-    // bytes_written will be 0 if the same data already exists in flash
+    assert(fs != NULL);
+    const uint32_t bytes_written = nvs_write(fs, id, data, len);
+
     // 如果flash中已经存在相同的数据，则Bytes_written将为0
     return ((bytes_written == 0) || (bytes_written == len));
 }
 
 // 产品和Nexus NV *read*功能使用的通用代码
 static bool _internal_flash_filesystem_read_nv( \
-    struct nvs_fs* fs, uint32_t id, void* data, size_t len)
+    struct nvs_fs* fs, uint32_t id, void* data, uint32_t len)
 {
     if (!filesystem_success_init)
     {
@@ -147,7 +147,7 @@ static bool _internal_flash_filesystem_read_nv( \
     //如果最近的条目被损坏，读取最多9前
     // flash中的条目(如果存在)
     uint16_t writes_in_past = 0;
-    ssize_t bytes_read = 0;
+    uint32_t bytes_read = 0;
     while (writes_in_past <
            FLASH_FILESYSTEM_READ_NUMBER_OF_PAST_ENTRIES_TO_EXAMINE)
     {

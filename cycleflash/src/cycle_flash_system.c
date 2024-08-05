@@ -337,7 +337,12 @@ cfs_system_handle_t cfs_filesystem_object_add_oc_object( \
     return cfs_object_handle;
 }
 
-cfs_system_handle_t cfs_filesystem_object_init( \
+//*******************************************************************************************
+//-- 对外接口  
+//*******************************************************************************************
+
+
+cfs_system_handle_t cfs_nv_system( \
     cfs_system *temp_object, const char * const name)
 {
     // 判断参数有效性
@@ -396,3 +401,36 @@ cfs_system_handle_t cfs_filesystem_object_init( \
     return new_cfs_object_handle;
 }
 
+// 根据id往内存中写入数据
+uint32_t cfs_nv_write( cfs_system_handle_t temp_object, \
+	uint32_t temp_id, const uint8_t *data, uint32_t len)
+{
+    /*user designation codes*/
+    
+    return false;
+}
+
+// 根据ID读取内存中的数据
+uint32_t cfs_nv_read(cfs_system_handle_t temp_object, \
+	uint32_t temp_id, uint8_t *data, uint32_t len, uint16_t past_id)
+{
+    /*user designation codes*/
+    
+    return false;
+}
+
+// 清除指定对象的存储空间
+bool cfs_nv_clear(cfs_system_handle_t temp_object)
+{
+    /*user designation codes*/
+    
+    return false;
+}
+
+// 返回目前存储对象的ID
+uint32_t cfs_nv_get_current_id(cfs_system_handle_t temp_object)
+{
+    /*user designation codes*/
+
+    return false;
+}

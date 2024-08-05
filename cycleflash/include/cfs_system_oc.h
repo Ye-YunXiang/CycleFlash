@@ -49,20 +49,18 @@ typedef enum
 }cfs_oc_read_data_result;
 
 
-
-// 根据ID计算有效数据个数
-uint32_t cfs_system_oc_valid_data_number(cfs_object_linked_list *temp_linked_object);
-
 // 读取内存中的数据
 cfs_oc_read_data_result \
     cfs_system_oc_read_flash_data(const uint32_t addr, cfs_data_block * buffer);
+
+// 根据ID计算有效数据个数
+uint32_t cfs_system_oc_valid_data_number(cfs_object_linked_list *temp_linked_object);
 
 /*遍历数据页，初始化ID值*/
 uint32_t cfs_system_oc_traverse_data_page_id_init(uint32_t temp_cfs_handle);
 
 /*遍历目录页，初始化ID值*/
 uint32_t cfs_system_oc_traverse_list_page_id_init(uint32_t temp_cfs_handle);
-
 
 /*crc-16-xmodem标识验证链表对象是否存在*/
 bool cfs_system_oc_object_linked_crc_16_verify(\
