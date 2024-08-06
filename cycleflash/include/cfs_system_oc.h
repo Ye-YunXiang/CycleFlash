@@ -69,6 +69,11 @@ cfs_object_linked_list *cfs_system_oc_add_object(\
 // 检查设置的文件的地址和将要存入数据的地址片区有没有重复
 bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object);
 
+/*使用初始化链表对象后返回的句柄，在通过crc-16-xmodem标识验证链表对象是否存在*/
+// 存在返回链表对象，不存在返回NULL
+cfs_object_linked_list *cfs_system_oc_object_linked_crc_16_verify( \
+    cfs_system_handle_t temp_cfs_handle);
+
 // 根据ID得到本ID对应的内存地址
 uint32_t cfs_system_oc_via_id_calculate_addr( \
     cfs_system_handle_t temp_object, uint32_t temp_id);
@@ -95,10 +100,7 @@ uint32_t cfs_system_oc_object_valid_id_numbe_get( \
 // 得到内部系统数据对象指针
 cfs_system *cfs_system_oc_system_object_get(const cfs_object_linked_list *temp_object);
 
-/*使用初始化链表对象后返回的句柄，在通过crc-16-xmodem标识验证链表对象是否存在*/
-// 存在返回链表对象，不存在返回NULL
-cfs_object_linked_list *cfs_system_oc_object_linked_crc_16_verify( \
-    cfs_system_handle_t temp_cfs_handle);
+
 
 
 #endif /* __CFS_SYSTEM_OC_H__ */
