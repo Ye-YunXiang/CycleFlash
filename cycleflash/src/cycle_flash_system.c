@@ -28,7 +28,6 @@
 // Encoding:UTF-8
 
 #include <string.h>
-#include <limits.h>
 #include <assert.h>
 
 #include "cfs_system_oc.h"
@@ -41,14 +40,10 @@
 // 偷懒，后续在优化吧
 static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs_handle)
 {
-    uint32_t temp_data_MAX_id = 0;
+    uint32_t temp_data_MAX_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
 
     // 初始化缓冲数据块
     cfs_data_block data_block;
-    // // 包头包尾的长度
-    // uint16_t read_data_block_total_len = \
-    //     CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN + temp_cfs_handle->data_size;
-
     memset(&data_block, NULL, sizeof(cfs_data_block));   
     // 用户存储数据空间申请
     data_block.data_pointer = (uint8_t *)CFS_MALLOC(data_block.data_len);
@@ -96,15 +91,18 @@ static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs
             }
         }
 
-        if((data_block.data_id > temp_data_MAX_id) && \
-            read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
+        if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
         {
-            temp_data_MAX_id = data_block.data_id;
+            if(data_block.data_id > temp_data_MAX_id || \
+                temp_data_MAX_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
+            {
+                temp_data_MAX_id = data_block.data_id;
+            }
         }
     }
 
     // 如果读出来的结果是有ID的，遍历ID最大的这一页，寻找ID的最大值
-    if(temp_data_MAX_id > 0)
+    if(temp_data_MAX_id != CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
         uint8_t temp_count = 0;
         cfs_oc_read_data_result read_result = CFS_OC_READ_DATA_RESULT_NULL;
@@ -115,13 +113,10 @@ static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs
                 data_addr + (temp_cfs_handle->data_size * temp_count), &data_block);
             
             // 读错就在往前读一数据块，读空直接退出
-            if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
+            if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED && \
+                data_block.data_id > temp_data_MAX_id)
             {
-                if((data_block.data_id > temp_data_MAX_id) && \
-                    read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
-                {
-                    temp_data_MAX_id = data_block.data_id;
-                } 
+                temp_data_MAX_id = data_block.data_id;
             }
             else if(read_result == CFS_OC_READ_DATA_RESULT_NULL)
             {
@@ -141,14 +136,14 @@ static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs
     }
 
     CFS_FREE(data_block.data_pointer);
-    return  temp_data_MAX_id;
+    return temp_data_MAX_id;
 }
 
 // 紧密存储遍历内存ID初始化
 // 偷懒，后续在优化吧
 static uint32_t cfs_filesystem_tight_data_page_id_init(cfs_system * temp_cfs_handle)
 {
-    uint32_t temp_data_MAX_id = 0;
+    uint32_t temp_data_MAX_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
 
     // 初始化缓冲数据块
     cfs_data_block data_block;
@@ -214,15 +209,18 @@ static uint32_t cfs_filesystem_tight_data_page_id_init(cfs_system * temp_cfs_han
             }
         }
 
-        if((data_block.data_id > temp_data_MAX_id) && \
-            read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
+        if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
         {
-            temp_data_MAX_id = data_block.data_id;
+            if(data_block.data_id > temp_data_MAX_id || \
+                temp_data_MAX_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
+            {
+                temp_data_MAX_id = data_block.data_id;
+            }
         }
     }
 
     // 如果读出来的结果是有ID的，遍历ID最大的这一页，寻找ID的最大值
-    if(temp_data_MAX_id > 0)
+    if(temp_data_MAX_id != CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
         uint8_t temp_count = 0;
         cfs_oc_read_data_result read_result = CFS_OC_READ_DATA_RESULT_NULL;
@@ -233,13 +231,10 @@ static uint32_t cfs_filesystem_tight_data_page_id_init(cfs_system * temp_cfs_han
                 data_addr + (temp_cfs_handle->data_size * temp_count), &data_block);
             
             // 读错就在往前读一数据块，读空直接退出
-            if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
+            if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED && \
+                data_block.data_id > temp_data_MAX_id)
             {
-                if((data_block.data_id > temp_data_MAX_id) && \
-                    read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
-                {
-                    temp_data_MAX_id = data_block.data_id;
-                } 
+                temp_data_MAX_id = data_block.data_id;
             }
             else if(read_result == CFS_OC_READ_DATA_RESULT_NULL)
             {
@@ -283,11 +278,10 @@ bool cfs_filesystem_check_flash_repeat_address(const cfs_system *temp_object)
 bool cfs_filesystem_object_id_init( cfs_system_handle_t temp_cfs_handle)
 {
     cfs_object_linked_list *temp_object = \
-		(cfs_object_linked_list *)((uint32_t)(temp_cfs_handle >> 1));
-    uint16_t temp_crc_16 = (uint16_t)temp_cfs_handle;
-    uint32_t temp_data_id = 0;
+        cfs_system_oc_object_linked_crc_16_verify(temp_cfs_handle);
+    assert(temp_object != NULL);
 
-    assert(cfs_system_oc_object_linked_crc_16_verify(temp_object, temp_crc_16) == true);
+    uint32_t temp_data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
     
     cfs_system *temp_cfs_system = cfs_system_oc_system_object_get(temp_object);
 
@@ -309,9 +303,16 @@ bool cfs_filesystem_object_id_init( cfs_system_handle_t temp_cfs_handle)
 	// 设置遍历好的ID值
     cfs_system_oc_object_id_set(temp_object, temp_data_id);
 
+    // 判断有没有ID
+    if(temp_data_id != CFS_CONFIG_NOT_LINKED_DATA_ID)
+    {
+        temp_data_id = cfs_system_oc_valid_data_number(temp_object);
+    }
+    else
+    {
+        temp_data_id = 0;
+    }
     // 设置目前可用的ID数量
-    temp_data_id = \
-        cfs_system_oc_valid_data_number(temp_object);
     cfs_system_oc_object_valid_id_number_set(temp_object, temp_data_id);
 
     return true;
@@ -320,8 +321,8 @@ bool cfs_filesystem_object_id_init( cfs_system_handle_t temp_cfs_handle)
 cfs_system_handle_t cfs_filesystem_object_add_oc_object( \
     cfs_system *temp_object, const char * const name)
 {
-    assert((strlen(name) + 1) <= CFS_CONFIG_MAX_OBJECT_NAME_LEN || \
-        CFS_CONFIG_MAX_OBJECT_NAME_LEN <= UCHAR_MAX);
+    assert((strlen(name) + 1) <= CFS_CONFIG_CURRENT_OBJECT_NAME_LEN || \
+        CFS_CONFIG_CURRENT_OBJECT_NAME_LEN <= CFS_CONFIG_MAX_OBJECT_NAME_LEN);
 
     cfs_object_linked_list *temp_linked_object = \
 		cfs_system_oc_add_object(temp_object, (uint8_t *)name);
@@ -405,6 +406,12 @@ cfs_system_handle_t cfs_nv_system( \
 uint32_t cfs_nv_write( cfs_system_handle_t temp_object, \
 	uint32_t temp_id, const uint8_t *data, uint32_t len)
 {
+    cfs_object_linked_list *temp_object = \
+        cfs_system_oc_object_linked_crc_16_verify(temp_cfs_handle);
+    if(temp_object == NULL)
+    {
+        return false;
+    }
     /*user designation codes*/
     
     return false;
@@ -414,6 +421,12 @@ uint32_t cfs_nv_write( cfs_system_handle_t temp_object, \
 uint32_t cfs_nv_read(cfs_system_handle_t temp_object, \
 	uint32_t temp_id, uint8_t *data, uint32_t len, uint16_t past_id)
 {
+    cfs_object_linked_list *temp_object = \
+        cfs_system_oc_object_linked_crc_16_verify(temp_cfs_handle);
+    if(temp_object == NULL)
+    {
+        return false;
+    }
     /*user designation codes*/
     
     return false;
@@ -422,6 +435,12 @@ uint32_t cfs_nv_read(cfs_system_handle_t temp_object, \
 // 清除指定对象的存储空间
 bool cfs_nv_clear(cfs_system_handle_t temp_object)
 {
+    cfs_object_linked_list *temp_object = \
+        cfs_system_oc_object_linked_crc_16_verify(temp_cfs_handle);
+    if(temp_object == NULL)
+    {
+        return false;
+    }
     /*user designation codes*/
     
     return false;
@@ -430,6 +449,12 @@ bool cfs_nv_clear(cfs_system_handle_t temp_object)
 // 返回目前存储对象的ID
 uint32_t cfs_nv_get_current_id(cfs_system_handle_t temp_object)
 {
+    cfs_object_linked_list *temp_object = \
+        cfs_system_oc_object_linked_crc_16_verify(temp_cfs_handle);
+    if(temp_object == NULL)
+    {
+        return false;
+    }
     /*user designation codes*/
 
     return false;

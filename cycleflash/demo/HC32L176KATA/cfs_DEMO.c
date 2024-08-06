@@ -48,9 +48,6 @@ static cfs_system_handle_t product_filesystem = NULL;
 // 用于管理存储设备的身份信息，专门用与存储设备ID之类。
 static cfs_system_handle_t identity_filesystem = NULL;
 
-// how many entries in flash to examine if the most recent entry is
-// corrupted (such as if the most recent entry was a partially-completed flash
-// write)
 // 检查Flash系统中的条目是否损坏
 #define FLASH_FILESYSTEM_READ_NUMBER_OF_PAST_ENTRIES_TO_EXAMINE 10
 
@@ -151,9 +148,6 @@ static bool _internal_flash_filesystem_read_nv( \
     while (writes_in_past <
            FLASH_FILESYSTEM_READ_NUMBER_OF_PAST_ENTRIES_TO_EXAMINE)
     {
-        // Reading with writes_in_past == 0 is the same as calling `nvs_read`
-        // (attempts to read most recent entry only). writes_in_past == 1
-        // attempts to read one write before the most recent entry, etc.
         //使用writes_in_past == 0读取与调用' nvs_read '相同
         //(只尝试读取最近的条目)。Writes_in_past == 1
         //在最近的条目之前尝试读一个写，等等。
@@ -178,8 +172,8 @@ static bool _internal_flash_filesystem_read_nv( \
 int flash_filesystem_write_product_nv( \
     enum flash_filesystem_product_nv_id id, const void* data, size_t len)
 {
-    const bool success = _internal_flash_filesystem_write_nv(
-        product_filesystem, id, data, len);
+    const bool success = \
+        _internal_flash_filesystem_write_nv(product_filesystem, id, data, len);
     if (success)
     {
         return len;

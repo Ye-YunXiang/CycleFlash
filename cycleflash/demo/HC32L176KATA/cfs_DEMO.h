@@ -1,4 +1,4 @@
-/** \file flash_filesystem.h
+ /** \file flash_filesystem.h
  * \brief A demo implementation of flash filesystem for Nexus and Product Code
  * \author Angaza
  * \copyright 2021 Angaza, Inc.

@@ -64,7 +64,7 @@ cfs_oc_read_data_result \
 
         memcpy(&temp_id, buffer_read, sizeof(temp_id));
 
-        if(temp_id == UINT_MAX)
+        if(temp_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
         {
             result = CFS_OC_READ_DATA_RESULT_NULL;
         }
@@ -94,57 +94,64 @@ cfs_oc_read_data_result \
 // 根据ID计算有效数据个数
 uint32_t cfs_system_oc_valid_data_number(cfs_object_linked_list *temp_linked_object)
 {
-    uint32_t result_id = 0;
     uint32_t all_data = 0; 
     uint32_t data_pages = 0;
     uint32_t data_cycle = 0;
+    uint32_t result_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
     cfs_system *temp_system_object = temp_linked_object->object_handle;
+    uint32_t temp_id = temp_linked_object->data_id + 1;
 
-    if(temp_linked_object->data_id <= 2)
+    if(temp_system_object->sector_count <= 2)
     {
         all_data = temp_system_object->sector_size / temp_system_object->data_size;
-        data_pages = temp_linked_object->data_id % all_data;
+        data_pages = temp_id / all_data;
         if(data_pages >= temp_system_object->sector_count)
         {
-            result_id = ((temp_linked_object->data_id % all_data) == 0) ? \
+            result_id = ((temp_id % all_data) == 0) ? \
                 (all_data * temp_system_object->sector_count) : \
-                (all_data * (temp_system_object->sector_count - 1) + data_pages);
+                (all_data * (temp_system_object->sector_count - 1) + \
+                (temp_id % all_data));
         }
         else
         {
-            result_id = temp_linked_object->data_id;
+            result_id = temp_id;
         }
     }
     else
     {
         all_data = (temp_system_object->sector_size * temp_system_object->sector_count) \
             / temp_system_object->data_size;
-        data_cycle = temp_linked_object->data_id % all_data;
+        data_cycle = temp_id % all_data;
 
         if(data_cycle > 0)
         {
             result_id = all_data - \
-                ( temp_system_object->sector_size / temp_system_object->data_size) - 1;
+                ( temp_system_object->sector_size / temp_system_object->data_size);
         }
         else
         {
-            result_id = temp_linked_object->data_id;
+            result_id = temp_id;
         }
     }
 
     return result_id;
 }
 
-// 验证链有没有表数据数据对象
-bool cfs_system_oc_object_linked_crc_16_verify(\
-    const cfs_object_linked_list * temp_object, const uint16_t temp_crc_16)
+/*使用初始化链表对象后返回的句柄，在通过crc-16-xmodem标识验证链表对象是否存在*/
+// 存在返回链表对象，不存在返回NULL
+cfs_object_linked_list * cfs_system_oc_object_linked_crc_16_verify( \
+    cfs_system_handle_t temp_cfs_handle);
 {
+    cfs_object_linked_list *temp_object = \
+		(cfs_object_linked_list *)((uint32_t)(temp_cfs_handle >> 1));
+    uint16_t temp_crc_16 = (uint16_t)temp_cfs_handle;
+
     if(temp_object->this_linked_addr_crc_16 == temp_crc_16)
     {
-        return true;
+        return temp_object;
     }
 
-    return false;
+    return NULL;
 }
 
 // 链表添加一个数据对象
@@ -159,22 +166,23 @@ cfs_object_linked_list *cfs_system_oc_add_object(\
         return NULL;
     }
 
-	uint8_t temp_len = strlen((char *)name) + 1;
+	uint8_t temp_len = 0;
     /*写入名字*/
-    while(temp_len != CFS_CONFIG_MAX_OBJECT_NAME_LEN)
+    while(temp_len < (CFS_CONFIG_CURRENT_OBJECT_NAME_LEN - 2))
     {
-        if(name[temp_len] == '\0' || temp_len >= (CFS_CONFIG_MAX_OBJECT_NAME_LEN - 1))
+        if(name[temp_len] == '\0')
         {
             new_node->object_name[temp_len] = '0';
+            temp_len++;
             break;
         }
         else
         {
             new_node->object_name[temp_len] = name[temp_len];
         }
-
         temp_len++;
     }
+    new_node->object_name[temp_len] = '0';
 
     if (cfs_system_object_head == NULL)
     {
@@ -229,6 +237,15 @@ bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object)
     }
     /*No object name*/
     return false;
+}
+
+// 根据ID得到本ID对应的内存地址
+uint32_t cfs_system_oc_via_id_calculate_addr( \
+    cfs_system_handle_t temp_object, uint32_t temp_id)
+{
+    uint32_t addr = 0;
+
+    return addr;
 }
 
 
