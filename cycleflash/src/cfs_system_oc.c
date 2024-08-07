@@ -190,31 +190,38 @@ bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object)
     return false;
 }
 
-// 根据ID得到本ID对应的内存地址
+// 根据ID得到ID对应的内存地址
 uint32_t cfs_system_oc_via_id_calculate_addr( \
-    cfs_system_handle_t temp_object, uint32_t temp_id)
+    cfs_object_linked_list *temp_object, uint32_t temp_id)
 {
     assert(temp_id != CFS_CONFIG_NOT_LINKED_DATA_ID);
-    uint32_t addr = 0;
-    uint32_t page_id_count = 0;
-    uint32_t all_page_id_count = 0;
-    uint32_t data_block_size = \
-        temp_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
-    
-    // 非紧密存储数据
-    if(temp_object->struct_type == CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH && \
-        temp_object->sector_count <= 2)
-    {
-        page_id_count = temp_object->sector_size / data_block_size;
-    }
-    // 紧密存储数据
-    else
-    {
-        
+    cfs_system *temp_cfs_object = temp_object->object_handle;
 
-    }
+	uint32_t data_size = \
+        temp_cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
+	uint32_t all_data = \
+        (temp_cfs_object->sector_size * temp_cfs_object->sector_count) / data_size;
+	uint16_t data_cycle = (temp_object->data_id + 1) / all_data;
+	uint16_t data_cycle_int = (temp_object->data_id + 1) % all_data;
+	
+	uint32_t result_addr = NULL;
+	
+	if(data_cycle < 1 || (data_cycle == 1 && data_cycle_int == 0))
+	{
+		result_addr = temp_object->data_id * data_size;
+	}
+	else if(data_cycle > 1 && data_cycle_int != 0)
+	{
+		result_addr = (temp_object->data_id - data_cycle * all_data) * data_size;
+	}
+	else if(data_cycle > 1 && data_cycle_int == 0)
+	{
+		result_addr = (temp_object->data_id - (data_cycle - 1) * all_data) * data_size;
+	}
 
-    return addr;
+    result_addr = result_addr + temp_cfs_object->addr_handle;
+
+    return result_addr;
 }
 
 

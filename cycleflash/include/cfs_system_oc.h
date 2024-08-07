@@ -76,7 +76,7 @@ cfs_object_linked_list *cfs_system_oc_object_linked_crc_16_verify( \
 
 // 根据ID得到本ID对应的内存地址
 uint32_t cfs_system_oc_via_id_calculate_addr( \
-    cfs_system_handle_t temp_object, uint32_t temp_id);
+    cfs_object_linked_list *temp_object, uint32_t temp_id);
 
 
 // *****************************************************************************************************
