@@ -26,15 +26,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-// for size_t
-#include <stddef.h>
 
-/** Developer-defined custom flash/NV 'ID' tags.
- *
- * These are not used by Nexus Library, and can be any
- * value between 0 and 65535. These are used to uniquely tag
- * data written to flash that is used by the product code.
- */
 enum flash_filesystem_product_nv_id
 {
     // Recommended flash IDs for Nexus Identity information

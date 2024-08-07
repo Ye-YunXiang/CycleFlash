@@ -133,10 +133,12 @@ cfs_object_linked_list *cfs_system_oc_add_object(\
         cfs_system_object_tail->next = new_node;
     }
 
+    new_node->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
+    new_node->valid_id_number = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     new_node->object_handle = object_pointer;
-    new_node->data_id = 0;
     new_node->this_linked_addr_crc_16  = \
-        cfs_system_utils_crc16_xmodem_check((uint8_t *)((uint32_t)new_node), sizeof(uint32_t));
+        cfs_system_utils_crc16_xmodem_check(\
+        (uint8_t *)((uint32_t)new_node), sizeof(uint32_t));
     cfs_system_object_tail = new_node;
 
     return new_node;
