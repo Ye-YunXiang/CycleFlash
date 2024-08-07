@@ -43,47 +43,36 @@ static cfs_object_linked_list *cfs_system_object_tail = NULL;
 // 根据ID计算有效数据个数
 uint32_t cfs_system_oc_valid_data_number(cfs_object_linked_list *temp_linked_object)
 {
-    uint32_t all_data = 0; 
-    uint32_t data_pages = 0;
-    uint32_t data_cycle = 0;
-    uint32_t result_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
-    cfs_system *temp_system_object = temp_linked_object->object_handle;
-    uint32_t temp_id = temp_linked_object->data_id + 1;
-    uint32_t data_block_size = \
-        temp_system_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
+    uint32_t result_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
 
-    if(temp_system_object->sector_count <= 2)
+    cfs_system *temp_cfs_object = temp_linked_object->object_handle;
+    if(temp_linked_object->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
-        all_data = temp_system_object->sector_size / data_block_size;
-        data_pages = temp_id / all_data;
-        if(data_pages >= temp_system_object->sector_count)
+        return CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
+    }
+
+	uint32_t data_size = \
+        temp_cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
+	uint32_t all_data = \
+        (temp_cfs_object->sector_size * temp_cfs_object->sector_count) / data_size;
+	uint16_t data_cycle = (temp_linked_object->data_id + 1) / all_data;
+	uint16_t data_cycle_int = (temp_linked_object->data_id + 1) % all_data;
+	
+	if(data_cycle < 1 || (data_cycle == 1 && data_cycle_int == 0))
+	{
+		result_id = temp_linked_object->data_id + 1;
+	}
+	else
+	{
+        if(temp_cfs_object->sector_count > 1)
         {
-            result_id = ((temp_id % all_data) == 0) ? \
-                (all_data * temp_system_object->sector_count) : \
-                (all_data * (temp_system_object->sector_count - 1) + \
-                (temp_id % all_data));
+            result_id = all_data - (temp_cfs_object->sector_size / data_size) - 1;
         }
         else
         {
-            result_id = temp_id;
+            result_id = data_cycle_int == 0 ? all_data : data_cycle_int;
         }
-    }
-    else
-    {
-        all_data = (temp_system_object->sector_size * temp_system_object->sector_count) \
-            / data_block_size;
-        data_cycle = temp_id % all_data;
-
-        if(data_cycle > 0)
-        {
-            result_id = all_data - \
-                ( temp_system_object->sector_size / data_block_size);
-        }
-        else
-        {
-            result_id = temp_id;
-        }
-    }
+	}
 
     return result_id;
 }
@@ -210,7 +199,7 @@ uint32_t cfs_system_oc_via_id_calculate_addr( \
 	{
 		result_addr = temp_object->data_id * data_size;
 	}
-	else if(data_cycle > 1 && data_cycle_int != 0)
+	else if(data_cycle >= 1 && data_cycle_int != 0)
 	{
 		result_addr = (temp_object->data_id - data_cycle * all_data) * data_size;
 	}

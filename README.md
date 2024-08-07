@@ -40,22 +40,28 @@ Created: 2024.7.29
 **存入的ID从0开始，FFFFFFFF代表内存中没有数据。**  
 
 > 存入数据结构：`ID(4byte) | 数据长度(2byte) | 数据(最大为1页大小-7) | CRC16(2byte)`
+> 存入数据紧密存储，一页长度不够会跨页存储。
 
 ### 2.1 计算可回溯的数据
 
 > 存入的数据的ID是从 "0" 开始的，但是有效数据是要统计可用的个数，所以要 "ID + 1" 去计算个数。
+> 要注意，循环存储的数据是推荐2页起存的，只要页数>=2页，会有一页且只有一页的数据为缓存，不算在有效数据。
 
 一定要注意，结构体输入的是要存入的数据大小，但是实际存入内存中会加入包头包尾，所以实际存入长度比设定的长度大8byte。
 ★★★***数据块大小***： 这里的数据块大小为`cfs_system.data_size + 8`
 上面计算结果用于下面的计算。
 
-> 紧密存储数据，这一页长度不够会跨页存储。
-
-- 先计算分配的区域能存储多少数据块：`all_data = (一页大小 * 总共页数) / 数据块大小`。
-- 接下来根据ID计算循环存储了多少次 `data_cycle = (id + 1) % all_data)`
-- 根据上面的结果做裁切，得到结果:
-  - 如果 data_cycle==0: 就是还没有开始循环，直接得到结果 `result_id = id`。
-  - 如果 data_cydle>0: 已经开始循环了， `result_id = all_data - (数据页大小/数据块大小)`。
+- 先计算分配的区域能存储多少数据块：`all_data = (扇叶大小 * 总共页数) / 数据块大小`。
+- 接下来根据ID计算循环存储了多少次 `data_cycle = (id + 1) / all_data)`
+- 计算数据的余数，看看是不是正好存满：`data_cycle_int = (id + 1) % all_data`
+- 接下来分两种总情况：
+  - 如果 data_cycle < 1 || (data_cycle == 1 && data_cycle_int == 0)：
+    - 得出结论：`result_id = id + 1`
+  - 否则：
+    - 如果分配的总页数 > 1:
+      - 得出结论：`all_data - (扇叶大小 / 数据块大小) - 1`
+    - 如果分配的总页数 = 1:
+      - 得出结论：`result_id = data_cycle_int == 0 ? all_data : data_cycle_int`
 
 ### 2.2 计算ID位置
 
@@ -67,7 +73,7 @@ Created: 2024.7.29
 - 接下来分三总情况：
   - 如果 data_cycle < 1 || (data_cycle == 1 && data_cycle_int == 0)：
     - 得出结论：`result_addr = id * data_size + addr`
-  - 如果 data_cycle > 1 && data_cycle_int != 0 ：
+  - 如果 data_cycle >= 1 && data_cycle_int != 0 ：
     - 得出结论：`result_addr = (id - data_cycle * all_data) * data_size + addr`
   - 如果 data_cycle > 1 && data_cycle_int == 0 ：
     - 得出结论：`result_addr = (id - (data_cycle - 1) * all_data) * data_size + addr`
@@ -84,11 +90,7 @@ Created: 2024.7.29
 
 ***循环存储类型***
 
-- 数据页<=2页：数据不会进行跨页存储，一页长度不够了就换一页存储。
-- 数据页>2页：页和页之间的数据会紧密存储，比如一页的长度不够了，数据存储会存储到下一页。
-
-***循环重复存储***
-
+- 开放ID无限增长权限，可以循环进行存储，会擦除循环的重复扇叶，有效数据需要计算。
 - 每次存储要写入下一页内存之前，会先擦除下一页内存，在进行存储。
 
 ## 3、下方是临时记录
