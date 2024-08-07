@@ -47,6 +47,9 @@ static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs
     memset(&data_block, NULL, sizeof(cfs_data_block));   
     // 用户存储数据空间申请
     data_block.data_pointer = (uint8_t *)CFS_MALLOC(data_block.data_len);
+    // 计算数据块大小
+    const uint32_t data_block_size = \
+        temp_cfs_handle->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
     
     // 存储数据的起始地址，和记录最大ID
     volatile uint32_t data_addr = temp_cfs_handle->addr_handle;
@@ -62,7 +65,7 @@ static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs
             memset(data_block.data_pointer, NULL, data_block.data_len);
             read_result = cfs_system_oc_read_flash_data( \
                 (temp_cfs_handle->addr_handle + i * temp_cfs_handle->sector_size) + \
-                (temp_cfs_handle->data_size * temp_count), &data_block);
+                (data_block_size * temp_count), &data_block);
             
             // 读错就在往后读一数据块，读空直接退出
             if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED || \
@@ -70,7 +73,7 @@ static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs
             {
                 data_addr = \
                     (temp_cfs_handle->addr_handle + i * temp_cfs_handle->sector_size) + \
-                    (temp_cfs_handle->data_size * temp_count);
+                    (data_block_size * temp_count);
                 data_max_addr = \
                     (temp_cfs_handle->addr_handle + (i+1) * temp_cfs_handle->sector_size);
                 break;
@@ -81,7 +84,7 @@ static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs
             }
 
             if(temp_count <= \
-                (temp_cfs_handle->sector_size / temp_cfs_handle->data_size - 1))
+                (temp_cfs_handle->sector_size / data_block_size - 1))
             {
                 temp_count++;
             }
@@ -110,7 +113,7 @@ static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs
         {
             memset(data_block.data_pointer, NULL, data_block.data_len);
             read_result = cfs_system_oc_read_flash_data( \
-                data_addr + (temp_cfs_handle->data_size * temp_count), &data_block);
+                data_addr + (data_block_size * temp_count), &data_block);
             
             // 读错就在往前读一数据块，读空直接退出
             if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED && \
@@ -124,7 +127,7 @@ static uint32_t cfs_filesystem_not_tight_data_page_id_init(cfs_system * temp_cfs
             }
 
             if((data_addr + \
-                (temp_cfs_handle->data_size * (temp_count + 1))) <= data_max_addr)
+                (data_block_size * (temp_count + 1))) <= data_max_addr)
             {
                 temp_count++;
             }
@@ -147,13 +150,13 @@ static uint32_t cfs_filesystem_tight_data_page_id_init(cfs_system * temp_cfs_han
 
     // 初始化缓冲数据块
     cfs_data_block data_block;
-    // // 包头包尾的长度
-    // uint16_t read_data_block_total_len = \
-    //     CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN + temp_cfs_handle->data_size;
-
     memset(&data_block, NULL, sizeof(cfs_data_block));   
     // 用户存储数据空间申请
     data_block.data_pointer = (uint8_t *)CFS_MALLOC(data_block.data_len);
+
+        // 计算数据块大小
+    const uint32_t data_block_size = \
+        temp_cfs_handle->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
     
     // 存储数据的起始地址，和记录最大ID
     volatile uint32_t data_addr = temp_cfs_handle->addr_handle;
@@ -167,18 +170,18 @@ static uint32_t cfs_filesystem_tight_data_page_id_init(cfs_system * temp_cfs_han
         while(read_result != CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
         {
             uint32_t temp_addr = \
-                (i * temp_cfs_handle->sector_size) / temp_cfs_handle->data_size;
+                (i * temp_cfs_handle->sector_size) / data_block_size;
             // 计算要第几个数据的数据地址。
             if(i == 0)
             {
                 temp_addr = temp_cfs_handle->addr_handle + \
-                    temp_count * temp_cfs_handle->data_size;
+                    temp_count * data_block_size;
             }
             else
             {
                 temp_addr = temp_cfs_handle->addr_handle + \
                     (((i * temp_cfs_handle->sector_size) / \
-                    temp_cfs_handle->data_size) + 1) * temp_cfs_handle->data_size;
+                    data_block_size) + 1) * data_block_size;
             }
             
             memset(data_block.data_pointer, NULL, data_block.data_len);
@@ -190,7 +193,7 @@ static uint32_t cfs_filesystem_tight_data_page_id_init(cfs_system * temp_cfs_han
             {
                 data_addr = temp_addr;
                 data_max_addr = \
-                    (temp_cfs_handle->addr_handle + (i+1) * temp_cfs_handle->data_size);
+                    (temp_cfs_handle->addr_handle + (i+1) * data_block_size);
                 break;
             }
             else if(read_result == CFS_OC_READ_DATA_RESULT_NULL)
@@ -199,7 +202,7 @@ static uint32_t cfs_filesystem_tight_data_page_id_init(cfs_system * temp_cfs_han
             }
 
             if(temp_count <= \
-                (temp_cfs_handle->sector_size / temp_cfs_handle->data_size - 1))
+                (temp_cfs_handle->sector_size / data_block_size - 1))
             {
                 temp_count++;
             }
@@ -228,7 +231,7 @@ static uint32_t cfs_filesystem_tight_data_page_id_init(cfs_system * temp_cfs_han
         {
             memset(data_block.data_pointer, NULL, data_block.data_len);
             read_result = cfs_system_oc_read_flash_data( \
-                data_addr + (temp_cfs_handle->data_size * temp_count), &data_block);
+                data_addr + (data_block_size * temp_count), &data_block);
             
             // 读错就在往前读一数据块，读空直接退出
             if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED && \
@@ -242,7 +245,7 @@ static uint32_t cfs_filesystem_tight_data_page_id_init(cfs_system * temp_cfs_han
             }
 
             if((data_addr + \
-                (temp_cfs_handle->data_size * (temp_count + 1))) <= data_max_addr)
+                (data_block_size * (temp_count + 1))) <= data_max_addr)
             {
                 temp_count++;
             }
@@ -408,7 +411,7 @@ uint32_t cfs_nv_write( cfs_system_handle_t temp_object, \
 {
     cfs_object_linked_list *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_cfs_handle);
-    if(temp_object == NULL)
+    if(temp_object == NULL || temp_id != CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
         return false;
     }
@@ -423,7 +426,7 @@ uint32_t cfs_nv_read(cfs_system_handle_t temp_object, \
 {
     cfs_object_linked_list *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_cfs_handle);
-    if(temp_object == NULL)
+    if(temp_object == NULL || temp_id != CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
         return false;
     }

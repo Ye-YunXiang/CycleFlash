@@ -49,10 +49,12 @@ uint32_t cfs_system_oc_valid_data_number(cfs_object_linked_list *temp_linked_obj
     uint32_t result_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
     cfs_system *temp_system_object = temp_linked_object->object_handle;
     uint32_t temp_id = temp_linked_object->data_id + 1;
+    uint32_t data_block_size = \
+        temp_system_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
 
     if(temp_system_object->sector_count <= 2)
     {
-        all_data = temp_system_object->sector_size / temp_system_object->data_size;
+        all_data = temp_system_object->sector_size / data_block_size;
         data_pages = temp_id / all_data;
         if(data_pages >= temp_system_object->sector_count)
         {
@@ -69,13 +71,13 @@ uint32_t cfs_system_oc_valid_data_number(cfs_object_linked_list *temp_linked_obj
     else
     {
         all_data = (temp_system_object->sector_size * temp_system_object->sector_count) \
-            / temp_system_object->data_size;
+            / data_block_size;
         data_cycle = temp_id % all_data;
 
         if(data_cycle > 0)
         {
             result_id = all_data - \
-                ( temp_system_object->sector_size / temp_system_object->data_size);
+                ( temp_system_object->sector_size / data_block_size);
         }
         else
         {
@@ -192,9 +194,25 @@ bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object)
 uint32_t cfs_system_oc_via_id_calculate_addr( \
     cfs_system_handle_t temp_object, uint32_t temp_id)
 {
+    assert(temp_id != CFS_CONFIG_NOT_LINKED_DATA_ID);
     uint32_t addr = 0;
-
+    uint32_t page_id_count = 0;
+    uint32_t all_page_id_count = 0;
+    uint32_t data_block_size = \
+        temp_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
     
+    // 非紧密存储数据
+    if(temp_object->struct_type == CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH && \
+        temp_object->sector_count <= 2)
+    {
+        page_id_count = temp_object->sector_size / data_block_size;
+    }
+    // 紧密存储数据
+    else
+    {
+        
+
+    }
 
     return addr;
 }
