@@ -383,10 +383,12 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
 {
     assert(buffer != NULL && \
         buffer->data_len >= 1 && buffer->id != CFS_CONFIG_NOT_LINKED_DATA_ID);
-        
+
     cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
     const uint32_t data_addr = \
         cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
+
+    buffer->data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer);
 
     __write_flash_data_block(data_addr, buffer);
 
@@ -406,7 +408,52 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
 cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer)
 {
-    return false;
+    assert(buffer != NULL && \
+        buffer->data_len >= 1 && buffer->id != CFS_CONFIG_NOT_LINKED_DATA_ID);
+        
+    cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
+    cfs_system *temp_cfs_objecr = cfs_system_oc_object_struct_type_get(temp_object);
+    const uint32_t data_addr = \
+        cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
+    const uint32_t start_addr = \
+        (data_addr / temp_cfs_objecr->sector_size) * temp_cfs_objecr->sector_size;
+    uint8_t *read_sector_data = (uint8_t *)CFS_MALLOC(temp_cfs_objecr->sector_size);
+    uint8_t *temo_read_sector_data = read_sector_data;
+
+    buffer->data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer);
+
+    cfs_port_system_flash_read(\
+        start_addr, read_sector_data, temp_cfs_objecr->sector_size);
+
+    memset(temo_read_sector_data, NULL, \
+        temp_cfs_objecr->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
+    temo_read_sector_data = read_sector_data + data_addr - start_addr;
+    memcpy(temo_read_sector_data, &buffer->data_id, sizeof(buffer->data_id));
+    temo_read_sector_data += sizeof(buffer->data_id);
+    memcpy(temo_read_sector_data, &buffer->data_len, sizeof(buffer->data_len));
+    temo_read_sector_data += sizeof(buffer->data_len);
+    memcpy(temo_read_sector_data, buffer->data_pointer, buffer->data_len);
+    temo_read_sector_data += buffer->data_len;
+    memcpy(temo_read_sector_data, &buffer->data_crc_16, sizeof(buffer->data_crc_16));
+
+    cfs_port_system_flash_lock_enable();
+    cfs_port_system_flash_erasing_page(start_addr);
+    __write_flash_data(start_addr, read_sector_data, temp_cfs_objecr->sector_size);
+    cfs_port_system_flash_lock_disable();
+
+    if(cfs_port_system_flash_read_contrast( \
+        start_addr, read_sector_data, temp_cfs_objecr->sector_size) == false)
+    {
+        read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
+    }
+    else
+    {
+        read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED;
+    }
+
+    CFS_FREE(read_sector_data);
+
+    return read_result;
 }
 
 

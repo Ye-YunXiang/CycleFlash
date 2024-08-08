@@ -123,7 +123,7 @@ bool cfs_port_system_flash_lock_disable(void);
  * \param uint8_t  擦除几页 
  * \return 成功返回true，否则false
  */
-bool cfs_port_system_flash_erasing_page(const uint32_t addr, const uint16_t len);
+bool cfs_port_system_flash_erasing_page(const uint32_t addr);
 
 
 #endif /* __CFS_PORT_DEVICE_FLASH_H__ */
