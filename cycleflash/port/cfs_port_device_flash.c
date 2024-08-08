@@ -46,7 +46,7 @@ bool cfs_port_system_flash_init(void)
     return true;
 }
 
-bool cfs_port_system_flash_write_data( \
+bool cfs_port_system_flash_write_byte( \
     const uint32_t addr, const uint8_t * data, const uint16_t len)
 {
     /*User initialization code*/
@@ -54,8 +54,46 @@ bool cfs_port_system_flash_write_data( \
     return true;
 }
 
-bool cfs_port_system_flash_read_data( \
+bool cfs_port_system_flash_write_half_word( \
+    const uint32_t addr, const uint8_t * data, const uint16_t len)
+{
+    /*User initialization code*/
+
+    return true;
+}
+
+bool cfs_port_system_flash_write_word( \
+    const uint32_t addr, const uint8_t * data, const uint16_t len)
+{
+    /*User initialization code*/
+
+    return true;
+}
+
+bool cfs_port_system_flash_read( \
     const uint32_t addr, uint8_t * buffer, const uint16_t len)
+{
+    /*User initialization code*/
+
+    return true;
+}
+
+bool cfs_port_system_flash_read_contrast( \
+    const uint32_t addr, uint8_t * buffer, const uint16_t len)
+{
+    /*User initialization code*/
+
+    return true;
+}
+
+bool cfs_port_system_flash_lock_enable(void)
+{
+    /*User initialization code*/
+
+    return true;
+}
+
+bool cfs_port_system_flash_lock_disable(void)
 {
     /*User initialization code*/
 

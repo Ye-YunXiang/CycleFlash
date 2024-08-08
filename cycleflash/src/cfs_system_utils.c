@@ -27,6 +27,7 @@
  */
 // Encoding:UTF-8
 
+#include <assert.h>
 #include "cfs_system_utils.h"
 
 // CRC校验 // CRC-8 多项式：x^8 + x^2 + x^1 + x^0 (0x07)
@@ -52,11 +53,52 @@ uint8_t cfs_system_utils_crc_8_check(const uint8_t *data, uint32_t data_length)
 */
 uint16_t cfs_system_utils_crc16_xmodem_check(const uint8_t *data, uint32_t data_length)
 {
-    uint8_t temp_char = 0;
     uint16_t crc_int = 0;
+    uint8_t temp_char = 0;
+
     while (data_length--)
     {
         temp_char = *(data++);
+        crc_int ^= (temp_char << 8);
+        for (int i = 0; i < 8; i++)
+        {
+            if (crc_int & 0x8000)
+                crc_int = (crc_int << 1) ^ (0x1021);
+            else
+                crc_int = crc_int << 1;
+        }
+    }
+    return (crc_int^0);
+}
+
+
+/* 初始值（0）、多项式（0x1021）、结果异或值（0）、输入翻转（falsh）、输出翻转（falsh）
+ * 参数： uint8_t * 起始指针
+ *       uint32_t  数据
+*/
+// 根据cfs系统专门创建的验证数据块函数, 这个数据块的crc16不参与验证
+uint16_t cfs_system_utils_crc16_xmodem_check_data_block(const cfs_data_block *data)
+{
+    assert(data->data_len != 0 && data->data_pointer != NULL);
+
+    uint8_t *data_block_handle = (uint8_t *)(&data->data_id);
+    uint32_t data_block_length = \
+        data->data_len + sizeof(data->data_len) + sizeof(data->data_id);
+    uint16_t crc_int = 0;
+    uint8_t temp_char = 0;
+
+    while (data_block_length--)
+    {
+        if(data_block_length == (data->data_len + sizeof(data->data_len)))
+        {
+            data_block_handle = (uint8_t *)(&data->data_len);
+        }
+        else if(data_block_length == data->data_len)
+        {
+            data_block_handle = data->data_pointer;
+        }
+
+        temp_char = *(data_block_handle++);
         crc_int ^= (temp_char << 8);
         for (int i = 0; i < 8; i++)
         {

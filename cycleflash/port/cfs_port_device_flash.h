@@ -43,15 +43,37 @@
 bool cfs_port_system_flash_init(void);
 
 
-/** 往flash中存储数据
+/** 往flash中存储数据(字节写)
  * 
- * 要能实现指定长度存入内存。
+ * 要能实现指定长度存入内存(1字节速度存入)
  * 
  * \param uint32_t flash地址
  * \param uint8_t  数据指针 
  * \return 成功返回true，否则false
  */
-bool cfs_port_system_flash_write_data( \
+bool cfs_port_system_flash_write_byte( \
+    const uint32_t addr, const uint8_t * data, const uint16_t len);
+
+/** 往flash中存储数据(半字写)
+ * 
+ * 要能实现指定长度存入内存(2字节速度存入)
+ * 
+ * \param uint32_t flash地址
+ * \param uint8_t  数据指针 
+ * \return 成功返回true，否则false
+ */
+bool cfs_port_system_flash_write_half_word( \
+    const uint32_t addr, const uint8_t * data, const uint16_t len);
+
+/** 往flash中存储数据(字写)
+ * 
+ * 要能实现指定长度存入内存(4字节速度存入)
+ * 
+ * \param uint32_t flash地址
+ * \param uint8_t  数据指针 
+ * \return 成功返回true，否则false
+ */
+bool cfs_port_system_flash_write_word( \
     const uint32_t addr, const uint8_t * data, const uint16_t len);
 
 
@@ -63,9 +85,37 @@ bool cfs_port_system_flash_write_data( \
  * \param uint8_t  装载数据的缓存指针 
  * \return 成功返回true，否则false
  */
-bool cfs_port_system_flash_read_data( \
+bool cfs_port_system_flash_read( \
     const uint32_t addr, uint8_t * buffer, const uint16_t len);
 
+
+/** 传入数据指针对比flash中指定地址的数据是否相同。
+ * 
+ * 对比数据和内存中的数据是否一致
+ * 
+ * \param uint32_t 要对比的flash地址
+ * \param uint8_t  要对比的装载数据的缓存指针 
+ * \return 对比成功返回true，否则false
+ */
+bool cfs_port_system_flash_read_contrast( \
+    const uint32_t addr, uint8_t * buffer, const uint16_t len);
+
+
+/** 上操作flash保护锁。
+ * 
+ * 对操作flash进程进行保护上锁
+ * 
+ * \return 成功返回true，否则false
+ */
+bool cfs_port_system_flash_lock_enable(void);
+
+/** 解除操作flash保护锁。
+ * 
+ * 解除操作flash进程的保护锁
+ * 
+ * \return 成功返回true，否则false
+ */
+bool cfs_port_system_flash_lock_disable(void);
 
 /** 擦除指定页面的数据
  * 

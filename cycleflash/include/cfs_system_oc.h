@@ -38,15 +38,15 @@
 
 typedef enum
 {
-    // cfs读取的数据为空
-    CFS_OC_READ_DATA_RESULT_NULL            = 0,
+    // cfs操作的数据为空
+    CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL       = 0,
     // cfs数据页非空
-    CFS_OC_READ_DATA_RESULT_NONEMPTY        = 1,
-    // cfs读取的数据CRC验证错误
-    CFS_OC_READ_DATA_RESULT_DATA_ERROE      = 2,
-    // cfs读取的数据有效
-    CFS_OC_READ_DATA_RESULT_DATA_SUCCEED    = 3,
-}cfs_oc_read_data_result;
+    CFS_OC_READ_OR_WRITE_DATA_RESULT_NONEMPTY   = 1,
+    // cfs写入或读取数据错误
+    CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE      = 2,
+    // cfs写入或读取数据有效
+    CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED    = 3,
+}cfs_oc_action_data_result;
 
 
 // 根据ID计算有效数据个数
@@ -78,15 +78,15 @@ uint32_t cfs_system_oc_via_id_calculate_addr( \
 // 写入和读取数据 —— 接口
 
 // 读取内存中的数据
-cfs_oc_read_data_result cfs_system_oc_read_flash_data( \
+cfs_oc_action_data_result cfs_system_oc_read_flash_data( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer);
 
 // 往内存中写入新的数据，增加式
-bool cfs_system_oc_add_write_flash_data( \
+cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer);
 
 // 修改内存中的数据
-bool cfs_system_oc_set_write_flash_data( \
+cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer);
 
 

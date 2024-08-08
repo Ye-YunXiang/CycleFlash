@@ -62,9 +62,10 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
         uint32_t data_just_full = 0;
         data_max_addr = \
             (temp_cfs_handle->addr_handle + (i+1) * data_block_size);
-        cfs_oc_read_data_result read_result = CFS_OC_READ_DATA_RESULT_NULL;
+        cfs_oc_action_data_result read_result = \
+            CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
 
-        while(read_result != CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
+        while(read_result != CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
         {
             data_just_full= (i * temp_cfs_handle->sector_size) % data_block_size;   
             if(data_just_full == 0)
@@ -83,13 +84,14 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
             read_result = cfs_system_oc_read_flash_data(temp_linked_object, &data_block);
             
             // 读错就在往后读一数据块，读空直接退出
-            if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED || \
-                (temp_count ==2 && read_result != CFS_OC_READ_DATA_RESULT_DATA_SUCCEED))
+            if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED || \
+                (read_result != CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED && \
+                temp_count == 2))
             {
                 data_start_id = data_block.data_id;
                 break;
             }
-            else if(read_result == CFS_OC_READ_DATA_RESULT_NULL)
+            else if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL)
             {
                 break;
             }
@@ -106,7 +108,7 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
             }
         }
 
-        if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
+        if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
         {
             if(data_block.data_id > temp_data_MAX_id || \
                 temp_data_MAX_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
@@ -123,8 +125,8 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
         data_max_addr = ((uint32_t)(cfs_system_oc_via_id_calculate_addr( \
             temp_linked_object, data_start_id) / temp_cfs_handle->sector_size) + 1)* \
             temp_cfs_handle->sector_size;
-        cfs_oc_read_data_result read_result = CFS_OC_READ_DATA_RESULT_NULL;
-        while(read_result != CFS_OC_READ_DATA_RESULT_DATA_SUCCEED)
+        cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
+        while(read_result != CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
         {
             memset(data_block.data_pointer, NULL, data_block.data_len);
             data_block.data_id = data_start_id;
@@ -132,12 +134,12 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
                 temp_linked_object, &data_block);
             
             // 读错就在往前读一数据块，读空直接退出
-            if(read_result == CFS_OC_READ_DATA_RESULT_DATA_SUCCEED && \
+            if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED && \
                 data_block.data_id > temp_data_MAX_id)
             {
                 temp_data_MAX_id = data_block.data_id;
             }
-            else if(read_result == CFS_OC_READ_DATA_RESULT_NULL)
+            else if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL)
             {
                 break;
             }
@@ -252,7 +254,7 @@ static uint32_t cfs_filesystem_cycle_data_write( \
     return NULL;
 }
 
-// OTA数据——写入数据,写入成功返回写入的原始数据长度
+// OTA数据——写入数据,写入成功返回写入的原始数据长度-----------------
 static uint32_t cfs_filesystem_oat_write( \
     cfs_object_linked_list *temp_object, \
     uint32_t temp_id, uint8_t *data, uint16_t len)

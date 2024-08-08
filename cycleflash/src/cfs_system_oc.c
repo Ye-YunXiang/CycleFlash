@@ -40,6 +40,9 @@ static cfs_object_linked_list *cfs_system_object_head = NULL;
 static cfs_object_linked_list *cfs_system_object_tail = NULL;
 
 
+// *****************************************************************************************************
+// 其他接口 —— 接口
+
 // 根据ID计算有效数据个数
 uint32_t cfs_system_oc_valid_data_number(const cfs_object_linked_list *temp_linked_object)
 {
@@ -214,81 +217,193 @@ uint32_t cfs_system_oc_via_id_calculate_addr( \
 
     return result_addr;
 }
+// *****************************************************************************************************
+// 写入和读取数据 —— 内部处理
+
+static bool __read_flash_data_block(volatile uint32_t addr, cfs_data_block * block)
+{
+    cfs_port_system_flash_lock_enable();
+
+    cfs_port_system_flash_read(\
+        addr, (uint8_t *)(&block->data_id), sizeof(block->data_id));
+    addr += sizeof(block->data_id);
+    cfs_port_system_flash_read(\
+        addr, (uint8_t *)(&block->data_len), sizeof(block->data_len));
+    addr += sizeof(block->data_len);
+    cfs_port_system_flash_read(\
+        addr, block->data_pointer, block->data_len);
+    addr += block->data_len;
+    cfs_port_system_flash_read(\
+        addr, block->data_crc_16, sizeof(block->data_crc_16));
+
+    cfs_port_system_flash_lock_disable();
+
+    return true;
+}
+
+static bool __write_flash_data_block(volatile uint32_t addr, const cfs_data_block * block)
+{
+    // 根据字符大小定制的写入逻辑
+    assert(sizeof(block->data_id) == 4 && \
+        sizeof(block->data_len) == 2 && sizeof(block->data_crc_16) == 2);
+    
+    cfs_port_system_flash_lock_enable();
+
+    __write_flash_data(addr, (uint8_t *)(&block->data_id), sizeof(block->data_id));
+    addr += sizeof(block->data_id);
+    __write_flash_data(addr, (uint8_t *)(&block->data_len), sizeof(block->data_len));
+    addr += sizeof(block->data_len);
+    __write_flash_data(addr, block->data_pointer, block->data_len);
+    addr += block->data_len;
+    __write_flash_data(addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
+
+    cfs_port_system_flash_lock_disable();
+
+    return true;
+}
+
+static bool __write_flash_data( \
+    volatile uint32_t addr, const uint8_t * buffer, uint16_t len)
+{
+    uint32_t *data_handle = buffer;
+
+    cfs_port_system_flash_lock_enable();
+
+    while(len != 0)
+    {
+        if(addr % 4 == 0 && len >= 4)
+        {
+            cfs_port_system_flash_write_word(addr, data_handle, len / 4);
+            len = len - (len / 4);
+            data_handle = data_handle + (len / 4) * 4;
+        }
+        else if(addr % 2 == 0 && len >= 2)
+        {
+            cfs_port_system_flash_write_half_word(addr, data_handle, len / 2);
+            len = len - (len / 2);
+            data_handle = data_handle + (len / 2) * 2;
+        }
+        else
+        {
+            cfs_port_system_flash_write_byte(addr, data_handle, 1);
+            len--;
+            data_handle++;
+        }
+    }
+
+    cfs_port_system_flash_lock_disable();
+    return true;
+}
+
+static bool __contrast_flash_data_block( \
+    volatile uint32_t addr, const cfs_data_block * block)
+{
+    bool result = false;
+    cfs_port_system_flash_lock_enable();
+
+    while(true)
+    {
+        result = cfs_port_system_flash_read_contrast( \
+            addr, (uint8_t *)(&block->data_id), sizeof(block->data_id));
+        if(result == false)
+        {
+            break;
+        }
+
+        addr += sizeof(block->data_id);
+        cfs_port_system_flash_read_contrast( \
+            addr, (uint8_t *)(&block->data_len), sizeof(block->data_len));
+        if(result == false)
+        {
+            break;
+        }
+
+        addr += sizeof(block->data_len);
+        cfs_port_system_flash_read_contrast( \
+            addr, block->data_pointer, block->data_len);
+        if(result == false)
+        {
+            break;
+        }
+
+        addr += block->data_len;
+        cfs_port_system_flash_read_contrast( \
+            addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
+
+        break;
+    }
+    cfs_port_system_flash_lock_disable();
+
+    return result;
+}
+
 
 
 // *****************************************************************************************************
 // 写入和读取数据 —— 接口
 
 // 读取内存中的数据,会验证crc8
-cfs_oc_read_data_result cfs_system_oc_read_flash_data( \
+cfs_oc_action_data_result cfs_system_oc_read_flash_data( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer)
 {
     assert(buffer->data_pointer != NULL || buffer->data_len >= 1);
 
     const uint32_t addr = cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
-    buffer->data_id = NULL;
 
-    cfs_oc_read_data_result result = CFS_OC_READ_DATA_RESULT_NULL;
-    uint16_t info_block_len = \
-        CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN + buffer->data_len;
+    cfs_oc_action_data_result result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
 
-    // 创建读取整条数据的缓存
-    uint8_t *buffer_read = (uint8_t *)CFS_MALLOC(info_block_len);
     volatile uint8_t i = 2;
     while(i--)
     {
-        uint32_t temp_id = 0;
-        cfs_port_system_flash_read_data(addr, buffer_read, info_block_len);
-        uint16_t check_crc_16 = cfs_system_utils_crc16_xmodem_check( \
-            buffer_read, (info_block_len - sizeof(buffer->data_crc_16)));
-        uint16_t read_crc_16 = *(buffer_read + (info_block_len - sizeof(buffer->data_crc_16)));
+        __read_flash_data_block(addr, buffer);
+        uint16_t check_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer);
 
-        memcpy(&temp_id, buffer_read, sizeof(temp_id));
-
-        if(temp_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
+        if(buffer->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
         {
-            result = CFS_OC_READ_DATA_RESULT_NULL;
+            result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
         }
-        else if(check_crc_16 == read_crc_16)
+        else if(check_crc_16 == buffer->data_crc_16)
         {
-            // 读取数据块ID
-            memcpy(&(buffer->data_id), buffer_read, sizeof(buffer->data_id));
-            // 读取用户数据
-            memcpy(buffer->data_pointer, \
-                buffer_read + CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN, \
-                (buffer->data_len));
-            buffer->data_crc_16 = read_crc_16;
-            result = CFS_OC_READ_DATA_RESULT_DATA_SUCCEED;
+            result = CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED;
             break;
         }
         else
         {
-            result = CFS_OC_READ_DATA_RESULT_DATA_ERROE;
+            buffer->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
+            result = CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
         }
     }
 
-    CFS_FREE(buffer_read);
     return result;
 }
 
 // 往内存中写入新的数据，增加式
-bool cfs_system_oc_add_write_flash_data( \
+cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer)
 {
-    assert(buffer != NULL || buffer->data_len >= 1);
-//    uint32_t data_addr = cfs_system_oc_via_id_calculate_addr(temp_object, temp_id);
+    assert(buffer != NULL && \
+        buffer->data_len >= 1 && buffer->id != CFS_CONFIG_NOT_LINKED_DATA_ID);
+        
+    cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
+    const uint32_t data_addr = \
+        cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
 
-//    cfs_data_block temp_buffer;
-//    temp_buffer->data_id = id;
-//    temp_buffer->data_len = len;
-//    temp_buffer->data_pointer = buffer;
+    __write_flash_data_block(data_addr, buffer);
 
+    if(__contrast_flash_data_block(data_addr, buffer) == false)
+    {
+        read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
+    }
+    else
+    {
+        read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED;
+    }
 
-    return false;
+    return read_result;
 }
 
 // 修改内存中的数据
-bool cfs_system_oc_set_write_flash_data( \
+cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer)
 {
     return false;
