@@ -108,7 +108,7 @@ bool flash_filesystem_init(void)
 
 // 产品和Nexus NV *write*功能使用的通用代码
 static bool _internal_flash_filesystem_write_nv( \
-    cfs_system_handle_t fs, uint32_t id, const void* data, uint32_t len)
+    cfs_system_handle_t fs, uint32_t id, void* data, uint32_t len)
 {
     if (!filesystem_success_init)
     {
@@ -120,15 +120,21 @@ static bool _internal_flash_filesystem_write_nv( \
     }
 
     assert(fs != NULL);
-    const uint32_t bytes_written = nvs_write(fs, id, data, len);
+    const uint32_t bytes_written = cfs_nv_write(fs, id, data, len);
 
-    // 如果flash中已经存在相同的数据，则Bytes_written将为0
-    return ((bytes_written == 0) || (bytes_written == len));
+    if (bytes_written == len)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 // 产品和Nexus NV *read*功能使用的通用代码
 static bool _internal_flash_filesystem_read_nv( \
-    struct nvs_fs* fs, uint32_t id, void* data, uint32_t len)
+    cfs_system_handle_t fs, uint32_t id, void* data, uint32_t len)
 {
     if (!filesystem_success_init)
     {
@@ -139,39 +145,21 @@ static bool _internal_flash_filesystem_read_nv( \
         return false;
     }
 
-    assert((fs == &nexus_filesystem) || (fs == &product_filesystem));
-    // if the most recent entry is corrupted, read up to 9 previous
-    // entries in flash (if present)
-    //如果最近的条目被损坏，读取最多9前
-    // flash中的条目(如果存在)
-    uint16_t writes_in_past = 0;
-    uint32_t bytes_read = 0;
-    while (writes_in_past <
-           FLASH_FILESYSTEM_READ_NUMBER_OF_PAST_ENTRIES_TO_EXAMINE)
+    assert(fs != NULL);
+    const uint32_t bytes_read = cfs_nv_read(fs, id, (uint8_t *)data, len);
+
+    if (bytes_read == len)
     {
-        //使用writes_in_past == 0读取与调用' nvs_read '相同
-        //(只尝试读取最近的条目)。Writes_in_past == 1
-        //在最近的条目之前尝试读一个写，等等。
-        bytes_read = nvs_read_hist(fs, id, data, len, writes_in_past);
-        if (bytes_read == len)
-        {
-            // return early, success.
-            return true;
-        }
-        // nvs_read_hist
-        else if (bytes_read == ENOENT)
-        {
-            return false;
-        }
-        writes_in_past++;
+        return true;
     }
-    // read 10 most recent flash entries and all were corrupted - return false.
-    return false;
+    else
+    {
+        return false;
+    }
 }
 
 // 写入信用量到内存
-int flash_filesystem_write_product_nv( \
-    enum flash_filesystem_product_nv_id id, const void* data, size_t len)
+int flash_filesystem_write_product_nv(uint32_t id, void* data, uint32_t len)
 {
     const bool success = \
         _internal_flash_filesystem_write_nv(product_filesystem, id, data, len);
@@ -183,7 +171,7 @@ int flash_filesystem_write_product_nv( \
 }
 
 // 写入nexus的信息到内存
-int flash_filesystem_write_nexus_nv(uint16_t id, const void* data, size_t len)
+int flash_filesystem_write_nexus_nv(uint16_t id, void* data, uint32_t len)
 {
     const bool success =
         _internal_flash_filesystem_write_nv(nexus_filesystem, id, data, len);
@@ -196,14 +184,22 @@ int flash_filesystem_write_nexus_nv(uint16_t id, const void* data, size_t len)
 
 // 写入设备的ID数据
 int flash_filesystem_write_identity_nv( \
-    enum flash_filesystem_product_nv_id id, const void* data, size_t len);
+    enum flash_filesystem_product_nv_id id, void* data, uint32_t len)
+{
+    const bool success = _internal_flash_filesystem_write_nv( \
+        identity_filesystem, (uint32_t)id, data, len);
+    if (success)
+    {
+        return len;
+    }
+    return 0;
+}
 
 // 读取内存中的设备数据
-int flash_filesystem_read_product_nv( \
-    enum flash_filesystem_product_nv_id id, void* data, size_t len)
+int flash_filesystem_read_product_nv(uint32_t id, void* data, uint32_t len)
 {
-    const bool success = _internal_flash_filesystem_read_nv(
-        product_filesystem, (uint16_t) id, data, len);
+    const bool success = \
+        _internal_flash_filesystem_read_nv(product_filesystem, id, data, len);
     if (success)
     {
         return len;
@@ -212,10 +208,10 @@ int flash_filesystem_read_product_nv( \
 }
 
 // 读取内存中的nexus的数据
-int flash_filesystem_read_nexus_nv(uint16_t id, void* data, size_t len)
+int flash_filesystem_read_nexus_nv(uint16_t id, void* data, uint32_t len)
 {
     const bool success =
-        _internal_flash_filesystem_read_nv(nexus_filesystem, id, data, len);
+        _internal_flash_filesystem_read_nv(nexus_filesystem, (uint32_t)id, data, len);
     if (success)
     {
         return len;
@@ -223,26 +219,35 @@ int flash_filesystem_read_nexus_nv(uint16_t id, void* data, size_t len)
     return 0;
 }
 
-// 读取内存中的ID数据
-int flash_filesystem_read_identity_nv(enum flash_filesystem_product_nv_id id,
-                                   void* data,
-                                   size_t len)
+// 读取设备的ID数据
+int flash_filesystem_read_identity_nv( \
+    enum flash_filesystem_product_nv_id id, void* data, uint32_t len)
 {
+    const bool success = _internal_flash_filesystem_read_nv( \
+        identity_filesystem, (uint32_t)id, data, len);
+    if (success)
+    {
+        return len;
+    }
     return 0;
 }
+
 
 // 擦除内存中的nexus信息。
 bool flash_filesystem_erase_nexus_nv(void)
 {
-    return nvs_clear(&nexus_filesystem);
+    return cfs_nv_clear(nexus_filesystem);
 }
 
 // 擦除内存中的设备信息
 bool flash_filesystem_erase_product_nv(void)
 {
-    return nvs_clear(&product_filesystem);
+    return cfs_nv_clear(product_filesystem);
 }
 
 // 擦除内存中关于ID的信息
-bool flash_filesystem_erase_identity_nv(void);
+bool flash_filesystem_erase_identity_nv(void)
+{
+    return cfs_nv_clear(identity_filesystem);
+}
 

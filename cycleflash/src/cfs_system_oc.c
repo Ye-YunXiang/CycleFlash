@@ -254,7 +254,7 @@ static bool __read_flash_data_block(volatile uint32_t addr, cfs_data_block * blo
 }
 
 static bool __write_flash_data( \
-    volatile uint32_t addr, const uint8_t * buffer, uint16_t len)
+    volatile uint32_t addr, uint8_t * buffer, uint16_t len)
 {
     uint32_t data_handle = (uint32_t)(buffer);
 
@@ -286,7 +286,7 @@ static bool __write_flash_data( \
     return true;
 }
 
-static bool __write_flash_data_block(volatile uint32_t addr, const cfs_data_block * block)
+static bool __write_flash_data_block(volatile uint32_t addr, cfs_data_block * block)
 {
     // 根据字符大小定制的写入逻辑
     assert(sizeof(block->data_id) == 4 && \
@@ -458,7 +458,8 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
     read_sector_data = \
         (uint8_t *)CFS_MALLOC(temp_cfs_objecr->sector_size * read_page_count);
     temo_read_sector_data = read_sector_data;
-    buffer->data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer);
+    
+    uint16_t temp_data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer);
 
     cfs_port_system_flash_read(\
         start_addr, read_sector_data, temp_cfs_objecr->sector_size);
@@ -471,7 +472,7 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
     temo_read_sector_data += sizeof(buffer->data_len);
     memcpy(temo_read_sector_data, buffer->data_pointer, buffer->data_len);
     temo_read_sector_data += buffer->data_len;
-    memcpy(temo_read_sector_data, &buffer->data_crc_16, sizeof(buffer->data_crc_16));
+    memcpy(temo_read_sector_data, &temp_data_crc_16, sizeof(buffer->data_crc_16));
 
     cfs_port_system_flash_lock_enable();
     cfs_port_system_flash_erasing_page(start_addr, read_page_count);

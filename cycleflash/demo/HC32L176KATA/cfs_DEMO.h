@@ -66,9 +66,7 @@ bool flash_filesystem_init(void);
  * @return Number of bytes written. On success, it will be equal to the number
  * of bytes requested to be written. On failure returns 0.
  */
-int flash_filesystem_write_product_nv(enum flash_filesystem_product_nv_id id,
-                                      const void* data,
-                                      size_t len);
+int flash_filesystem_write_product_nv(uint32_t id, void* data, uint32_t len);
 
 /**
  * @brief flash_filesystem_write_nexus_nv
@@ -82,9 +80,7 @@ int flash_filesystem_write_product_nv(enum flash_filesystem_product_nv_id id,
  * @return Number of bytes written. On success, it will be equal to the number
  * of bytes requested to be written. On failure returns 0.
  */
-int flash_filesystem_write_nexus_nv(enum flash_filesystem_product_nv_id id,
-                                    const void* data,
-                                    size_t len);
+int flash_filesystem_write_nexus_nv(uint16_t id, void* data, uint32_t len);
 
 /**
  * @brief flash_filesystem_write_identity_nv
@@ -98,9 +94,8 @@ int flash_filesystem_write_nexus_nv(enum flash_filesystem_product_nv_id id,
  * @return Number of bytes written. On success, it will be equal to the number
  * of bytes requested to be written. On failure returns 0.
  */
-int flash_filesystem_write_identity_nv(enum flash_filesystem_product_nv_id id,
-                                    const void* data,
-                                    size_t len);
+int flash_filesystem_write_identity_nv( \
+    enum flash_filesystem_product_nv_id id, void* data, uint32_t len);
 
 /**
  * @brief flash_filesystem_read_product_nv
@@ -114,9 +109,7 @@ int flash_filesystem_write_identity_nv(enum flash_filesystem_product_nv_id id,
  * @return Number of bytes read. On success, it will be equal to the number
  * of bytes requested to be read. On failure returns 0.
  */
-int flash_filesystem_read_product_nv(enum flash_filesystem_product_nv_id id,
-                                     void* data,
-                                     size_t len);
+int flash_filesystem_read_product_nv(uint32_t id, void* data, uint32_t len);
 
 /**
  * @brief flash_filesystem_read_nexus_nv
@@ -130,9 +123,7 @@ int flash_filesystem_read_product_nv(enum flash_filesystem_product_nv_id id,
  * @return Number of bytes read. On success, it will be equal to the number
  * of bytes requested to be read. On failure returns 0.
  */
-int flash_filesystem_read_nexus_nv(enum flash_filesystem_product_nv_id id,
-                                   void* data,
-                                   size_t len);
+int flash_filesystem_read_nexus_nv(uint16_t id, void* data, uint32_t len);
 
 /**
  * @brief flash_filesystem_read_identity_nv
@@ -146,9 +137,8 @@ int flash_filesystem_read_nexus_nv(enum flash_filesystem_product_nv_id id,
  * @return Number of bytes read. On success, it will be equal to the number
  * of bytes requested to be read. On failure returns 0.
  */
-int flash_filesystem_read_identity_nv(enum flash_filesystem_product_nv_id id,
-                                   void* data,
-                                   size_t len);
+int flash_filesystem_read_identity_nv( \
+    enum flash_filesystem_product_nv_id id, void* data, uint32_t len);
 
 /**
  * @brief flash_filesystem_erase_nexus_nv

@@ -110,7 +110,7 @@ bool cfs_system_oc_object_valid_id_number_set( \
     cfs_object_linked_list * temp_cfs_handle, uint16_t temp_id);
 
 // 得到数据数据对象的可用ID
-uint16_t cfs_system_oc_object_valid_id_numbe_get( \
+uint16_t cfs_system_oc_object_valid_id_number_get( \
     const cfs_object_linked_list *temp_cfs_handle);
 
 // 得到数据对象的类型

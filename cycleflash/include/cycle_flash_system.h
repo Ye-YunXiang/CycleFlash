@@ -92,4 +92,12 @@ bool cfs_nv_clear(cfs_system_handle_t temp_object_handle);
  */
 uint32_t cfs_nv_get_current_id(cfs_system_handle_t temp_object_handle);
 
+
+/** 返回目前存储对象的可用ID
+ *
+ * \param cfs_system_handle_t 存储空间的句柄
+ * \return 获取当成功就返回ID，反则为flash
+ */
+uint32_t cfs_nv_get_current_valid_id(cfs_system_handle_t temp_object_handle);
+
 #endif /* __CYCLE_FLASH_SYSTEM_H__ */

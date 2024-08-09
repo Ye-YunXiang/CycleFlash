@@ -284,11 +284,11 @@ static uint32_t cfs_filesystem_cycle_data_write( \
     uint32_t write_id, uint8_t *data, uint16_t len)
 {
     cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
-    cfs_data_block temp_data_block;
     uint32_t temp_id = cfs_system_oc_object_id_get(temp_object);
-    uint16_t temp_valid_id = cfs_system_oc_object_valid_id_numbe_get(temp_object);
+    uint16_t temp_valid_id = cfs_system_oc_object_valid_id_number_get(temp_object);
 
     // 填充数据
+    cfs_data_block temp_data_block;
     temp_data_block.data_id = write_id;
     temp_data_block.data_len = len;
     temp_data_block.data_pointer = data;
@@ -464,7 +464,7 @@ uint32_t cfs_nv_read(cfs_system_handle_t temp_object_handle, \
         temp_cfs_object->sector_size * temp_cfs_object->sector_count / \
         (temp_cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
     uint32_t temp_id = cfs_system_oc_object_id_get(temp_object);
-    uint16_t temp_valid_id = cfs_system_oc_object_valid_id_numbe_get(temp_object);
+    uint16_t temp_valid_id = cfs_system_oc_object_valid_id_number_get(temp_object);
     
     switch (cfs_system_oc_object_struct_type_get(temp_object))
     {
@@ -547,5 +547,5 @@ uint32_t cfs_nv_get_current_valid_id(cfs_system_handle_t temp_object_handle)
         return CFS_CONFIG_NOT_LINKED_DATA_ID;
     }
 
-    return cfs_system_oc_object_valid_id_numbe_get(temp_object);
+    return cfs_system_oc_object_valid_id_number_get(temp_object);
 }
