@@ -257,8 +257,6 @@ static uint32_t cfs_filesystem_fixed_data_write( \
     temp_data_block.data_id = write_id;
     temp_data_block.data_len = len;
     temp_data_block.data_pointer = data;
-    temp_data_block.data_crc_16 = \
-        cfs_system_utils_crc16_xmodem_check_data_block(&temp_data_block);
 
     flash_data_block_is_null = \
         cfs_system_oc_flash_checking_null_values(temp_object, temp_data_block);
@@ -294,8 +292,6 @@ static uint32_t cfs_filesystem_cycle_data_write( \
     temp_data_block.data_id = write_id;
     temp_data_block.data_len = len;
     temp_data_block.data_pointer = data;
-    temp_data_block.data_crc_16 = \
-        cfs_system_utils_crc16_xmodem_check_data_block(&temp_data_block);
 
     if(write_id > temp_id)
     {

@@ -380,11 +380,25 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
         buffer->data_len >= 1 && buffer->id != CFS_CONFIG_NOT_LINKED_DATA_ID);
 
     cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
+    cfs_system *temp_cfs = cfs_system_oc_system_object_get(temp_object);
     const uint32_t data_addr = \
         cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
+    const uint32_t start_addr = \
+        (data_addr / temp_cfs->sector_size) * temp_cfs->sector_size;
+    const uint32_t max_addr = start_addr + temp_cfs->sector_size;
+    const uint32_t data_block_lent = \
+        buffer->data_len + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
 
     buffer->data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer);
 
+    if(data_addr == temp_cfs->addr_handle) 
+    {
+        cfs_port_system_flash_erasing_page(data_addr, 1);
+    }
+    else if((data_addr + data_block_lent) >= max_addr)
+    {
+        cfs_port_system_flash_erasing_page(max_addr, 1);
+    }
     __write_flash_data_block(data_addr, buffer);
 
     if(__contrast_flash_data_block(data_addr, buffer) == false)
@@ -412,14 +426,25 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
         cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
     const uint32_t start_addr = \
         (data_addr / temp_cfs_objecr->sector_size) * temp_cfs_objecr->sector_size;
-    uint8_t *read_sector_data = (uint8_t *)CFS_MALLOC(temp_cfs_objecr->sector_size);
-    uint8_t *temo_read_sector_data = read_sector_data;
+    const uint32_t max_addr = start_addr + temp_cfs_objecr->sector_size;
+    const uint32_t data_block_lent = \
+        buffer->data_len + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
 
+    uint8_t *read_sector_data = NULL;
+    uint8_t *temo_read_sector_data = NULL;
+    uint16_t read_page_count = 1;
+    if((data_addr + data_block_lent) >= max_addr)
+    {
+        read_page_count = 2;
+    }
+
+    read_sector_data = \
+        (uint8_t *)CFS_MALLOC(temp_cfs_objecr->sector_size * read_page_count);
+    temo_read_sector_data = read_sector_data;
     buffer->data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer);
 
     cfs_port_system_flash_read(\
         start_addr, read_sector_data, temp_cfs_objecr->sector_size);
-
     memset(temo_read_sector_data, NULL, \
         temp_cfs_objecr->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
     temo_read_sector_data = read_sector_data + data_addr - start_addr;
@@ -432,12 +457,14 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
     memcpy(temo_read_sector_data, &buffer->data_crc_16, sizeof(buffer->data_crc_16));
 
     cfs_port_system_flash_lock_enable();
-    cfs_port_system_flash_erasing_page(start_addr);
-    __write_flash_data(start_addr, read_sector_data, temp_cfs_objecr->sector_size);
+    cfs_port_system_flash_erasing_page(start_addr, read_page_count);
+    __write_flash_data(\
+        start_addr, read_sector_data, temp_cfs_objecr->sector_size * read_page_count);
     cfs_port_system_flash_lock_disable();
 
     if(cfs_port_system_flash_read_contrast( \
-        start_addr, read_sector_data, temp_cfs_objecr->sector_size) == false)
+        start_addr, read_sector_data, \
+        temp_cfs_objecr->sector_size * read_page_count) == false)
     {
         read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
     }
