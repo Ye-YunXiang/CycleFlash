@@ -48,6 +48,10 @@ typedef enum
     CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED    = 3,
 }cfs_oc_action_data_result;
 
+// 检查flash制定地址的block是否有数据
+// 如果为空值返回true
+bool cfs_system_oc_flash_checking_null_values( \
+    const cfs_object_linked_list *temp_object, cfs_data_block * buffer);
 
 // 根据ID计算有效数据个数
 uint32_t cfs_system_oc_valid_data_number(const cfs_object_linked_list *temp_linked_object);

@@ -259,7 +259,7 @@ static uint32_t cfs_filesystem_fixed_data_write( \
     temp_data_block.data_pointer = data;
 
     flash_data_block_is_null = \
-        cfs_system_oc_flash_checking_null_values(temp_object, temp_data_block);
+        cfs_system_oc_flash_checking_null_values(temp_object, &temp_data_block);
     
     if( flash_data_block_is_null == true)
     {
@@ -300,6 +300,11 @@ static uint32_t cfs_filesystem_cycle_data_write( \
     else if((temp_id-temp_valid_id) < write_id <= temp_id)
     {
         read_result = cfs_system_oc_set_write_flash_data(temp_object, &temp_data_block);
+    }
+
+    if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
+    {
+        return len;
     }
 
     /*user designation codes*/
@@ -382,7 +387,7 @@ cfs_system_handle_t cfs_nv_init( \
 
 // 根据id往内存中写入数据
 uint32_t cfs_nv_write(cfs_system_handle_t temp_object_handle, \
-	uint32_t temp_id, const uint8_t *data, uint16_t len)
+	uint32_t temp_id, uint8_t *data, uint16_t len)
 {
     uint32_t result_len = NULL;
     cfs_object_linked_list *temp_object = \

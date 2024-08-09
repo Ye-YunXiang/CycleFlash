@@ -54,7 +54,7 @@ cfs_system_handle_t cfs_nv_init( \
  * \return 写入成功返回写入的数据个数，如果写入失败返回 0。
  */
 uint32_t cfs_nv_write(cfs_system_handle_t temp_object_handle, \
-	uint32_t temp_id, const uint8_t *data, uint16_t len);
+	uint32_t temp_id, uint8_t *data, uint16_t len);
 
 
 /** 根据ID读取内存中的数据

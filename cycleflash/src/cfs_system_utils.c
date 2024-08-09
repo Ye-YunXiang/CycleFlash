@@ -28,6 +28,7 @@
 // Encoding:UTF-8
 
 #include <assert.h>
+#include <stddef.h>
 #include "cfs_system_utils.h"
 
 // CRC校验 // CRC-8 多项式：x^8 + x^2 + x^1 + x^0 (0x07)

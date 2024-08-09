@@ -229,10 +229,43 @@ static bool __read_flash_data_block(volatile uint32_t addr, cfs_data_block * blo
         addr, block->data_pointer, block->data_len);
     addr += block->data_len;
     cfs_port_system_flash_read(\
-        addr, block->data_crc_16, sizeof(block->data_crc_16));
+        addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
 
     cfs_port_system_flash_lock_disable();
 
+    return true;
+}
+
+static bool __write_flash_data( \
+    volatile uint32_t addr, const uint8_t * buffer, uint16_t len)
+{
+    uint32_t data_handle = (uint32_t)(buffer);
+
+    cfs_port_system_flash_lock_enable();
+
+    while(len != 0)
+    {
+        if(addr % 4 == 0 && len >= 4)
+        {
+            cfs_port_system_flash_write_word(addr, (uint8_t *)data_handle, len / 4);
+            len = len - (len / 4);
+            data_handle = data_handle + (len / 4) * 4;
+        }
+        else if(addr % 2 == 0 && len >= 2)
+        {
+            cfs_port_system_flash_write_half_word(addr, (uint8_t *)data_handle, len / 2);
+            len = len - (len / 2);
+            data_handle = data_handle + (len / 2) * 2;
+        }
+        else
+        {
+            cfs_port_system_flash_write_byte(addr, (uint8_t *)data_handle, 1);
+            len--;
+            data_handle++;
+        }
+    }
+
+    cfs_port_system_flash_lock_disable();
     return true;
 }
 
@@ -254,39 +287,6 @@ static bool __write_flash_data_block(volatile uint32_t addr, const cfs_data_bloc
 
     cfs_port_system_flash_lock_disable();
 
-    return true;
-}
-
-static bool __write_flash_data( \
-    volatile uint32_t addr, const uint8_t * buffer, uint16_t len)
-{
-    uint32_t *data_handle = buffer;
-
-    cfs_port_system_flash_lock_enable();
-
-    while(len != 0)
-    {
-        if(addr % 4 == 0 && len >= 4)
-        {
-            cfs_port_system_flash_write_word(addr, data_handle, len / 4);
-            len = len - (len / 4);
-            data_handle = data_handle + (len / 4) * 4;
-        }
-        else if(addr % 2 == 0 && len >= 2)
-        {
-            cfs_port_system_flash_write_half_word(addr, data_handle, len / 2);
-            len = len - (len / 2);
-            data_handle = data_handle + (len / 2) * 2;
-        }
-        else
-        {
-            cfs_port_system_flash_write_byte(addr, data_handle, 1);
-            len--;
-            data_handle++;
-        }
-    }
-
-    cfs_port_system_flash_lock_disable();
     return true;
 }
 
@@ -377,7 +377,7 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer)
 {
     assert(buffer != NULL && \
-        buffer->data_len >= 1 && buffer->id != CFS_CONFIG_NOT_LINKED_DATA_ID);
+        buffer->data_len >= 1 && buffer->data_id != CFS_CONFIG_NOT_LINKED_DATA_ID);
 
     cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
     cfs_system *temp_cfs = cfs_system_oc_system_object_get(temp_object);
@@ -418,10 +418,10 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer)
 {
     assert(buffer != NULL && \
-        buffer->data_len >= 1 && buffer->id != CFS_CONFIG_NOT_LINKED_DATA_ID);
+        buffer->data_len >= 1 && buffer->data_id != CFS_CONFIG_NOT_LINKED_DATA_ID);
         
     cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
-    cfs_system *temp_cfs_objecr = cfs_system_oc_object_struct_type_get(temp_object);
+    cfs_system *temp_cfs_objecr = cfs_system_oc_system_object_get(temp_object);
     const uint32_t data_addr = \
         cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
     const uint32_t start_addr = \
