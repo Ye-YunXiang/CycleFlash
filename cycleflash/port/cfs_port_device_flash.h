@@ -49,10 +49,11 @@ bool cfs_port_system_flash_init(void);
  * 
  * \param uint32_t flash地址
  * \param uint8_t  数据指针 
+ * \param uint16_t  数据块长度 
  * \return 成功返回true，否则false
  */
 bool cfs_port_system_flash_write_byte( \
-    const uint32_t addr, const uint8_t * data, const uint16_t len);
+    volatile uint32_t addr, const uint8_t * data, uint16_t len);
 
 /** 往flash中存储数据(半字写)
  * 
@@ -60,10 +61,11 @@ bool cfs_port_system_flash_write_byte( \
  * 
  * \param uint32_t flash地址
  * \param uint8_t  数据指针 
+ * \param uint16_t  数据块长度 
  * \return 成功返回true，否则false
  */
 bool cfs_port_system_flash_write_half_word( \
-    const uint32_t addr, const uint8_t * data, const uint16_t len);
+    volatile uint32_t addr, const uint8_t * data, const uint16_t len);
 
 /** 往flash中存储数据(字写)
  * 
@@ -71,10 +73,11 @@ bool cfs_port_system_flash_write_half_word( \
  * 
  * \param uint32_t flash地址
  * \param uint8_t  数据指针 
+ * \param uint16_t  数据块长度 
  * \return 成功返回true，否则false
  */
 bool cfs_port_system_flash_write_word( \
-    const uint32_t addr, const uint8_t * data, const uint16_t len);
+    volatile uint32_t addr, const uint8_t * data, const uint16_t len);
 
 
 /** 往flash中读取数据
@@ -83,10 +86,11 @@ bool cfs_port_system_flash_write_word( \
  * 
  * \param uint32_t flash地址
  * \param uint8_t  装载数据的缓存指针 
+ * \param uint16_t  数据块长度 
  * \return 成功返回true，否则false
  */
 bool cfs_port_system_flash_read( \
-    const uint32_t addr, uint8_t * buffer, const uint16_t len);
+    volatile uint32_t addr, uint8_t * buffer, uint16_t len);
 
 
 /** 传入数据指针对比flash中指定地址的数据是否相同。
@@ -95,10 +99,22 @@ bool cfs_port_system_flash_read( \
  * 
  * \param uint32_t 要对比的flash地址
  * \param uint8_t  要对比的装载数据的缓存指针 
+ * \param uint16_t  数据块的长度 
  * \return 对比成功返回true，否则false
  */
 bool cfs_port_system_flash_read_contrast( \
-    const uint32_t addr, uint8_t * buffer, const uint16_t len);
+    volatile uint32_t addr, uint8_t * buffer, uint16_t len);
+
+/** 传入数据指针判断flash中指定地址的数据是否为空。
+ * 
+ * 判断某块内存的数据是否为空
+ * 
+ * \param uint32_t flash地址
+ * \param uint16_t  数据块长度 
+ * \return 为空返回true，否则false
+ */
+bool cfs_port_system_flash_read_checking_null_values( \
+    volatile uint32_t addr, uint16_t len);
 
 
 /** 上操作flash保护锁。
@@ -120,10 +136,10 @@ bool cfs_port_system_flash_lock_disable(void);
 /** 擦除指定页面的数据
  * 
  * \param uint32_t flash地址
- * \param uint8_t  擦除几页 
+ * \param uint16_t  擦除几页 
  * \return 成功返回true，否则false
  */
-bool cfs_port_system_flash_erasing_page(const uint32_t addr);
+bool cfs_port_system_flash_erasing_page(volatile uint32_t addr, uint16_t page);
 
 
 #endif /* __CFS_PORT_DEVICE_FLASH_H__ */

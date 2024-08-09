@@ -47,7 +47,7 @@ bool cfs_port_system_flash_init(void)
 }
 
 bool cfs_port_system_flash_write_byte( \
-    const uint32_t addr, const uint8_t * data, const uint16_t len)
+    volatile uint32_t addr, const uint8_t * data, uint16_t len)
 {
     /*User initialization code*/
 
@@ -55,7 +55,7 @@ bool cfs_port_system_flash_write_byte( \
 }
 
 bool cfs_port_system_flash_write_half_word( \
-    const uint32_t addr, const uint8_t * data, const uint16_t len)
+    volatile uint32_t addr, const uint8_t * data, uint16_t len)
 {
     /*User initialization code*/
 
@@ -63,7 +63,7 @@ bool cfs_port_system_flash_write_half_word( \
 }
 
 bool cfs_port_system_flash_write_word( \
-    const uint32_t addr, const uint8_t * data, const uint16_t len)
+    volatile uint32_t addr, const uint8_t * data, uint16_t len)
 {
     /*User initialization code*/
 
@@ -71,15 +71,25 @@ bool cfs_port_system_flash_write_word( \
 }
 
 bool cfs_port_system_flash_read( \
-    const uint32_t addr, uint8_t * buffer, const uint16_t len)
+    volatile uint32_t addr, uint8_t * buffer, uint16_t len)
 {
     /*User initialization code*/
 
     return true;
 }
 
+// 如果相同返回true
 bool cfs_port_system_flash_read_contrast( \
-    const uint32_t addr, uint8_t * buffer, const uint16_t len)
+    volatile uint32_t addr, uint8_t * buffer, uint16_t len)
+{
+    /*User initialization code*/
+
+    return true;
+}
+
+// 如果是空值返回true
+bool cfs_port_system_flash_read_checking_null_values( \
+    volatile uint32_t addr, uint16_t len)
 {
     /*User initialization code*/
 
@@ -100,7 +110,7 @@ bool cfs_port_system_flash_lock_disable(void)
     return true;
 }
 
-bool cfs_port_system_flash_erasing_page(const uint32_t addr, const uint16_t len)
+bool cfs_port_system_flash_erasing_page(volatile uint32_t addr, uint16_t page)
 {
     /*User initialization code*/
 

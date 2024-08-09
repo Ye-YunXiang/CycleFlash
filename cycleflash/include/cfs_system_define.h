@@ -73,6 +73,8 @@ typedef struct cfs_filesystem_object
 #define CFS_CONFIG_NOT_LINKED_DATA_ID       UINT_MAX
 /*无有效ID*/
 #define CFS_CONFIG_NOT_LINKED_VALID_DATA_ID   0
+/*设置ID的最大值*/
+#define CFS_CONFIG_SET_LINKED_DATA_ID_MAX     5
 
 /*存储对象 - 对象类型 - 数据ID 单链表键值对*/
 typedef struct cfs_linked_list

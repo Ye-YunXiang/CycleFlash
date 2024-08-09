@@ -238,18 +238,74 @@ static uint32_t cfs_filesystem_fixed_data_write( \
     cfs_object_linked_list *temp_object, \
     uint32_t write_id, uint8_t *data, uint16_t len)
 {
+    cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
+    cfs_system *temp_cfs_object = cfs_system_oc_system_object_get(temp_object);
+    const uint32_t  temp_max_id = \
+        temp_cfs_object->sector_size * temp_cfs_object->sector_count / \
+        (temp_cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
+    cfs_data_block temp_data_block;
+    bool flash_data_block_is_null = true;
+    
+    if(write_id >= temp_max_id)
+    {
+        // 固定存储，ID不能超过最大ID数
+        assert(write_id < temp_max_id);
+        return NULL;
+    }
 
-    uint32_t temp_id = cfs_system_oc_object_id_get(temp_object);
-    uint16_t temp_valid_id = cfs_system_oc_object_valid_id_numbe_get(temp_object);
-    /*user designation codes*/
+    // 填充数据
+    temp_data_block.data_id = write_id;
+    temp_data_block.data_len = len;
+    temp_data_block.data_pointer = data;
+    temp_data_block.data_crc_16 = \
+        cfs_system_utils_crc16_xmodem_check_data_block(&temp_data_block);
+
+    flash_data_block_is_null = \
+        cfs_system_oc_flash_checking_null_values(temp_object, temp_data_block);
+    
+    if( flash_data_block_is_null == true)
+    {
+        read_result = cfs_system_oc_add_write_flash_data(temp_object, &temp_data_block);
+    }
+    else
+    {
+        read_result = cfs_system_oc_set_write_flash_data(temp_object, &temp_data_block);
+    }
+    
+    if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
+    {
+        return len;
+    }
+    
     return NULL;
 }
 
 // 循环存储数据——写入数据,写入成功返回写入的原始数据长度
 static uint32_t cfs_filesystem_cycle_data_write( \
     cfs_object_linked_list *temp_object, \
-    uint32_t temp_id, uint8_t *data, uint16_t len)
+    uint32_t write_id, uint8_t *data, uint16_t len)
 {
+    cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
+    cfs_data_block temp_data_block;
+    uint32_t temp_id = cfs_system_oc_object_id_get(temp_object);
+    uint16_t temp_valid_id = cfs_system_oc_object_valid_id_numbe_get(temp_object);
+
+    // 填充数据
+    temp_data_block.data_id = write_id;
+    temp_data_block.data_len = len;
+    temp_data_block.data_pointer = data;
+    temp_data_block.data_crc_16 = \
+        cfs_system_utils_crc16_xmodem_check_data_block(&temp_data_block);
+
+    if(write_id > temp_id)
+    {
+        read_result = cfs_system_oc_add_write_flash_data(temp_object, &temp_data_block);
+    }
+    else if((temp_id-temp_valid_id) < write_id <= temp_id)
+    {
+        read_result = cfs_system_oc_set_write_flash_data(temp_object, &temp_data_block);
+    }
+
     /*user designation codes*/
     return NULL;
 }
@@ -330,13 +386,14 @@ cfs_system_handle_t cfs_nv_init( \
 
 // 根据id往内存中写入数据
 uint32_t cfs_nv_write(cfs_system_handle_t temp_object_handle, \
-	uint32_t temp_id, const uint8_t *data, uint32_t len)
+	uint32_t temp_id, const uint8_t *data, uint16_t len)
 {
+    uint32_t result_len = NULL;
     cfs_object_linked_list *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
     if(temp_object == NULL || temp_id != CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
-        return NULL;
+        return result_len;
     }
 
     switch (cfs_system_oc_object_struct_type_get(temp_object))
@@ -344,18 +401,22 @@ uint32_t cfs_nv_write(cfs_system_handle_t temp_object_handle, \
         case CFS_FILESYSTEM_OBJECT_TYPE_NULL:
             // 不应该出现这种情况
             assert(false);
-            return NULL;
+            return result_len;
         
         case CFS_FILESYSTEM_OBJECT_TYPE_FIXED_DATA_STORAGE:
-            
+            result_len = \
+                cfs_filesystem_fixed_data_write(temp_object, temp_id, data, len);
             break;
         
         case CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH:
-            /* code */
+            result_len = \
+                cfs_filesystem_cycle_data_write(temp_object, temp_id, data, len);
             break;
         
         case CFS_FILESYSTEM_OBJECT_TYPE_OTA_BUFFER:
-            /* code */
+            /*暂时不应该到这里，接口还没写*/
+            result_len = \
+                cfs_filesystem_oat_write(temp_object, temp_id, data, len);
             break;
         
         default:
@@ -364,7 +425,7 @@ uint32_t cfs_nv_write(cfs_system_handle_t temp_object_handle, \
 
     /*user designation codes*/
     
-    return NULL;
+    return result_len;
 }
 
 // 根据ID读取内存中的数据

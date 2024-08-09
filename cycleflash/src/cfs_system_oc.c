@@ -43,8 +43,20 @@ static cfs_object_linked_list *cfs_system_object_tail = NULL;
 // *****************************************************************************************************
 // 其他接口 —— 接口
 
+// 如果为空值返回true
+bool cfs_system_oc_flash_checking_null_values( \
+    const cfs_object_linked_list *temp_object, cfs_data_block * buffer)
+{
+    uint32_t addr = cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
+    uint32_t data_block_len = \
+        buffer->data_len + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
+    
+    return cfs_port_system_flash_read_checking_null_values(addr, data_block_len);
+}
+
 // 根据ID计算有效数据个数
-uint32_t cfs_system_oc_valid_data_number(const cfs_object_linked_list *temp_linked_object)
+uint32_t cfs_system_oc_valid_data_number( \
+    const cfs_object_linked_list *temp_linked_object)
 {
     uint32_t result_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
 
@@ -78,23 +90,6 @@ uint32_t cfs_system_oc_valid_data_number(const cfs_object_linked_list *temp_link
 	}
 
     return result_id;
-}
-
-/*使用初始化链表对象后返回的句柄，在通过crc-16-xmodem标识验证链表对象是否存在*/
-// 存在返回链表对象，不存在返回NULL
-cfs_object_linked_list * cfs_system_oc_object_linked_crc_16_verify( \
-    cfs_system_handle_t temp_cfs_handle)
-{
-    cfs_object_linked_list *temp_object = \
-		(cfs_object_linked_list *)((uint32_t)(temp_cfs_handle >> 1));
-    uint16_t temp_crc_16 = (uint16_t)temp_cfs_handle;
-
-    if(temp_object->this_linked_addr_crc_16 == temp_crc_16)
-    {
-        return temp_object;
-    }
-
-    return NULL;
 }
 
 // 链表添加一个数据对象
@@ -505,3 +500,20 @@ cfs_system *cfs_system_oc_system_object_get(const cfs_object_linked_list *temp_o
     return temp_object->object_handle;
 }
 
+
+/*使用初始化链表对象后返回的句柄，在通过crc-16-xmodem标识验证链表对象是否存在*/
+// 存在返回链表对象，不存在返回NULL
+cfs_object_linked_list * cfs_system_oc_object_linked_crc_16_verify( \
+    cfs_system_handle_t temp_cfs_handle)
+{
+    cfs_object_linked_list *temp_object = \
+		(cfs_object_linked_list *)((uint32_t)(temp_cfs_handle >> 1));
+    uint16_t temp_crc_16 = (uint16_t)temp_cfs_handle;
+
+    if(temp_object->this_linked_addr_crc_16 == temp_crc_16)
+    {
+        return temp_object;
+    }
+
+    return NULL;
+}
