@@ -41,8 +41,16 @@
  * \param cfs_nv_system 初始化结构体指针
  * \return cfs_system_handle_t 初始化后的句柄，如果初始化失败返回 false。
  */
-cfs_system_handle_t cfs_nv_init( \
+cfs_system_handle_t cfs_nv_object_init( \
 	cfs_system *temp_object, const char * const name);
+
+
+/** 删除文件管理系统对象
+ *
+ * \param cfs_system_handle_t 存储空间的句柄
+ * \return 删除成功返回true
+ */
+bool cfs_nv_object_delete(cfs_system_handle_t temp_object_handle);
 
 
 /** 根据id往内存中写入数据
@@ -63,11 +71,10 @@ uint32_t cfs_nv_write(cfs_system_handle_t temp_object_handle, \
  * \param uint32_t 要读取的ID
  * \param uint8_t 装载数据的指针
  * \param uint32_t 读取数据长度
- * \param uint16_t 读取过去的数据，用现在的id减去它
  * \return 读取数据成功后返回读取数据的个数，如果读取失败返回 0。
  */
 uint32_t cfs_nv_read(cfs_system_handle_t temp_object_handle, \
-	uint32_t temp_id, uint8_t *data, uint32_t len, uint16_t past_id);
+	uint32_t temp_id, uint8_t *data, uint32_t len);
 
 
 /** 清除指定对象的存储空间

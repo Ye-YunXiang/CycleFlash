@@ -73,14 +73,13 @@ typedef struct cfs_filesystem_object
 #define CFS_CONFIG_NOT_LINKED_DATA_ID       UINT_MAX
 /*无有效ID*/
 #define CFS_CONFIG_NOT_LINKED_VALID_DATA_ID   0
-/*设置ID的最大值*/
-#define CFS_CONFIG_SET_LINKED_DATA_ID_MAX     5
 
 /*存储对象 - 对象类型 - 数据ID 单链表键值对*/
 typedef struct cfs_linked_list
 {
     struct cfs_filesystem_object *object_handle;            // 存储对象
     uint32_t data_id;                      	                // 数据块ID
+    struct cfs_linked_list *prior;                          // 链表上一个节点
     struct cfs_linked_list *next;                           // 链表下一个节点
     uint16_t valid_id_number;                               // 有效ID个数
     uint16_t this_linked_addr_crc_16;                       // 这个链表对象地址的crc-16-xmodem值

@@ -89,6 +89,11 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
 cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer);
 
+// 清楚对象在内存中的数据
+bool cfs_system_oc_flash_data_clear(const cfs_object_linked_list *temp_object);
+
+// 删除内核对象
+bool cfs_system_oc_object_delete(cfs_object_linked_list *temp_object);
 
 // *****************************************************************************************************
 // 设置和获取对象接口

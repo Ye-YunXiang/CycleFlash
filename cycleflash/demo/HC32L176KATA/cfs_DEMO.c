@@ -70,7 +70,7 @@ bool flash_filesystem_init(void)
     cfs_system_init.sector_size = 512;
     cfs_system_init.sector_count = 4;
     cfs_system_init.data_size = 40;
-    nexus_filesystem = cfs_nv_init(&cfs_system_init, "nexus");
+    nexus_filesystem = cfs_nv_object_init(&cfs_system_init, "nexus");
     if(nexus_filesystem == false)
     {
         return false;
@@ -83,7 +83,7 @@ bool flash_filesystem_init(void)
     cfs_system_init.sector_size = 512;
     cfs_system_init.sector_count = 4;
     cfs_system_init.data_size = 4;
-    product_filesystem = cfs_nv_init(&cfs_system_init, "product");
+    product_filesystem = cfs_nv_object_init(&cfs_system_init, "product");
     if(product_filesystem == false)
     {
         return false;
@@ -96,7 +96,7 @@ bool flash_filesystem_init(void)
     cfs_system_init.sector_size = 512;
     cfs_system_init.sector_count = 1;
     cfs_system_init.data_size = 20;
-    identity_filesystem = cfs_nv_init(&cfs_system_init, "identity");
+    identity_filesystem = cfs_nv_object_init(&cfs_system_init, "identity");
     if(identity_filesystem == false)
     {
         return false;
