@@ -34,6 +34,14 @@
 #include <limits.h>
 
 /*存储初始化文件系统返回的对象句柄*/
+
+
+typedef struct {
+    int32_t high;  // 高 32 位
+    int32_t low;   // 低 32 位
+    int8_t sign;   // 符号位 (1: 正, -1: 负)
+}cfs_system_handle_t;
+
 typedef uint64_t cfs_system_handle_t;
 
 // 一页FLASH大小
@@ -67,11 +75,6 @@ typedef struct cfs_filesystem_object
 }cfs_system;
 
 
-/*当前名字长度*/
-#define CFS_CONFIG_CURRENT_OBJECT_NAME_LEN   16
-/*允许的最长对象名,不许超过255*/
-#define CFS_CONFIG_MAX_OBJECT_NAME_LEN   255
-
 /*无ID状态*/
 #define CFS_CONFIG_NOT_LINKED_DATA_ID       UINT_MAX
 /*无有效ID*/
@@ -86,7 +89,6 @@ typedef struct cfs_linked_list
     struct cfs_linked_list *next;                           // 链表下一个节点
     uint16_t valid_id_number;                               // 有效ID个数
     uint16_t this_linked_addr_crc_16;                       // 这个链表对象地址的crc-16-xmodem值
-    uint8_t object_name[CFS_CONFIG_CURRENT_OBJECT_NAME_LEN];// 对象名字
 }cfs_object_linked_list;
 
 

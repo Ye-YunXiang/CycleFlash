@@ -29,6 +29,10 @@
 
 #include "cfs_system_define.h"
 #include "cfs_port_device_flash.h"
+#include "flash.h"
+
+
+// 下方代码是根据HC32L176写的案例，仅供参考
 
 static bool cfs_port_flash_init_flag = false;
 
@@ -47,25 +51,43 @@ bool cfs_port_system_flash_init(void)
 }
 
 bool cfs_port_system_flash_write_byte( \
-    volatile uint32_t addr, const uint8_t * data, uint16_t len)
+    volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
 {
-    /*User initialization code*/
+    uint16_t i;
+    for(i=0; i< len; i++)
+    {
+        Flash_WriteByte(addr, *data);
+        addr += 0x01;
+        data++;
+    }
 
     return true;
 }
 
 bool cfs_port_system_flash_write_half_word( \
-    volatile uint32_t addr, const uint8_t * data, uint16_t len)
+    volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
 {
-    /*User initialization code*/
+    uint16_t i;
+    for(i=0; i< len; i++)
+    {
+        Flash_WriteHalfWord(addr, *data);
+        addr += 0x01;
+        data++;
+    }
 
     return true;
 }
 
 bool cfs_port_system_flash_write_word( \
-    volatile uint32_t addr, const uint8_t * data, uint16_t len)
+    volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
 {
-    /*User initialization code*/
+    uint16_t i;
+    for(i=0; i< len; i++)
+    {
+        Flash_WriteWord(addr, *data);
+        addr += 0x01;
+        data++;
+    }
 
     return true;
 }
@@ -73,8 +95,7 @@ bool cfs_port_system_flash_write_word( \
 bool cfs_port_system_flash_read( \
     volatile uint32_t addr, uint8_t * buffer, uint16_t len)
 {
-    /*User initialization code*/
-
+    memcpy(buffer, (uint8_t *)addr, len);
     return true;
 }
 
@@ -82,16 +103,31 @@ bool cfs_port_system_flash_read( \
 bool cfs_port_system_flash_read_contrast( \
     volatile uint32_t addr, uint8_t * buffer, uint16_t len)
 {
-    /*User initialization code*/
-
-    return true;
+    if(memcmp(buffer, (uint8_t *)addr, len) == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 // 如果是空值返回true
 bool cfs_port_system_flash_read_checking_null_values( \
     volatile uint32_t addr, uint16_t len)
 {
-    /*User initialization code*/
+    uint16_t i;
+    
+    for(i=0; i< len; i++)
+    {
+        if(0xff != *((uint8_t *)addr))
+        {
+            // 不为空
+            return false;
+        }
+        addr += 0x01;
+    }
 
     return true;
 }
@@ -112,7 +148,12 @@ bool cfs_port_system_flash_lock_disable(void)
 
 bool cfs_port_system_flash_erasing_page(volatile uint32_t addr, uint16_t page)
 {
-    /*User initialization code*/
+    uint16_t i = 0;
+    for(i = 0; i < page; i++)
+    {
+        addr = addr + (i * 512);
+        while(Ok != Flash_SectorErase(addr)){};
+    }
 
     return true;
 }

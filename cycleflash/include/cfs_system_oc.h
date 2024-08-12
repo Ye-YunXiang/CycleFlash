@@ -63,8 +63,7 @@ uint32_t cfs_system_oc_traverse_data_page_id_init(uint32_t temp_cfs_handle);
 uint32_t cfs_system_oc_traverse_list_page_id_init(uint32_t temp_cfs_handle);
 
 // 链表添加一个数据对象
-cfs_object_linked_list *cfs_system_oc_add_object(\
-    cfs_system *object_pointer, const uint8_t * const name);
+cfs_object_linked_list *cfs_system_oc_add_object(cfs_system *object_pointer);
 
 // 检查设置的文件的地址和将要存入数据的地址片区有没有重复
 bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object);
@@ -89,7 +88,7 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
 cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer);
 
-// 清楚对象在内存中的数据
+// 清除对象在内存中的数据
 bool cfs_system_oc_flash_data_clear(const cfs_object_linked_list *temp_object);
 
 // 删除内核对象

@@ -93,8 +93,7 @@ uint32_t cfs_system_oc_valid_data_number( \
 }
 
 // 链表添加一个数据对象
-cfs_object_linked_list *cfs_system_oc_add_object(\
-    cfs_system *object_pointer, const uint8_t * const name) 
+cfs_object_linked_list *cfs_system_oc_add_object(cfs_system *object_pointer) 
 {
     cfs_object_linked_list *new_node = 
         (cfs_object_linked_list *)CFS_MALLOC(sizeof(cfs_object_linked_list));
@@ -114,25 +113,7 @@ cfs_object_linked_list *cfs_system_oc_add_object(\
     new_cfs_node->sector_size = object_pointer->sector_size;
     new_cfs_node->sector_count = object_pointer->sector_count;
     new_cfs_node->data_size = object_pointer->data_size;
-    new_cfs_node->struct_type = object_pointer->struct_type;
-
-	uint8_t temp_len = 0;
-    /*写入名字*/
-    while(temp_len < (CFS_CONFIG_CURRENT_OBJECT_NAME_LEN - 2))
-    {
-        if(name[temp_len] == '\0')
-        {
-            new_node->object_name[temp_len] = '0';
-            temp_len++;
-            break;
-        }
-        else
-        {
-            new_node->object_name[temp_len] = name[temp_len];
-        }
-        temp_len++;
-    }
-    new_node->object_name[temp_len] = '0';
+    new_cfs_node->struct_type = object_pointer->struct_type; 
 
     if (cfs_system_object_head == NULL)
     {
@@ -152,9 +133,6 @@ cfs_object_linked_list *cfs_system_oc_add_object(\
     new_node->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
     new_node->valid_id_number = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     new_node->object_handle = new_cfs_node;
-    new_node->this_linked_addr_crc_16  = \
-        cfs_system_utils_crc16_xmodem_check(\
-        (uint8_t *)((uint32_t)new_node), sizeof(uint32_t));
 
     return new_node;
 }

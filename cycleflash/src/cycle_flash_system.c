@@ -212,25 +212,15 @@ static uint32_t cfs_filesystem_object_id_init( cfs_system_handle_t temp_cfs_hand
     return true;
 }
 
-static cfs_system_handle_t cfs_filesystem_object_add_oc_object( \
-    cfs_system *temp_object, const char * const name)
+static cfs_system_handle_t cfs_filesystem_object_add_oc_object(cfs_system *temp_object)
 {
-    assert((strlen(name) + 1) <= CFS_CONFIG_CURRENT_OBJECT_NAME_LEN || \
-        CFS_CONFIG_CURRENT_OBJECT_NAME_LEN <= CFS_CONFIG_MAX_OBJECT_NAME_LEN);
-
-    cfs_object_linked_list *temp_linked_object = \
-		cfs_system_oc_add_object(temp_object, (uint8_t *)name);
+    cfs_object_linked_list *temp_linked_object = cfs_system_oc_add_object(temp_object);
     if(temp_linked_object == NULL)
     {
-        return false;
+        return 0;
     }
-
-    cfs_system_handle_t cfs_object_handle = \
-        ((uint32_t)(temp_linked_object) << \
-        (temp_linked_object->this_linked_addr_crc_16)) & \
-        temp_linked_object->this_linked_addr_crc_16;
     
-    return cfs_object_handle;
+    return (cfs_system_handle_t)temp_linked_object;
 }
 
 // 存储固定数据——写入数据,写入成功返回写入的原始数据长度
@@ -339,9 +329,7 @@ static uint32_t cfs_filesystem_flsh_data_read( \
 //-- 对外接口  
 //*******************************************************************************************
 
-
-cfs_system_handle_t cfs_nv_object_init( \
-    cfs_system *temp_object, const char * const name)
+cfs_system_handle_t cfs_nv_object_init(cfs_system *temp_object)
 {
     // 判断参数有效性
     assert(temp_object->sector_size % 64 == 0);
@@ -362,17 +350,10 @@ cfs_system_handle_t cfs_nv_object_init( \
         return false;
     }
 
-    if(temp_object->struct_type == CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH || \
-        temp_object->sector_count < 2 )
-    {
-        // 如果使用的循环存储，分配的页数必须要 >= 2
-        assert(false);
-        return false;
-    }
-
     // 在判断地址有没有重复
     if(true == cfs_filesystem_check_flash_repeat_address(temp_object))
     {
+			cfs_filesystem_check_flash_repeat_address(temp_object);
         /*内存参数交叉了！*/
         assert(false);
         return false;
@@ -386,7 +367,7 @@ cfs_system_handle_t cfs_nv_object_init( \
     
     /*开始初始化*/
     cfs_system_handle_t new_cfs_object_handle = \
-        cfs_filesystem_object_add_oc_object(temp_object, name);
+        cfs_filesystem_object_add_oc_object(temp_object);		
     if(new_cfs_object_handle == false)
     {
         return false;

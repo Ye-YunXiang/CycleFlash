@@ -41,8 +41,7 @@
  * \param cfs_nv_system 初始化结构体指针
  * \return cfs_system_handle_t 初始化后的句柄，如果初始化失败返回 false。
  */
-cfs_system_handle_t cfs_nv_object_init( \
-	cfs_system *temp_object, const char * const name);
+cfs_system_handle_t cfs_nv_object_init(cfs_system *temp_object);
 
 
 /** 删除文件管理系统对象
