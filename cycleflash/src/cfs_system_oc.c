@@ -35,10 +35,10 @@
 #include "cfs_port_device_flash.h"
 #include "cfs_system_utils.h"
 
+
 /*数据对象的头指针*/
 static cfs_object_linked_list *cfs_system_object_head = NULL;
 static cfs_object_linked_list *cfs_system_object_tail = NULL;
-
 
 // *****************************************************************************************************
 // 其他接口 —— 接口
@@ -240,9 +240,6 @@ static bool __read_flash_data_block(volatile uint32_t addr, cfs_data_block * blo
         addr, (uint8_t *)(&block->data_id), sizeof(block->data_id));
     addr += sizeof(block->data_id);
     cfs_port_system_flash_read(\
-        addr, (uint8_t *)(&block->data_len), sizeof(block->data_len));
-    addr += sizeof(block->data_len);
-    cfs_port_system_flash_read(\
         addr, block->data_pointer, block->data_len);
     addr += block->data_len;
     cfs_port_system_flash_read(\
@@ -296,8 +293,6 @@ static bool __write_flash_data_block(volatile uint32_t addr, cfs_data_block * bl
 
     __write_flash_data(addr, (uint8_t *)(&block->data_id), sizeof(block->data_id));
     addr += sizeof(block->data_id);
-    __write_flash_data(addr, (uint8_t *)(&block->data_len), sizeof(block->data_len));
-    addr += sizeof(block->data_len);
     __write_flash_data(addr, block->data_pointer, block->data_len);
     addr += block->data_len;
     __write_flash_data(addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
@@ -323,14 +318,6 @@ static bool __contrast_flash_data_block( \
         }
 
         addr += sizeof(block->data_id);
-        cfs_port_system_flash_read_contrast( \
-            addr, (uint8_t *)(&block->data_len), sizeof(block->data_len));
-        if(result == false)
-        {
-            break;
-        }
-
-        addr += sizeof(block->data_len);
         cfs_port_system_flash_read_contrast( \
             addr, block->data_pointer, block->data_len);
         if(result == false)
@@ -468,8 +455,6 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
     temo_read_sector_data = read_sector_data + data_addr - start_addr;
     memcpy(temo_read_sector_data, &buffer->data_id, sizeof(buffer->data_id));
     temo_read_sector_data += sizeof(buffer->data_id);
-    memcpy(temo_read_sector_data, &buffer->data_len, sizeof(buffer->data_len));
-    temo_read_sector_data += sizeof(buffer->data_len);
     memcpy(temo_read_sector_data, buffer->data_pointer, buffer->data_len);
     temo_read_sector_data += buffer->data_len;
     memcpy(temo_read_sector_data, &temp_data_crc_16, sizeof(buffer->data_crc_16));

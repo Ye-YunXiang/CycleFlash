@@ -15,6 +15,9 @@ CycleFlash 是一个用于管理MCU内置flash的轻量级管理系统，有简�
 
 ## 2、使用介绍
 
+> **注意：**使用的时候要预留够两页flash大小 + 0.1K大小的RAM。
+> 两页FLASH大小是因为如果跨页修改数据会动态申请两页大小的内存，0.1K大小的RAM是初始化的时候固定动态申请使用。
+
 使用时先实现 cycleflash\port_device_flash.h 的接口。
 使用时包含头文件 #include "cycle_flash_system.h" 即可。
 
@@ -31,4 +34,4 @@ ID要自己记录，可以通过接口得到内部ID记录到哪里了，只能�
 
 ## 3、文档
 
-- 关于系统设计的文档介绍：[介绍](./cycleflash/design.md)
+- 关于系统设计的文档介绍：[design.md](./cycleflash/design.md)

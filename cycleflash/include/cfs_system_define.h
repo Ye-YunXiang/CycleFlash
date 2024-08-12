@@ -36,6 +36,9 @@
 /*存储初始化文件系统返回的对象句柄*/
 typedef uint64_t cfs_system_handle_t;
 
+// 一页FLASH大小
+#define CFS_BUFFER_SIZE 512
+
 // 定义初始化内存的方式
 #define CFS_MALLOC      malloc 
 #define CFS_FREE        free
@@ -88,13 +91,13 @@ typedef struct cfs_linked_list
 
 
 /*不算数据长度，通过数据块算包头包尾的长度*/
-// SIZEOF(data_id) + SIZEOF(data_len) + SIZEOF(data_crc_16)
-#define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN  8
+// SIZEOF(data_id) + SIZEOF(data_crc_16)
+#define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN  6
 // 读取数据块的偏移长度
-// SIZEOF(data_id) + SIZEOF(data_len)
-#define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN    6
+// SIZEOF(data_id)
+#define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN    4
 /*系统存入内存的数据块*/
-// 存入数据结构：`ID(4byte) | 数据长度(2byte) | 数据(最大为1页大小-7) | CRC16(2byte)`
+// 存入数据结构：`ID(4byte) | 数据(最大为1页大小-7) | CRC16(2byte)`
 typedef struct 
 {
     uint32_t data_id;               // 数据块ID

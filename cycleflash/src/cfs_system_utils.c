@@ -84,17 +84,13 @@ uint16_t cfs_system_utils_crc16_xmodem_check_data_block(const cfs_data_block *da
 
     uint8_t *data_block_handle = (uint8_t *)(&data->data_id);
     uint32_t data_block_length = \
-        data->data_len + sizeof(data->data_len) + sizeof(data->data_id);
+        data->data_len + sizeof(data->data_id);
     uint16_t crc_int = 0;
     uint8_t temp_char = 0;
 
     while (data_block_length--)
     {
-        if(data_block_length == (data->data_len + sizeof(data->data_len)))
-        {
-            data_block_handle = (uint8_t *)(&data->data_len);
-        }
-        else if(data_block_length == data->data_len)
+        if(data_block_length == data->data_len)
         {
             data_block_handle = data->data_pointer;
         }
