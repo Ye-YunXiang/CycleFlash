@@ -33,6 +33,7 @@
 #include "cfs_system_oc.h"
 #include "cycle_flash_system.h"
 #include "cfs_port_device_flash.h" 
+#include "cfs_system_utils.h"
 
 // 紧密存储遍历内存ID初始化
 // 偷懒，后续在优化吧
@@ -46,8 +47,9 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
     cfs_data_block data_block;
     memset(&data_block, NULL, sizeof(cfs_data_block));   
     // 用户存储数据空间申请
-    data_block.data_pointer = (uint8_t *)CFS_MALLOC(data_block.data_len);
-
+    data_block.data_pointer = (uint8_t *)CFS_MALLOC(temp_cfs_handle->data_size);
+    data_block.data_len = temp_cfs_handle->data_size;
+    
         // 计算数据块大小
     const uint32_t data_block_size = \
         temp_cfs_handle->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
@@ -61,7 +63,7 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
         uint8_t temp_count = 0;
         uint32_t data_just_full = 0;
         data_max_addr = \
-            (temp_cfs_handle->addr_handle + (i+1) * data_block_size);
+            (temp_cfs_handle->addr_handle + (i+1) * temp_cfs_handle->sector_size);
         cfs_oc_action_data_result read_result = \
             CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
 
@@ -219,8 +221,12 @@ static cfs_system_handle_t cfs_filesystem_object_add_oc_object(cfs_system *temp_
     {
         return 0;
     }
-    
-    return (cfs_system_handle_t)temp_linked_object;
+    cfs_system_handle_t return_handle = \
+        (((cfs_system_handle_t)temp_linked_object) << 16) + \
+        cfs_system_utils_crc16_xmodem_check( \
+        (uint8_t *)temp_linked_object, sizeof(temp_linked_object));
+
+    return return_handle;
 }
 
 // 存储固定数据——写入数据,写入成功返回写入的原始数据长度

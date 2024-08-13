@@ -133,6 +133,9 @@ cfs_object_linked_list *cfs_system_oc_add_object(cfs_system *object_pointer)
     new_node->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
     new_node->valid_id_number = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     new_node->object_handle = new_cfs_node;
+    new_node->this_linked_addr_crc_16 = \
+        cfs_system_utils_crc16_xmodem_check( \
+        (uint8_t *)(new_node), sizeof(new_node_crc));
 
     return new_node;
 }
@@ -147,7 +150,7 @@ bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object)
         uint32_t head_1 = temp_object->addr_handle;
 
         uint32_t tail_1 = temp_object->addr_handle + \
-            (temp_object->sector_size * temp_object->sector_count);
+            (temp_object->sector_size * temp_object->sector_count) - 1;
 
         cfs_object_linked_list *temp_pointer = cfs_system_object_head->next;
         
@@ -156,7 +159,7 @@ bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object)
             uint32_t head_2 = temp_pointer->object_handle->addr_handle;
             uint32_t tail_2 = temp_pointer->object_handle->addr_handle + \
                 (temp_pointer->object_handle->sector_size * \
-                temp_pointer->object_handle->sector_count);
+                temp_pointer->object_handle->sector_count) - 1;
 
             if((head_1 <= tail_2 && tail_1 >= head_2) || \
                 (head_2 <= tail_1 && tail_2 >= head_1) || \
@@ -564,9 +567,16 @@ cfs_system *cfs_system_oc_system_object_get(const cfs_object_linked_list *temp_o
 cfs_object_linked_list * cfs_system_oc_object_linked_crc_16_verify( \
     cfs_system_handle_t temp_cfs_handle)
 {
+    // uint32_t temp_crc_handle = (uint32_t)temp_cfs_handle;
+    // cfs_object_linked_list *temp_object = \
+    //     (cfs_object_linked_list *)(temp_cfs_handle);
+    // uint16_t temp_crc_16 = \
+    //     cfs_system_utils_crc16_xmodem_check( \
+    //     (uint8_t *)(&temp_crc_handle), sizeof(temp_crc_handle));
+
     cfs_object_linked_list *temp_object = \
-		(cfs_object_linked_list *)((uint32_t)(temp_cfs_handle >> 1));
-    uint16_t temp_crc_16 = (uint16_t)temp_cfs_handle;
+        (cfs_object_linked_list *)((uint32_t)(temp_cfs_handle>>16));
+    uint16_t temp_crc_16 = (uint16_t)(temp_cfs_handle);
 
     if(temp_object->this_linked_addr_crc_16 == temp_crc_16)
     {

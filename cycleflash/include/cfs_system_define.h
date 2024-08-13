@@ -36,12 +36,6 @@
 /*存储初始化文件系统返回的对象句柄*/
 
 
-typedef struct {
-    int32_t high;  // 高 32 位
-    int32_t low;   // 低 32 位
-    int8_t sign;   // 符号位 (1: 正, -1: 负)
-}cfs_system_handle_t;
-
 typedef uint64_t cfs_system_handle_t;
 
 // 一页FLASH大小
