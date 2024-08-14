@@ -31,8 +31,9 @@
 #include <stddef.h>
 #include "cfs_system_utils.h"
 
+
 // CRC校验 // CRC-8 多项式：x^8 + x^2 + x^1 + x^0 (0x07)
-uint8_t cfs_system_utils_crc_8_check(const uint8_t *data, uint32_t data_length)
+uint8_t cfs_system_utils_crc_8_check(const uint8_t *data, uint32_t data_length, bool inversion_bit)
 {
     uint8_t crc = 0;
     for (uint64_t i = 0; i < data_length; i++) {
@@ -45,14 +46,23 @@ uint8_t cfs_system_utils_crc_8_check(const uint8_t *data, uint32_t data_length)
             }
         }
     }
-    return crc;
+
+    // 是否按位取反
+    if(inversion_bit == true)
+    {
+        return ~(crc);
+    }
+    else
+    {
+        return (crc);
+    }
 }
 
 /* 初始值（0）、多项式（0x1021）、结果异或值（0）、输入翻转（falsh）、输出翻转（falsh）
  * 参数： uint8_t * 起始指针
  *       uint32_t  数据
 */
-uint16_t cfs_system_utils_crc16_xmodem_check(const uint8_t *data, uint32_t data_length)
+uint16_t cfs_system_utils_crc16_xmodem_check(const uint8_t *data, uint32_t data_length, bool inversion_bit)
 {
     uint16_t crc_int = 0;
     uint8_t temp_char = 0;
@@ -69,7 +79,16 @@ uint16_t cfs_system_utils_crc16_xmodem_check(const uint8_t *data, uint32_t data_
                 crc_int = crc_int << 1;
         }
     }
-    return (crc_int^0);
+
+    // 是否按位取反
+    if(inversion_bit == true)
+    {
+        return ~(crc_int^0);
+    }
+    else
+    {
+        return (crc_int^0);
+    }
 }
 
 
@@ -78,7 +97,7 @@ uint16_t cfs_system_utils_crc16_xmodem_check(const uint8_t *data, uint32_t data_
  *       uint32_t  数据
 */
 // 根据cfs系统专门创建的验证数据块函数, 这个数据块的crc16不参与验证
-uint16_t cfs_system_utils_crc16_xmodem_check_data_block(const cfs_data_block *data)
+uint16_t cfs_system_utils_crc16_xmodem_check_data_block(const cfs_data_block *data, bool inversion_bit)
 {
     assert(data->data_len != 0 && data->data_pointer != NULL);
 
@@ -105,5 +124,14 @@ uint16_t cfs_system_utils_crc16_xmodem_check_data_block(const cfs_data_block *da
                 crc_int = crc_int << 1;
         }
     }
-    return (crc_int^0);
+
+    // 是否按位取反
+    if(inversion_bit == true)
+    {
+        return ~(crc_int^0);
+    }
+    else
+    {
+        return (crc_int^0);
+    }
 }

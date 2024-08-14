@@ -35,6 +35,11 @@
 #include "cfs_port_device_flash.h" 
 #include "cfs_system_utils.h"
 
+// 测试-------
+cfs_object_linked_list *temp_cfs_object_linked_list;
+// ------------
+
+
 // 紧密存储遍历内存ID初始化
 // 偷懒，后续在优化吧
 static uint32_t cfs_filesystem_tight_data_page_id_init( \
@@ -50,18 +55,18 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
     data_block.data_pointer = (uint8_t *)CFS_MALLOC(temp_cfs_handle->data_size);
     data_block.data_len = temp_cfs_handle->data_size;
     
-        // 计算数据块大小
+    // 计算数据块大小
     const uint32_t data_block_size = \
         temp_cfs_handle->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
     
     // 存储数据的起始地址，和记录最大ID
     volatile uint32_t data_start_id = 0;
     volatile uint32_t data_max_addr = NULL;
+    volatile uint16_t data_max_i = 0;
     // 遍历每一页第一位的值，考虑到如果第一位数据存储错误的情况
     for(uint16_t i = 0; i < temp_cfs_handle->sector_count; i++)
     {
         uint8_t temp_count = 0;
-        uint32_t data_just_full = 0;
         data_max_addr = \
             (temp_cfs_handle->addr_handle + (i+1) * temp_cfs_handle->sector_size);
         cfs_oc_action_data_result read_result = \
@@ -69,17 +74,10 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
 
         while(read_result != CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
         {
-            data_just_full= (i * temp_cfs_handle->sector_size) % data_block_size;   
-            if(data_just_full == 0)
-            {
-                data_start_id = \
-                    (i * temp_cfs_handle->sector_size) / data_block_size + temp_count;
-            }
-            else
-            {
-                data_start_id = \
-                    (i * temp_cfs_handle->sector_size) / data_block_size + 1 + temp_count;
-            }
+            // 因为ID从0开始，所以这里计算出来的天然多1个。
+            // 然后如果是第0页得出的结果直接为0.
+            data_start_id = \
+                (i * temp_cfs_handle->sector_size) / data_block_size + temp_count;
 
             memset(data_block.data_pointer, NULL, data_block.data_len);
             data_block.data_id = data_start_id;
@@ -98,9 +96,10 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
                 break;
             }
 
-            if(data_max_addr >= \
-                (cfs_system_oc_via_id_calculate_addr( \
-                temp_linked_object, (data_start_id + 1)) - 1))
+            // 下方ID+1计算出地址后加上两个数据块的大小后，
+            // 在减 1 得出在往上加上一个ID长度有没有超过这一页。
+            if(data_max_addr >= (cfs_system_oc_via_id_calculate_addr( \
+                temp_linked_object, data_start_id) + data_block_size * 2 - 1))
             {
                 temp_count++;
             }
@@ -115,6 +114,7 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
             if(data_block.data_id > temp_data_MAX_id || \
                 temp_data_MAX_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
             {
+                data_max_i = i;
                 temp_data_MAX_id = data_block.data_id;
             }
         }
@@ -124,9 +124,8 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
     if(temp_data_MAX_id != CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
         data_start_id = temp_data_MAX_id;
-        data_max_addr = ((uint32_t)(cfs_system_oc_via_id_calculate_addr( \
-            temp_linked_object, data_start_id) / temp_cfs_handle->sector_size) + 1)* \
-            temp_cfs_handle->sector_size;
+        data_max_addr = temp_cfs_handle->addr_handle + \
+            (data_max_i + 1) * temp_cfs_handle->sector_size;
         cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
         while(read_result != CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
         {
@@ -146,9 +145,10 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
                 break;
             }
 
-            if(data_max_addr >= \
-                (cfs_system_oc_via_id_calculate_addr( \
-                temp_linked_object, (data_start_id + 1)) - 1))
+            // 下方ID+1计算出地址后加上两个数据块的大小后，
+            // 在减 1 得出在往上加上一个ID长度有没有超过这一页。
+            if(data_max_addr >= (cfs_system_oc_via_id_calculate_addr( \
+                temp_linked_object, data_start_id) + data_block_size * 2 - 1))
             {
                 data_start_id++;
             }
@@ -221,10 +221,15 @@ static cfs_system_handle_t cfs_filesystem_object_add_oc_object(cfs_system *temp_
     {
         return 0;
     }
+    
+    // 测试-------
+    temp_cfs_object_linked_list = temp_linked_object;
+    // ------------
+    
     cfs_system_handle_t return_handle = \
         (((cfs_system_handle_t)temp_linked_object) << 16) + \
         cfs_system_utils_crc16_xmodem_check( \
-        (uint8_t *)temp_linked_object, sizeof(temp_linked_object));
+        (uint8_t *)temp_linked_object, sizeof(temp_linked_object), true);
 
     return return_handle;
 }
@@ -290,7 +295,8 @@ static uint32_t cfs_filesystem_cycle_data_write( \
     temp_data_block.data_pointer = data;
 
     // 每次增加的ID不能跳，只能一个一个往上加
-    if(write_id > temp_id && ((write_id - temp_id) == 1))
+    if((write_id > temp_id && ((write_id - temp_id) == 1))|| \
+        (temp_id == CFS_CONFIG_NOT_LINKED_DATA_ID && write_id == 0))
     {
         read_result = cfs_system_oc_add_write_flash_data(temp_object, &temp_data_block);
     }
@@ -301,6 +307,11 @@ static uint32_t cfs_filesystem_cycle_data_write( \
 
     if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
     {
+        cfs_system_oc_object_id_set(temp_object, write_id);
+        
+        cfs_system_oc_object_valid_id_number_set( \
+            temp_object, cfs_system_oc_valid_data_number(temp_object));
+        
         return len;
     }
 
@@ -405,7 +416,7 @@ uint32_t cfs_nv_write(cfs_system_handle_t temp_object_handle, \
     uint32_t result_len = NULL;
     cfs_object_linked_list *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
-    if(temp_object == NULL || temp_id != CFS_CONFIG_NOT_LINKED_DATA_ID)
+    if(temp_object == NULL || temp_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
         return result_len;
     }
@@ -441,7 +452,7 @@ uint32_t cfs_nv_read(cfs_system_handle_t temp_object_handle, \
     uint32_t result_len = NULL;
     cfs_object_linked_list *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
-    if(temp_object == NULL || read_id != CFS_CONFIG_NOT_LINKED_DATA_ID)
+    if(temp_object == NULL || read_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
         return false;
     }

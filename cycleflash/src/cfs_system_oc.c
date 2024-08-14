@@ -135,7 +135,7 @@ cfs_object_linked_list *cfs_system_oc_add_object(cfs_system *object_pointer)
     new_node->object_handle = new_cfs_node;
     new_node->this_linked_addr_crc_16 = \
         cfs_system_utils_crc16_xmodem_check( \
-        (uint8_t *)(new_node), sizeof(new_node_crc));
+        (uint8_t *)(new_node), sizeof(new_node->object_handle), true);
 
     return new_node;
 }
@@ -188,22 +188,22 @@ uint32_t cfs_system_oc_via_id_calculate_addr( \
         temp_cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
 	uint32_t all_data = \
         (temp_cfs_object->sector_size * temp_cfs_object->sector_count) / data_size;
-	uint16_t data_cycle = (temp_object->data_id + 1) / all_data;
-	uint16_t data_cycle_int = (temp_object->data_id + 1) % all_data;
+	uint16_t data_cycle = (temp_id + 1) / all_data;
+	uint16_t data_cycle_int = (temp_id + 1) % all_data;
 	
 	uint32_t result_addr = NULL;
 	
 	if(data_cycle < 1 || (data_cycle == 1 && data_cycle_int == 0))
 	{
-		result_addr = temp_object->data_id * data_size;
+		result_addr = temp_id * data_size;
 	}
 	else if(data_cycle >= 1 && data_cycle_int != 0)
 	{
-		result_addr = (temp_object->data_id - data_cycle * all_data) * data_size;
+		result_addr = (temp_id - data_cycle * all_data) * data_size;
 	}
 	else if(data_cycle > 1 && data_cycle_int == 0)
 	{
-		result_addr = (temp_object->data_id - (data_cycle - 1) * all_data) * data_size;
+		result_addr = (temp_id - (data_cycle - 1) * all_data) * data_size;
 	}
 
     result_addr = result_addr + temp_cfs_object->addr_handle;
@@ -234,29 +234,30 @@ static bool __read_flash_data_block(volatile uint32_t addr, cfs_data_block * blo
 static bool __write_flash_data( \
     volatile uint32_t addr, uint8_t * buffer, uint16_t len)
 {
-    uint32_t data_handle = (uint32_t)(buffer);
-
     cfs_port_system_flash_lock_enable();
 
     while(len != 0)
     {
         if(addr % 4 == 0 && len >= 4)
         {
-            cfs_port_system_flash_write_word(addr, (uint8_t *)data_handle, len / 4);
-            len = len - (len / 4);
-            data_handle = data_handle + (len / 4) * 4;
+            cfs_port_system_flash_write_word(addr, buffer, len / 4);
+            buffer += (len / 4) * 4;
+            addr += (len / 4) * 4;
+            len -= (len / 4) * 4;
         }
         else if(addr % 2 == 0 && len >= 2)
         {
-            cfs_port_system_flash_write_half_word(addr, (uint8_t *)data_handle, len / 2);
-            len = len - (len / 2);
-            data_handle = data_handle + (len / 2) * 2;
+            cfs_port_system_flash_write_half_word(addr, buffer, len / 2);
+            buffer += (len / 2) * 2;
+            addr += (len / 2) * 2;
+            len -= (len / 2) * 2;
         }
         else
         {
-            cfs_port_system_flash_write_byte(addr, (uint8_t *)data_handle, 1);
+            cfs_port_system_flash_write_byte(addr, buffer, 1);
+            buffer++;
+            addr++;
             len--;
-            data_handle++;
         }
     }
 
@@ -336,7 +337,7 @@ cfs_oc_action_data_result cfs_system_oc_read_flash_data( \
     while(i--)
     {
         __read_flash_data_block(addr, buffer);
-        uint16_t check_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer);
+        uint16_t check_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer, true);
 
         if(buffer->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
         {
@@ -374,7 +375,7 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
     const uint32_t data_block_lent = \
         buffer->data_len + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
 
-    buffer->data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer);
+    buffer->data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer, true);
 
     if(data_addr == temp_cfs->addr_handle) 
     {
@@ -427,7 +428,7 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
         (uint8_t *)CFS_MALLOC(temp_cfs_objecr->sector_size * read_page_count);
     temo_read_sector_data = read_sector_data;
     
-    uint16_t temp_data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer);
+    uint16_t temp_data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer, true);
 
     cfs_port_system_flash_read(\
         start_addr, read_sector_data, temp_cfs_objecr->sector_size);

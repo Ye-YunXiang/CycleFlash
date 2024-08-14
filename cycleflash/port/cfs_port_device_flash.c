@@ -57,8 +57,8 @@ bool cfs_port_system_flash_write_byte( \
     for(i=0; i< len; i++)
     {
         Flash_WriteByte(addr, *data);
-        addr += 0x01;
-        data++;
+        addr += 1u;
+        data += 1u;
     }
 
     return true;
@@ -68,11 +68,13 @@ bool cfs_port_system_flash_write_half_word( \
     volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
 {
     uint16_t i;
+    volatile uint16_t write_u16data = 0;
     for(i=0; i< len; i++)
     {
-        Flash_WriteHalfWord(addr, *data);
-        addr += 0x01;
-        data++;
+        write_u16data = (data[0]) | (data[1] << 8);
+        Flash_WriteHalfWord(addr, write_u16data);
+        addr += 2u;
+        data += 2u;
     }
 
     return true;
@@ -82,11 +84,13 @@ bool cfs_port_system_flash_write_word( \
     volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
 {
     uint16_t i;
+    volatile uint32_t write_u32data = 0;
     for(i=0; i< len; i++)
     {
-        Flash_WriteWord(addr, *data);
-        addr += 0x01;
-        data++;
+        write_u32data = (data[0]) | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
+        Flash_WriteWord(addr, write_u32data);
+        addr += 4u;
+        data += 4u;
     }
 
     return true;
