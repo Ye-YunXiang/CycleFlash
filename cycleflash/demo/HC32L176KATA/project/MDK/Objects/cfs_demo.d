@@ -1,0 +1,11 @@
+.\objects\cfs_demo.o: ..\..\cfs\cfs_DEMO.c
+.\objects\cfs_demo.o: C:\Software\Programme\Keil_v5\ARM\ARMCC\Bin\..\include\assert.h
+.\objects\cfs_demo.o: C:\Software\Programme\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\cfs_demo.o: C:\Software\Programme\Keil_v5\ARM\ARMCC\Bin\..\include\errno.h
+.\objects\cfs_demo.o: ..\..\cfs\cfs_DEMO.h
+.\objects\cfs_demo.o: C:\Software\Programme\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\cfs_demo.o: C:\Software\Programme\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\cfs_demo.o: C:\GitRepository\CycleFlash\cycleflash\include\cycle_flash_system.h
+.\objects\cfs_demo.o: C:\Software\Programme\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\cfs_demo.o: C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h
+.\objects\cfs_demo.o: C:\Software\Programme\Keil_v5\ARM\ARMCC\Bin\..\include\limits.h

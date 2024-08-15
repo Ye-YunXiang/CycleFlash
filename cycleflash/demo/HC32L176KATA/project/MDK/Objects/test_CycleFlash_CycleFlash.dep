@@ -1,0 +1,779 @@
+Dependencies for Project 'test_CycleFlash', Target 'CycleFlash': (DO NOT MODIFY !)
+F (..\..\common\interrupts_hc32l17x.c)(0x653100DD)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\interrupts_hc32l17x.o --omf_browse .\objects\interrupts_hc32l17x.crf --depend .\objects\interrupts_hc32l17x.d)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\common\system_hc32l17x.c)(0x6507C053)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\system_hc32l17x.o --omf_browse .\objects\system_hc32l17x.crf --depend .\objects\system_hc32l17x.d)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\common\startup_hc32l17x.s)(0x66B9C655)(--cpu Cortex-M0+ -g --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include--pd "__UVISION_VERSION SETA 528" --pd "_RTE_ SETA 1"--list .\listings\startup_hc32l17x.lst --xref -o .\objects\startup_hc32l17x.o --depend .\objects\startup_hc32l17x.d)
+F (..\..\driver\src\adc.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\adc.o --omf_browse .\objects\adc.crf --depend .\objects\adc.d)
+I (..\..\driver\inc\adc.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\adt.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\adt.o --omf_browse .\objects\adt.crf --depend .\objects\adt.d)
+I (..\..\driver\inc\adt.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\aes.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\aes.o --omf_browse .\objects\aes.crf --depend .\objects\aes.d)
+I (..\..\driver\inc\aes.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\bgr.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\bgr.o --omf_browse .\objects\bgr.crf --depend .\objects\bgr.d)
+I (..\..\driver\inc\bgr.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\bt.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\bt.o --omf_browse .\objects\bt.crf --depend .\objects\bt.d)
+I (..\..\driver\inc\bt.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\crc.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\crc.o --omf_browse .\objects\crc.crf --depend .\objects\crc.d)
+I (..\..\driver\inc\crc.h)(0x66B0B6ED)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\dac.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\dac.o --omf_browse .\objects\dac.crf --depend .\objects\dac.d)
+I (..\..\driver\inc\dac.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\ddl.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\ddl.o --omf_browse .\objects\ddl.crf --depend .\objects\ddl.d)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\debug.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\debug.o --omf_browse .\objects\debug.crf --depend .\objects\debug.d)
+I (..\..\driver\inc\debug.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\dmac.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\dmac.o --omf_browse .\objects\dmac.crf --depend .\objects\dmac.d)
+I (..\..\driver\inc\dmac.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\flash.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\flash.o --omf_browse .\objects\flash.crf --depend .\objects\flash.d)
+I (..\..\driver\inc\flash.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\gpio.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\gpio.o --omf_browse .\objects\gpio.crf --depend .\objects\gpio.d)
+I (..\..\driver\inc\gpio.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\i2c.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\i2c.o --omf_browse .\objects\i2c.crf --depend .\objects\i2c.d)
+I (..\..\driver\inc\i2c.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\lcd.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\lcd.o --omf_browse .\objects\lcd.crf --depend .\objects\lcd.d)
+I (..\..\driver\inc\lcd.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\lpm.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\lpm.o --omf_browse .\objects\lpm.crf --depend .\objects\lpm.d)
+I (..\..\driver\inc\lpm.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\lptim.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\lptim.o --omf_browse .\objects\lptim.crf --depend .\objects\lptim.d)
+I (..\..\driver\inc\lptim.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\lpuart.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\lpuart.o --omf_browse .\objects\lpuart.crf --depend .\objects\lpuart.d)
+I (..\..\driver\inc\lpuart.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\lvd.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\lvd.o --omf_browse .\objects\lvd.crf --depend .\objects\lvd.d)
+I (..\..\driver\inc\lvd.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\opa.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\opa.o --omf_browse .\objects\opa.crf --depend .\objects\opa.d)
+I (..\..\driver\inc\opa.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\pca.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\pca.o --omf_browse .\objects\pca.crf --depend .\objects\pca.d)
+I (..\..\driver\inc\pca.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\pcnt.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\pcnt.o --omf_browse .\objects\pcnt.crf --depend .\objects\pcnt.d)
+I (..\..\driver\inc\pcnt.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\ram.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\ram.o --omf_browse .\objects\ram.crf --depend .\objects\ram.d)
+I (..\..\driver\inc\ram.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\reset.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\reset.o --omf_browse .\objects\reset.crf --depend .\objects\reset.d)
+I (..\..\driver\inc\reset.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\rtc.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\rtc.o --omf_browse .\objects\rtc.crf --depend .\objects\rtc.d)
+I (..\..\driver\inc\rtc.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\spi.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\spi.o --omf_browse .\objects\spi.crf --depend .\objects\spi.d)
+I (..\..\driver\inc\spi.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\sysctrl.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\sysctrl.o --omf_browse .\objects\sysctrl.crf --depend .\objects\sysctrl.d)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\timer3.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\timer3.o --omf_browse .\objects\timer3.crf --depend .\objects\timer3.d)
+I (..\..\driver\inc\timer3.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\trim.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\trim.o --omf_browse .\objects\trim.crf --depend .\objects\trim.d)
+I (..\..\driver\inc\trim.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\trng.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\trng.o --omf_browse .\objects\trng.crf --depend .\objects\trng.d)
+I (..\..\driver\inc\trng.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\uart.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\uart.o --omf_browse .\objects\uart.crf --depend .\objects\uart.d)
+I (..\..\driver\inc\uart.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\vc.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\vc.o --omf_browse .\objects\vc.crf --depend .\objects\vc.d)
+I (..\..\driver\inc\vc.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\..\driver\src\wdt.c)(0x66B0B6ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\wdt.o --omf_browse .\objects\wdt.crf --depend .\objects\wdt.d)
+I (..\..\driver\inc\wdt.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (..\source\main.c)(0x66BD9DA3)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+I (..\source\main_file_define.h)(0x66BD9DD2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5CEB79DE)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\math.h)(0x5CEB79D6)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+I (..\..\driver\inc\rtc.h)(0x66B0B6ED)
+I (..\..\driver\inc\uart.h)(0x66B0B6ED)
+I (..\..\driver\inc\flash.h)(0x66B0B6ED)
+I (..\..\driver\inc\bt.h)(0x66B0B6ED)
+I (..\user\user_int\system_gpio_define.h)(0x66BDA2B4)
+I (..\..\driver\inc\gpio.h)(0x66B0B6ED)
+I (..\user\user_int\system_uart.h)(0x66BDA29F)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cycle_flash_system.h)(0x66BD970E)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BC749E)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\limits.h)(0x5CEB79D6)
+I (..\..\cfs\cfs_DEMO.h)(0x66BD9760)
+F (..\user\user_src\system_uart.c)(0x66BDA2CC)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\system_uart.o --omf_browse .\objects\system_uart.crf --depend .\objects\system_uart.d)
+I (..\user\user_int\system_uart.h)(0x66BDA29F)
+I (..\source\main_file_define.h)(0x66BD9DD2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5CEB79DE)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\math.h)(0x5CEB79D6)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+I (..\..\driver\inc\rtc.h)(0x66B0B6ED)
+I (..\..\driver\inc\uart.h)(0x66B0B6ED)
+I (..\..\driver\inc\flash.h)(0x66B0B6ED)
+I (..\..\driver\inc\bt.h)(0x66B0B6ED)
+I (..\user\user_int\system_gpio_define.h)(0x66BDA2B4)
+I (..\..\driver\inc\gpio.h)(0x66B0B6ED)
+F (C:\GitRepository\CycleFlash\cycleflash\src\cfs_system_oc.c)(0x66BD79B2)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\cfs_system_oc.o --omf_browse .\objects\cfs_system_oc.crf --depend .\objects\cfs_system_oc.d)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\limits.h)(0x5CEB79D6)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_oc.h)(0x66B9E142)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5CEB79DE)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5CEB79E2)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BC749E)
+I (C:\GitRepository\CycleFlash\cycleflash\port\cfs_port_device_flash.h)(0x66B9D103)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_utils.h)(0x66BC822D)
+F (C:\GitRepository\CycleFlash\cycleflash\src\cfs_system_utils.c)(0x66BC82ED)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\cfs_system_utils.o --omf_browse .\objects\cfs_system_utils.crf --depend .\objects\cfs_system_utils.d)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_utils.h)(0x66BC822D)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5CEB79DE)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BC749E)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\limits.h)(0x5CEB79D6)
+F (C:\GitRepository\CycleFlash\cycleflash\src\cycle_flash_system.c)(0x66BD92A5)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\cycle_flash_system.o --omf_browse .\objects\cycle_flash_system.crf --depend .\objects\cycle_flash_system.d)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_oc.h)(0x66B9E142)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5CEB79DE)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5CEB79E2)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BC749E)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\limits.h)(0x5CEB79D6)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cycle_flash_system.h)(0x66BD970E)
+I (C:\GitRepository\CycleFlash\cycleflash\port\cfs_port_device_flash.h)(0x66B9D103)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_utils.h)(0x66BC822D)
+F (..\..\cfs\cfs_DEMO.c)(0x66BD986F)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\cfs_demo.o --omf_browse .\objects\cfs_demo.crf --depend .\objects\cfs_demo.d)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\errno.h)(0x5CEB79E4)
+I (..\..\cfs\cfs_DEMO.h)(0x66BD9760)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5CEB79DE)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cycle_flash_system.h)(0x66BD970E)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5CEB79E2)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BC749E)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\limits.h)(0x5CEB79D6)
+F (..\..\cfs\cfs_port_device_flash.c)(0x66BC87C7)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\cfs_port_device_flash.o --omf_browse .\objects\cfs_port_device_flash.crf --depend .\objects\cfs_port_device_flash.d)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BC749E)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\limits.h)(0x5CEB79D6)
+I (C:\GitRepository\CycleFlash\cycleflash\port\cfs_port_device_flash.h)(0x66B9D103)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5CEB79DE)
+I (..\..\driver\inc\flash.h)(0x66B0B6ED)
+I (..\..\driver\inc\ddl.h)(0x66B0B6ED)
+I (..\..\common\base_types.h)(0x5CF4FF30)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (..\..\common\board_stkhc32l17x.h)(0x5DA8379B)
+I (..\..\common\hc32l17x.h)(0x5D1972D3)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\core_cm0plus.h)(0x5C8B5FF6)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_version.h)(0x5B971444)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_compiler.h)(0x5C8F4DD4)
+I (C:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include\cmsis_armcc.h)(0x5C8F4DD4)
+I (..\..\common\system_hc32l17x.h)(0x5ED6398F)
+I (..\..\driver\inc\sysctrl.h)(0x66B0B6ED)
+I (..\..\common\interrupts_hc32l17x.h)(0x5CD95BFF)
+I (..\source\ddl_device.h)(0x5ED63EE1)
+F (C:\Users\11983\AppData\Local\Arm\Packs\Keil\ARM_Compiler\1.6.1\Source\retarget_io.c)(0x584E29BE)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\retarget_io.o --omf_browse .\objects\retarget_io.crf --depend .\objects\retarget_io.d)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5CEB79E2)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
+I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\rt_sys.h)(0x5CEB79E0)
+I (.\RTE\_CycleFlash\RTE_Components.h)(0x66BD9B3E)
