@@ -57,7 +57,10 @@ Created: 2024.7.29
     - 得出结论：`result_id = id + 1`
   - 否则：
     - 如果分配的总页数 > 1:
-      - 得出结论：`all_data - (扇叶大小 / 数据块大小) - 1`
+      - 先得出ID对应的数据结束地址：`id_end_addr = id对应的存储地址 + 数据块大小`
+      - 判断是否刚好存满 `if((id+1) % all_data)`
+        - 为真得出结果: `result_id = all_data;`
+        - 为假结果：`result_id =  (all_data - ((((id_end_addr / 扇叶大小) + 1) * 扇叶大小 - 分配区域的起始地址) / 数据块大小) - 1) + (id + 1) % all_data`
     - 如果分配的总页数 = 1:
       - 得出结论：`result_id = data_cycle_int == 0 ? all_data : data_cycle_int`
 

@@ -81,7 +81,22 @@ uint32_t cfs_system_oc_valid_data_number( \
 	{
         if(temp_cfs_object->sector_count > 1)
         {
-            result_id = all_data - (temp_cfs_object->sector_size / data_size) - 1;
+            // result_id = all_data - (temp_cfs_object->sector_size / data_size) - 1;
+            uint32_t temp_id_end_addr = cfs_system_oc_via_id_calculate_addr( \
+                temp_linked_object, temp_linked_object->data_id) + data_size;
+            if((temp_linked_object->data_id + 1) % all_data == 0)
+            {
+                // 刚好满
+                result_id = all_data;
+            }
+            else
+            {
+                // 还没满
+                result_id = \
+                    (all_data - ((((temp_id_end_addr / temp_cfs_object->sector_size) + 1)\
+                    * temp_cfs_object->sector_size - temp_cfs_object->addr_handle) / \
+                    data_size) - 1) + (temp_linked_object->data_id + 1) % all_data;
+            }
         }
         else
         {
