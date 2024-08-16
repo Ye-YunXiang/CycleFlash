@@ -416,7 +416,9 @@ uint32_t cfs_nv_write(cfs_system_handle_t temp_object_handle, \
     uint32_t result_len = NULL;
     cfs_object_linked_list *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
-    if(temp_object == NULL || temp_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
+    cfs_system *temp_cfs_object = cfs_system_oc_system_object_get(temp_object);
+    if(temp_object == NULL || temp_id == CFS_CONFIG_NOT_LINKED_DATA_ID || \
+        len > temp_cfs_object->data_size)
     {
         return result_len;
     }
@@ -452,12 +454,14 @@ uint32_t cfs_nv_read(cfs_system_handle_t temp_object_handle, \
     uint32_t result_len = NULL;
     cfs_object_linked_list *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
-    if(temp_object == NULL || read_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
+    cfs_system *temp_cfs_object = cfs_system_oc_system_object_get(temp_object);
+    if(temp_object == NULL || read_id == CFS_CONFIG_NOT_LINKED_DATA_ID || \
+        len > temp_cfs_object->data_size)
     {
         return false;
     }
 
-    cfs_system *temp_cfs_object = cfs_system_oc_system_object_get(temp_object);
+    
     const uint32_t  temp_max_id = \
         temp_cfs_object->sector_size * temp_cfs_object->sector_count / \
         (temp_cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);

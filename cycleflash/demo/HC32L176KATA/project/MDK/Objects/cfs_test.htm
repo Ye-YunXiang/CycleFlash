@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\cfs_test.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\cfs_test.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu Aug 15 14:40:16 2024
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Aug 16 17:19:07 2024
 <BR><P>
 <H3>Maximum Stack Usage =        328 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -874,8 +874,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_filesystem_object_add_oc_object
 </UL>
 
-<P><STRONG><a name="[90]"></a>cfs_system_oc_add_write_flash_data</STRONG> (Thumb, 164 bytes, Stack size 40 bytes, cfs_system_oc.o(i.cfs_system_oc_add_write_flash_data))
-<BR><BR>[Stack]<UL><LI>Max Depth = 132<LI>Call Chain = cfs_system_oc_add_write_flash_data &rArr; __write_flash_data_block &rArr; __write_flash_data &rArr; cfs_port_system_flash_write_word &rArr; Flash_WriteWord
+<P><STRONG><a name="[90]"></a>cfs_system_oc_add_write_flash_data</STRONG> (Thumb, 166 bytes, Stack size 40 bytes, cfs_system_oc.o(i.cfs_system_oc_add_write_flash_data))
+<BR><BR>[Stack]<UL><LI>Max Depth = 140<LI>Call Chain = cfs_system_oc_add_write_flash_data &rArr; __write_flash_data_block &rArr; __write_flash_data &rArr; cfs_port_system_flash_write_word &rArr; Flash_WriteWord
 </UL>
 <BR>[Calls]<UL><LI><a href="#[2d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
 <LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_utils_crc16_xmodem_check_data_block
@@ -1245,8 +1245,8 @@ Local Symbols
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__write_flash_data_block
 </UL>
 
-<P><STRONG><a name="[86]"></a>__write_flash_data_block</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, cfs_system_oc.o(i.__write_flash_data_block))
-<BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = __write_flash_data_block &rArr; __write_flash_data &rArr; cfs_port_system_flash_write_word &rArr; Flash_WriteWord
+<P><STRONG><a name="[86]"></a>__write_flash_data_block</STRONG> (Thumb, 64 bytes, Stack size 24 bytes, cfs_system_oc.o(i.__write_flash_data_block))
+<BR><BR>[Stack]<UL><LI>Max Depth = 100<LI>Call Chain = __write_flash_data_block &rArr; __write_flash_data &rArr; cfs_port_system_flash_write_word &rArr; Flash_WriteWord
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_port_system_flash_lock_enable
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_port_system_flash_lock_disable

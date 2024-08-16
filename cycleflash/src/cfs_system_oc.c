@@ -280,7 +280,8 @@ static bool __write_flash_data( \
     return true;
 }
 
-static bool __write_flash_data_block(volatile uint32_t addr, cfs_data_block * block)
+static bool __write_flash_data_block( \
+    volatile uint32_t addr, cfs_data_block * block, cfs_system *temp_cfs)
 {
     // 根据字符大小定制的写入逻辑
     assert(sizeof(block->data_id) == 4 && \
@@ -291,7 +292,7 @@ static bool __write_flash_data_block(volatile uint32_t addr, cfs_data_block * bl
     __write_flash_data(addr, (uint8_t *)(&block->data_id), sizeof(block->data_id));
     addr += sizeof(block->data_id);
     __write_flash_data(addr, block->data_pointer, block->data_len);
-    addr += block->data_len;
+    addr += temp_cfs->data_size;
     __write_flash_data(addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
 
     cfs_port_system_flash_lock_disable();
@@ -388,7 +389,7 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
         (data_addr / temp_cfs->sector_size) * temp_cfs->sector_size;
     const uint32_t max_addr = start_addr + temp_cfs->sector_size;
     const uint32_t data_block_lent = \
-        buffer->data_len + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
+        temp_cfs->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
 
     buffer->data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer, true);
 
@@ -400,7 +401,7 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
     {
         cfs_port_system_flash_erasing_page(max_addr, 1);
     }
-    __write_flash_data_block(data_addr, buffer);
+    __write_flash_data_block(data_addr, buffer, temp_cfs);
 
     if(__contrast_flash_data_block(data_addr, buffer) == false)
     {
@@ -429,7 +430,7 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
         (data_addr / temp_cfs_objecr->sector_size) * temp_cfs_objecr->sector_size;
     const uint32_t max_addr = start_addr + temp_cfs_objecr->sector_size;
     const uint32_t data_block_lent = \
-        buffer->data_len + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
+        temp_cfs_objecr->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
 
     uint8_t *read_sector_data = NULL;
     uint8_t *temo_read_sector_data = NULL;
@@ -583,13 +584,6 @@ cfs_system *cfs_system_oc_system_object_get(const cfs_object_linked_list *temp_o
 cfs_object_linked_list * cfs_system_oc_object_linked_crc_16_verify( \
     cfs_system_handle_t temp_cfs_handle)
 {
-    // uint32_t temp_crc_handle = (uint32_t)temp_cfs_handle;
-    // cfs_object_linked_list *temp_object = \
-    //     (cfs_object_linked_list *)(temp_cfs_handle);
-    // uint16_t temp_crc_16 = \
-    //     cfs_system_utils_crc16_xmodem_check( \
-    //     (uint8_t *)(&temp_crc_handle), sizeof(temp_crc_handle));
-
     cfs_object_linked_list *temp_object = \
         (cfs_object_linked_list *)((uint32_t)(temp_cfs_handle>>16));
     uint16_t temp_crc_16 = (uint16_t)(temp_cfs_handle);
