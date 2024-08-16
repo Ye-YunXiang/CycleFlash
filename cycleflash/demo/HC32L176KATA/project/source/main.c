@@ -6,7 +6,7 @@
 // 用keil调试，在每个if判断的地方自己打开修改。
 
 uint32_t id = 0;
-uint8_t data[] = "abcdefghijklnmopqrstuvwxyz1"; //27
+uint8_t data[] = "abcdefg"; //27
 uint8_t data_read[28];
 char uart_data[100];
 
@@ -39,7 +39,7 @@ int32_t main(void)
         for(int i=0; i<60; i++)
         {
             memset(&data_read[0], 0, sizeof(data_read));
-            flash_filesystem_write_product_nv(id, &data[0], 27);
+            flash_filesystem_write_product_nv(id, &data[0], strlen((char *)data));
             
             temp_id = flash_filesystem_product_current_id_get(); 
             temp_valid_id = flash_filesystem_product_current_valid_id_get();
@@ -71,7 +71,7 @@ int32_t main(void)
         {
             memset(&data_read[0], 0, sizeof(data_read));
             memset(uart_data, 0, sizeof(uart_data));
-            flash_filesystem_read_product_nv(i, &data_read[0], 27);
+            flash_filesystem_read_product_nv(i, &data_read[0], strlen((char *)data));
             data_read[27] = '\0';
             sprintf(&uart_data[0], "ID = %d, BODY: %s \r\n", i, &data_read[0]);
             system_ble_uart0_send_string(&uart_data[0], (strlen(uart_data)+1));

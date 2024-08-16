@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\cfs_test.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\cfs_test.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Aug 16 17:19:07 2024
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Aug 16 17:47:34 2024
 <BR><P>
 <H3>Maximum Stack Usage =        328 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -759,7 +759,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;flash_filesystem_init
 </UL>
 
-<P><STRONG><a name="[88]"></a>cfs_nv_read</STRONG> (Thumb, 184 bytes, Stack size 56 bytes, cycle_flash_system.o(i.cfs_nv_read))
+<P><STRONG><a name="[88]"></a>cfs_nv_read</STRONG> (Thumb, 192 bytes, Stack size 56 bytes, cycle_flash_system.o(i.cfs_nv_read))
 <BR><BR>[Stack]<UL><LI>Max Depth = 224<LI>Call Chain = cfs_nv_read &rArr; cfs_filesystem_flsh_data_read &rArr; cfs_system_oc_read_flash_data &rArr; cfs_system_oc_via_id_calculate_addr &rArr; __aeabi_assert &rArr; fputs &rArr; fputc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_idivmod
@@ -774,12 +774,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_internal_flash_filesystem_read_nv
 </UL>
 
-<P><STRONG><a name="[8a]"></a>cfs_nv_write</STRONG> (Thumb, 112 bytes, Stack size 32 bytes, cycle_flash_system.o(i.cfs_nv_write))
+<P><STRONG><a name="[8a]"></a>cfs_nv_write</STRONG> (Thumb, 130 bytes, Stack size 32 bytes, cycle_flash_system.o(i.cfs_nv_write))
 <BR><BR>[Stack]<UL><LI>Max Depth = 240<LI>Call Chain = cfs_nv_write &rArr; cfs_filesystem_fixed_data_write &rArr; cfs_system_oc_set_write_flash_data &rArr; cfs_system_oc_via_id_calculate_addr &rArr; __aeabi_assert &rArr; fputs &rArr; fputc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_filesystem_fixed_data_write
 <LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_filesystem_cycle_data_write
 <LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_assert
+<LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_system_object_get
 <LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_object_struct_type_get
 <LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_object_linked_crc_16_verify
 </UL>
@@ -874,7 +875,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_filesystem_object_add_oc_object
 </UL>
 
-<P><STRONG><a name="[90]"></a>cfs_system_oc_add_write_flash_data</STRONG> (Thumb, 166 bytes, Stack size 40 bytes, cfs_system_oc.o(i.cfs_system_oc_add_write_flash_data))
+<P><STRONG><a name="[90]"></a>cfs_system_oc_add_write_flash_data</STRONG> (Thumb, 168 bytes, Stack size 40 bytes, cfs_system_oc.o(i.cfs_system_oc_add_write_flash_data))
 <BR><BR>[Stack]<UL><LI>Max Depth = 140<LI>Call Chain = cfs_system_oc_add_write_flash_data &rArr; __write_flash_data_block &rArr; __write_flash_data &rArr; cfs_port_system_flash_write_word &rArr; Flash_WriteWord
 </UL>
 <BR>[Calls]<UL><LI><a href="#[2d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
@@ -961,12 +962,13 @@ Global Symbols
 <LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_filesystem_cycle_data_write
 </UL>
 
-<P><STRONG><a name="[99]"></a>cfs_system_oc_read_flash_data</STRONG> (Thumb, 120 bytes, Stack size 32 bytes, cfs_system_oc.o(i.cfs_system_oc_read_flash_data))
+<P><STRONG><a name="[99]"></a>cfs_system_oc_read_flash_data</STRONG> (Thumb, 130 bytes, Stack size 32 bytes, cfs_system_oc.o(i.cfs_system_oc_read_flash_data))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = cfs_system_oc_read_flash_data &rArr; cfs_system_oc_via_id_calculate_addr &rArr; __aeabi_assert &rArr; fputs &rArr; fputc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_utils_crc16_xmodem_check_data_block
 <LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_assert
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_via_id_calculate_addr
+<LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_system_object_get
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__read_flash_data_block
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_filesystem_tight_data_page_id_init
@@ -997,10 +999,12 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[96]"></a>cfs_system_oc_system_object_get</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, cfs_system_oc.o(i.cfs_system_oc_system_object_get))
-<BR><BR>[Called By]<UL><LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_nv_read
+<BR><BR>[Called By]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_nv_write
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_nv_read
 <LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_filesystem_tight_data_page_id_init
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_filesystem_fixed_data_write
 <LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_set_write_flash_data
+<LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_read_flash_data
 <LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_add_write_flash_data
 </UL>
 
@@ -1141,7 +1145,7 @@ Global Symbols
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_add_object
 </UL>
 
-<P><STRONG><a name="[39]"></a>$Super$$main</STRONG> (Thumb, 550 bytes, Stack size 8 bytes, main.o(i.main))
+<P><STRONG><a name="[39]"></a>$Super$$main</STRONG> (Thumb, 566 bytes, Stack size 8 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 320<LI>Call Chain = $Super$$main &rArr; flash_filesystem_write_product_nv &rArr; _internal_flash_filesystem_write_nv &rArr; cfs_nv_write &rArr; cfs_filesystem_fixed_data_write &rArr; cfs_system_oc_set_write_flash_data &rArr; cfs_system_oc_via_id_calculate_addr &rArr; __aeabi_assert &rArr; fputs &rArr; fputc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
@@ -1212,8 +1216,8 @@ Local Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[27]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemInit
 </UL>
 
-<P><STRONG><a name="[7c]"></a>__contrast_flash_data_block</STRONG> (Thumb, 86 bytes, Stack size 24 bytes, cfs_system_oc.o(i.__contrast_flash_data_block))
-<BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = __contrast_flash_data_block &rArr; cfs_port_system_flash_read_contrast &rArr; memcmp
+<P><STRONG><a name="[7c]"></a>__contrast_flash_data_block</STRONG> (Thumb, 88 bytes, Stack size 32 bytes, cfs_system_oc.o(i.__contrast_flash_data_block))
+<BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = __contrast_flash_data_block &rArr; cfs_port_system_flash_read_contrast &rArr; memcmp
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_port_system_flash_read_contrast
 <LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_port_system_flash_lock_enable
@@ -1222,8 +1226,8 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_add_write_flash_data
 </UL>
 
-<P><STRONG><a name="[80]"></a>__read_flash_data_block</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, cfs_system_oc.o(i.__read_flash_data_block))
-<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = __read_flash_data_block &rArr; cfs_port_system_flash_read
+<P><STRONG><a name="[80]"></a>__read_flash_data_block</STRONG> (Thumb, 64 bytes, Stack size 24 bytes, cfs_system_oc.o(i.__read_flash_data_block))
+<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = __read_flash_data_block &rArr; cfs_port_system_flash_read
 </UL>
 <BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_port_system_flash_read
 <LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_port_system_flash_lock_enable

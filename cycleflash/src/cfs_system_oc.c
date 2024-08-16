@@ -228,7 +228,8 @@ uint32_t cfs_system_oc_via_id_calculate_addr( \
 // *****************************************************************************************************
 // 写入和读取数据 —— 内部处理
 
-static bool __read_flash_data_block(volatile uint32_t addr, cfs_data_block * block)
+static bool __read_flash_data_block( \
+    volatile uint32_t addr, cfs_data_block * block, cfs_system *temp_cfs)
 {
     cfs_port_system_flash_lock_enable();
 
@@ -237,7 +238,7 @@ static bool __read_flash_data_block(volatile uint32_t addr, cfs_data_block * blo
     addr += sizeof(block->data_id);
     cfs_port_system_flash_read(\
         addr, block->data_pointer, block->data_len);
-    addr += block->data_len;
+    addr += temp_cfs->data_size;
     cfs_port_system_flash_read(\
         addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
 
@@ -301,7 +302,7 @@ static bool __write_flash_data_block( \
 }
 
 static bool __contrast_flash_data_block( \
-    volatile uint32_t addr, const cfs_data_block * block)
+    volatile uint32_t addr, const cfs_data_block * block, cfs_system *temp_cfs)
 {
     bool result = false;
     cfs_port_system_flash_lock_enable();
@@ -323,7 +324,7 @@ static bool __contrast_flash_data_block( \
             break;
         }
 
-        addr += block->data_len;
+        addr += temp_cfs->data_size;
         cfs_port_system_flash_read_contrast( \
             addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
 
@@ -346,13 +347,14 @@ cfs_oc_action_data_result cfs_system_oc_read_flash_data( \
     assert(buffer->data_pointer != NULL || buffer->data_len >= 1);
 
     const uint32_t addr = cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
+    cfs_system *temp_cfs = cfs_system_oc_system_object_get(temp_object);
 
     cfs_oc_action_data_result result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
 
     volatile uint8_t i = 2;
     while(i--)
     {
-        __read_flash_data_block(addr, buffer);
+        __read_flash_data_block(addr, buffer, temp_cfs);
         uint16_t check_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer, true);
 
         if(buffer->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
@@ -403,7 +405,7 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
     }
     __write_flash_data_block(data_addr, buffer, temp_cfs);
 
-    if(__contrast_flash_data_block(data_addr, buffer) == false)
+    if(__contrast_flash_data_block(data_addr, buffer, temp_cfs) == false)
     {
         read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
     }
