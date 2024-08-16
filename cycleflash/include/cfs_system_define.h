@@ -41,6 +41,9 @@ typedef uint64_t cfs_system_handle_t;
 // 一页FLASH大小
 #define CFS_BUFFER_SIZE 512
 
+// 擦除FLASH的默认值
+#define CFS_FLASH_ERASURE 0xFF
+
 // 定义初始化内存的方式
 #define CFS_MALLOC      malloc 
 #define CFS_FREE        free

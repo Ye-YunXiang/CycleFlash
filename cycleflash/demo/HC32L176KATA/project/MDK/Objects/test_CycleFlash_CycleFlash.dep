@@ -642,7 +642,7 @@ I (..\..\common\system_hc32l17x.h)(0x66BF15C5)
 I (..\..\driver\inc\sysctrl.h)(0x66BF15C5)
 I (..\..\common\interrupts_hc32l17x.h)(0x66BF15C5)
 I (..\source\ddl_device.h)(0x66BF15C5)
-F (..\source\main.c)(0x66BF2032)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (..\source\main.c)(0x66BF251E)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (..\source\main_file_define.h)(0x66BF15C5)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5CEB79E2)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5CEB79DE)
@@ -672,7 +672,7 @@ I (..\user\user_int\system_gpio_define.h)(0x66BF15C5)
 I (..\..\driver\inc\gpio.h)(0x66BF15C5)
 I (..\user\user_int\system_uart.h)(0x66BF15C5)
 I (C:\GitRepository\CycleFlash\cycleflash\include\cycle_flash_system.h)(0x66BF15C5)
-I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BF15C5)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BF24C7)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\limits.h)(0x5CEB79D6)
 I (..\..\cfs\cfs_DEMO.h)(0x66BF15C5)
 F (..\user\user_src\system_uart.c)(0x66BF15C5)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\system_uart.o --omf_browse .\objects\system_uart.crf --depend .\objects\system_uart.d)
@@ -704,7 +704,7 @@ I (..\..\driver\inc\flash.h)(0x66BF15C5)
 I (..\..\driver\inc\bt.h)(0x66BF15C5)
 I (..\user\user_int\system_gpio_define.h)(0x66BF15C5)
 I (..\..\driver\inc\gpio.h)(0x66BF15C5)
-F (C:\GitRepository\CycleFlash\cycleflash\src\cfs_system_oc.c)(0x66BF1F7C)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\cfs_system_oc.o --omf_browse .\objects\cfs_system_oc.crf --depend .\objects\cfs_system_oc.d)
+F (C:\GitRepository\CycleFlash\cycleflash\src\cfs_system_oc.c)(0x66BF2C4D)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\cfs_system_oc.o --omf_browse .\objects\cfs_system_oc.crf --depend .\objects\cfs_system_oc.d)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\limits.h)(0x5CEB79D6)
@@ -712,7 +712,7 @@ I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_oc.h)(0x66BF15C5)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5CEB79DE)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5CEB79E2)
-I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BF15C5)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BF24C7)
 I (C:\GitRepository\CycleFlash\cycleflash\port\cfs_port_device_flash.h)(0x66BF15C5)
 I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_utils.h)(0x66BF15C5)
 F (C:\GitRepository\CycleFlash\cycleflash\src\cfs_system_utils.c)(0x66BF15C5)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\cfs_system_utils.o --omf_browse .\objects\cfs_system_utils.crf --depend .\objects\cfs_system_utils.d)
@@ -721,7 +721,7 @@ I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5CEB79E2)
 I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_utils.h)(0x66BF15C5)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5CEB79DE)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
-I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BF15C5)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BF24C7)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\limits.h)(0x5CEB79D6)
 F (C:\GitRepository\CycleFlash\cycleflash\src\cycle_flash_system.c)(0x66BF1D5D)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\cycle_flash_system.o --omf_browse .\objects\cycle_flash_system.crf --depend .\objects\cycle_flash_system.d)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\string.h)(0x5CEB79E2)
@@ -730,7 +730,7 @@ I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_oc.h)(0x66BF15C5)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5CEB79DE)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5CEB79E2)
-I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BF15C5)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BF24C7)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\limits.h)(0x5CEB79D6)
 I (C:\GitRepository\CycleFlash\cycleflash\include\cycle_flash_system.h)(0x66BF15C5)
 I (C:\GitRepository\CycleFlash\cycleflash\port\cfs_port_device_flash.h)(0x66BF15C5)
@@ -744,10 +744,10 @@ I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5CEB79DE)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
 I (C:\GitRepository\CycleFlash\cycleflash\include\cycle_flash_system.h)(0x66BF15C5)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5CEB79E2)
-I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BF15C5)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BF24C7)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\limits.h)(0x5CEB79D6)
-F (..\..\cfs\cfs_port_device_flash.c)(0x66BF15C5)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\cfs_port_device_flash.o --omf_browse .\objects\cfs_port_device_flash.crf --depend .\objects\cfs_port_device_flash.d)
-I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BF15C5)
+F (..\..\cfs\cfs_port_device_flash.c)(0x66BF2A12)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\cfs_port_device_flash.o --omf_browse .\objects\cfs_port_device_flash.crf --depend .\objects\cfs_port_device_flash.d)
+I (C:\GitRepository\CycleFlash\cycleflash\include\cfs_system_define.h)(0x66BF24C7)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEB79E2)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\limits.h)(0x5CEB79D6)
 I (C:\GitRepository\CycleFlash\cycleflash\port\cfs_port_device_flash.h)(0x66BF15C5)

@@ -155,7 +155,7 @@ bool cfs_port_system_flash_erasing_page(volatile uint32_t addr, uint16_t page)
     uint16_t i = 0;
     for(i = 0; i < page; i++)
     {
-        addr = addr + (i * 512);
+        addr += i * 512;
         while(Ok != Flash_SectorErase(addr)){};
     }
 

@@ -6,7 +6,8 @@
 // 用keil调试，在每个if判断的地方自己打开修改。
 
 uint32_t id = 0;
-uint8_t data[] = "abcdefg"; //27
+uint8_t data[27] = "abcdefg"; //27
+uint8_t data_1[27] = "q  w  e  a  s  d"; //27
 uint8_t data_read[28];
 char uart_data[100];
 
@@ -39,7 +40,7 @@ int32_t main(void)
         for(int i=0; i<60; i++)
         {
             memset(&data_read[0], 0, sizeof(data_read));
-            flash_filesystem_write_product_nv(id, &data[0], strlen((char *)data));
+            flash_filesystem_write_product_nv(id, &data[0], 27);
             
             temp_id = flash_filesystem_product_current_id_get(); 
             temp_valid_id = flash_filesystem_product_current_valid_id_get();
@@ -52,6 +53,12 @@ int32_t main(void)
                 __nop();
             }
         }
+        
+        flash_filesystem_write_product_nv(59, &data_1[0], 27);
+        flash_filesystem_write_product_nv(31, &data_1[0], 27);
+        flash_filesystem_write_product_nv(46, &data_1[0], 27);
+        flash_filesystem_write_product_nv(35, &data_1[0], 27);
+        flash_filesystem_write_product_nv(48, &data_1[0], 27);
     }
     
     //读取部分

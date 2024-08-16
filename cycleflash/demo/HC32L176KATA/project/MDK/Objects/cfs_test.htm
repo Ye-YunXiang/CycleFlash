@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\cfs_test.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\cfs_test.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Aug 16 17:47:34 2024
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Aug 16 18:39:13 2024
 <BR><P>
 <H3>Maximum Stack Usage =        328 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -154,6 +154,7 @@ Global Symbols
 <P><STRONG><a name="[2f]"></a>__aeabi_memset</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, memseta.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[30]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_memset$wrapper
 <LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
+<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_set_write_flash_data
 </UL>
 
 <P><STRONG><a name="[cc]"></a>__aeabi_memset4</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memseta.o(.text), UNUSED)
@@ -165,7 +166,6 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;$Super$$main
 <LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_filesystem_tight_data_page_id_init
-<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_set_write_flash_data
 <LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;system_uart0_config_init
 </UL>
 
@@ -975,10 +975,10 @@ Global Symbols
 <LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_filesystem_flsh_data_read
 </UL>
 
-<P><STRONG><a name="[91]"></a>cfs_system_oc_set_write_flash_data</STRONG> (Thumb, 272 bytes, Stack size 56 bytes, cfs_system_oc.o(i.cfs_system_oc_set_write_flash_data))
+<P><STRONG><a name="[91]"></a>cfs_system_oc_set_write_flash_data</STRONG> (Thumb, 262 bytes, Stack size 56 bytes, cfs_system_oc.o(i.cfs_system_oc_set_write_flash_data))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = cfs_system_oc_set_write_flash_data &rArr; cfs_system_oc_via_id_calculate_addr &rArr; __aeabi_assert &rArr; fputs &rArr; fputc
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
+<BR>[Calls]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memset
 <LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 <LI><a href="#[2d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
 <LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_utils_crc16_xmodem_check_data_block
@@ -991,8 +991,6 @@ Global Symbols
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_via_id_calculate_addr
 <LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_system_object_get
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__write_flash_data
-<LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;malloc
-<LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;free
 </UL>
 <BR>[Called By]<UL><LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_filesystem_fixed_data_write
 <LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_filesystem_cycle_data_write
@@ -1140,12 +1138,11 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = free
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_filesystem_tight_data_page_id_init
-<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_set_write_flash_data
 <LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_object_delete
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_add_object
 </UL>
 
-<P><STRONG><a name="[39]"></a>$Super$$main</STRONG> (Thumb, 566 bytes, Stack size 8 bytes, main.o(i.main))
+<P><STRONG><a name="[39]"></a>$Super$$main</STRONG> (Thumb, 608 bytes, Stack size 8 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 320<LI>Call Chain = $Super$$main &rArr; flash_filesystem_write_product_nv &rArr; _internal_flash_filesystem_write_nv &rArr; cfs_nv_write &rArr; cfs_filesystem_fixed_data_write &rArr; cfs_system_oc_set_write_flash_data &rArr; cfs_system_oc_via_id_calculate_addr &rArr; __aeabi_assert &rArr; fputs &rArr; fputc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
@@ -1169,7 +1166,6 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = malloc
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_filesystem_tight_data_page_id_init
-<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_set_write_flash_data
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cfs_system_oc_add_object
 <LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;system_uart0_config_init
 </UL>

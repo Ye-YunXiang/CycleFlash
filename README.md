@@ -29,6 +29,8 @@ CycleFlash 是一个用于管理MCU内置flash的轻量级管理系统，有简�
 ID从0开始，如果ID为 FFFF FFFF 就是无ID。
 ID要自己记录，可以通过接口得到内部ID记录到哪里了，只能加不能减。
 
+**写入的数据大小请和自己设定的数据大小相同，如太短，缺少地方会用 0xFF 补齐。**
+
 如果使用的是固定存储类型，要自己计算可使用的ID个数，不能超过了分配的内存页，否者直接报错。
 计算方式：根据 `cfs_system_define.h` 的 `CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN` 加初始化时分配的数据大小，就为没次存入数据块的数据大小。
 
