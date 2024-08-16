@@ -299,6 +299,13 @@ static uint32_t cfs_filesystem_cycle_data_write( \
         (temp_id == CFS_CONFIG_NOT_LINKED_DATA_ID && write_id == 0))
     {
         read_result = cfs_system_oc_add_write_flash_data(temp_object, &temp_data_block);
+
+        if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
+        {
+            cfs_system_oc_object_id_set(temp_object, write_id);
+            cfs_system_oc_object_valid_id_number_set( \
+                temp_object, cfs_system_oc_valid_data_number(temp_object));
+        }
     }
     else if((temp_id-temp_valid_id) < write_id <= temp_id)
     {
@@ -307,11 +314,6 @@ static uint32_t cfs_filesystem_cycle_data_write( \
 
     if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
     {
-        cfs_system_oc_object_id_set(temp_object, write_id);
-        
-        cfs_system_oc_object_valid_id_number_set( \
-            temp_object, cfs_system_oc_valid_data_number(temp_object));
-        
         return len;
     }
 

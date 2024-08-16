@@ -154,7 +154,7 @@
           <Type>0</Type>
           <LineNumber>35</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>9624</Address>
+          <Address>9740</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -168,9 +168,9 @@
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>59</LineNumber>
+          <LineNumber>66</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>9766</Address>
+          <Address>9914</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -179,23 +179,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\source\main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\cfs_test\../source/main.c\59</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>443</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>7996</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>C:\GitRepository\CycleFlash\cycleflash\src\cfs_system_oc.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\cfs_test\C:/GitRepository/CycleFlash/cycleflash/src/cfs_system_oc.c\443</Expression>
+          <Expression>\\cfs_test\../source/main.c\66</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -217,12 +201,37 @@
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>flag</ItemText>
+          <ItemText>read_sector_data</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
           <ItemText>read_sector_data</ItemText>
+        </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>flag</ItemText>
+        </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>read_sector_data</ItemText>
+        </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>flag</ItemText>
+        </Ww>
+        <Ww>
+          <count>8</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>flag</ItemText>
+        </Ww>
+        <Ww>
+          <count>9</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>flag</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>
@@ -287,7 +296,7 @@
 
   <Group>
     <GroupName>common</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
