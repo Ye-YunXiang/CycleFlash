@@ -228,6 +228,17 @@ uint32_t cfs_system_oc_via_id_calculate_addr( \
 // *****************************************************************************************************
 // 写入和读取数据 —— 内部处理
 
+static bool __erasing_page_flash_data( volatile uint32_t addr, uint16_t page)
+{
+    cfs_port_system_flash_lock_enable();
+
+    cfs_port_system_flash_erasing_page(addr, 1);
+
+    cfs_port_system_flash_lock_disable();
+
+    return true;
+}
+
 static bool __read_flash_data_block( \
     volatile uint32_t addr, cfs_data_block * block, cfs_system *temp_cfs)
 {
@@ -397,11 +408,11 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
 
     if(data_addr == temp_cfs->addr_handle) 
     {
-        cfs_port_system_flash_erasing_page(data_addr, 1);
+        __erasing_page_flash_data(data_addr, 1);
     }
     else if((data_addr + data_block_lent) >= max_addr)
     {
-        cfs_port_system_flash_erasing_page(max_addr, 1);
+        __erasing_page_flash_data(max_addr, 1);
     }
     __write_flash_data_block(data_addr, buffer, temp_cfs);
 
@@ -417,7 +428,7 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
     return read_result;
 }
 
-uint8_t data_buffer_temp[512];
+uint8_t data_buffer_temp[CFS_BUFFER_SIZE];
 
 // 修改内存中的数据
 cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
@@ -453,7 +464,7 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
         memset(read_sector_data + data_addr - start_addr, CFS_FLASH_ERASURE, \
             start_addr + temp_cfs_objecr->sector_size - data_addr);
         cfs_port_system_flash_lock_enable();
-        cfs_port_system_flash_erasing_page(start_addr, 1);
+        __erasing_page_flash_data(start_addr, 1);
         __write_flash_data(\
             start_addr, read_sector_data, temp_cfs_objecr->sector_size);
         cfs_port_system_flash_lock_disable();
@@ -461,7 +472,7 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
         cfs_port_system_flash_read(start_addr + temp_cfs_objecr->sector_size, read_sector_data, temp_cfs_objecr->sector_size);
         memset(read_sector_data, CFS_FLASH_ERASURE, data_addr - start_addr + data_block_lent - temp_cfs_objecr->sector_size);
         cfs_port_system_flash_lock_enable();
-        cfs_port_system_flash_erasing_page(start_addr + temp_cfs_objecr->sector_size, 1);
+        __erasing_page_flash_data(start_addr + temp_cfs_objecr->sector_size, 1);
         __write_flash_data( start_addr + temp_cfs_objecr->sector_size, read_sector_data, temp_cfs_objecr->sector_size);
 
         __write_flash_data_block(data_addr, buffer, temp_cfs_objecr);
@@ -480,7 +491,7 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
         memcpy(temo_read_sector_data, &buffer->data_crc_16, sizeof(buffer->data_crc_16));
 
         cfs_port_system_flash_lock_enable();
-        cfs_port_system_flash_erasing_page(start_addr, read_page_count);
+        __erasing_page_flash_data(start_addr, read_page_count);
         __write_flash_data(\
             start_addr, read_sector_data, temp_cfs_objecr->sector_size);
         cfs_port_system_flash_lock_disable();
@@ -502,7 +513,7 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
 
 bool cfs_system_oc_flash_data_clear(const cfs_object_linked_list *temp_object)
 {
-    cfs_port_system_flash_erasing_page( \
+    __erasing_page_flash_data( \
         temp_object->object_handle->addr_handle, \
         temp_object->object_handle->sector_count);
     return true;
