@@ -405,7 +405,8 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
     {
         __erasing_page_flash_data(data_addr, 1);
     }
-    else if((data_addr + data_block_lent) >= max_addr)
+    else if((data_addr + data_block_lent) >= max_addr && max_addr < \
+        (temp_cfs->addr_handle + temp_cfs->sector_size * temp_cfs->sector_count))
     {
         __erasing_page_flash_data(max_addr, 1);
     }
