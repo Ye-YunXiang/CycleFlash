@@ -107,7 +107,7 @@ uint16_t cfs_system_utils_crc16_xmodem_check_data_block(const cfs_data_block *da
     uint16_t crc_int = 0;
     uint8_t temp_char = 0;
 
-    while (data_block_length--)
+    while (data_block_length)
     {
         if(data_block_length == data->data_len)
         {
@@ -123,6 +123,8 @@ uint16_t cfs_system_utils_crc16_xmodem_check_data_block(const cfs_data_block *da
             else
                 crc_int = crc_int << 1;
         }
+        
+        data_block_length--;
     }
 
     // 是否按位取反
