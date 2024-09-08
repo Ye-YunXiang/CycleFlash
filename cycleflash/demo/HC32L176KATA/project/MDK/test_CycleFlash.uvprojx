@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\user;..\user\user_int;..\user\user_src;..\source;..\..\common;..\..\driver\inc;..\..\driver\src;..\..\openpaygo;..\..\openpaygo\opaygo_decoder;..\..\openpaygo\opaygo_decoder\extended;..\..\nexus;C:\GitRepository\CycleFlash\cycleflash\include;C:\GitRepository\CycleFlash\cycleflash\port;..\..\cfs</IncludePath>
+              <IncludePath>..\user;..\user\user_int;..\user\user_src;..\source;..\..\common;..\..\driver\inc;..\..\driver\src;..\..\openpaygo;..\..\openpaygo\opaygo_decoder;..\..\openpaygo\opaygo_decoder\extended;..\..\nexus;C:\GitRepository\CycleFlash\cycleflash\include;C:\GitRepository\CycleFlash\cycleflash\port;..\..\cfs;..\..\cfs;..\..\..\..\include;..\..\..\..\port</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -588,19 +588,19 @@
           <GroupName>cycleflash\src</GroupName>
           <Files>
             <File>
-              <FileName>cfs_system_oc.c</FileName>
+              <FileName>cycle_flash_system.c</FileName>
               <FileType>1</FileType>
-              <FilePath>C:\GitRepository\CycleFlash\cycleflash\src\cfs_system_oc.c</FilePath>
+              <FilePath>..\..\..\..\src\cycle_flash_system.c</FilePath>
             </File>
             <File>
               <FileName>cfs_system_utils.c</FileName>
               <FileType>1</FileType>
-              <FilePath>C:\GitRepository\CycleFlash\cycleflash\src\cfs_system_utils.c</FilePath>
+              <FilePath>..\..\..\..\src\cfs_system_utils.c</FilePath>
             </File>
             <File>
-              <FileName>cycle_flash_system.c</FileName>
+              <FileName>cfs_system_oc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>C:\GitRepository\CycleFlash\cycleflash\src\cycle_flash_system.c</FilePath>
+              <FilePath>..\..\..\..\src\cfs_system_oc.c</FilePath>
             </File>
           </Files>
         </Group>

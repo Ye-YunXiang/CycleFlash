@@ -51,9 +51,7 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
     // 初始化缓冲数据块
     cfs_data_block data_block;
     memset(&data_block, NULL, sizeof(cfs_data_block));   
-    // 用户存储数据空间申请
-    data_block.data_pointer = (uint8_t *)CFS_MALLOC(temp_cfs_handle->data_size);
-    data_block.data_len = temp_cfs_handle->data_size;
+    cfs_system_oc_object_block_buffer_set(temp_linked_object, &data_block);
     
     // 计算数据块大小
     const uint32_t data_block_size = \
@@ -79,7 +77,7 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
             data_start_id = \
                 (i * temp_cfs_handle->sector_size) / data_block_size + temp_count;
 
-            memset(data_block.data_pointer, NULL, data_block.data_len);
+            memset(data_block.data_pointer, NULL, temp_cfs_handle->data_size);
             data_block.data_id = data_start_id;
             read_result = cfs_system_oc_read_flash_data(temp_linked_object, &data_block);
             
@@ -129,7 +127,7 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
         cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED;
         while(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
         {
-            memset(data_block.data_pointer, NULL, data_block.data_len);
+            memset(data_block.data_pointer, NULL, temp_cfs_handle->data_size);
             data_block.data_id = data_start_id;
             read_result = cfs_system_oc_read_flash_data( \
                 temp_linked_object, &data_block);
@@ -159,7 +157,6 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
         }
     }
 
-    CFS_FREE(data_block.data_pointer);
     return  temp_data_MAX_id;
 }
 
@@ -244,9 +241,8 @@ static uint32_t cfs_filesystem_fixed_data_write( \
     const uint32_t  temp_max_id = \
         temp_cfs_object->sector_size * temp_cfs_object->sector_count / \
         (temp_cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
-    cfs_data_block temp_data_block;
-    bool flash_data_block_is_null = true;
-    
+
+    bool flash_data_block_is_null = true;  
     if(write_id >= temp_max_id)
     {
         // 固定存储，ID不能超过最大ID数
@@ -255,9 +251,10 @@ static uint32_t cfs_filesystem_fixed_data_write( \
     }
 
     // 填充数据
+    cfs_data_block temp_data_block;
     temp_data_block.data_id = write_id;
-    temp_data_block.data_len = len;
-    temp_data_block.data_pointer = data;
+    cfs_system_oc_object_block_buffer_set(temp_object, &temp_data_block);
+    memcpy(temp_data_block.data_pointer, data, len);
 
     flash_data_block_is_null = \
         cfs_system_oc_flash_checking_null_values(temp_object, &temp_data_block);
@@ -291,8 +288,8 @@ static uint32_t cfs_filesystem_cycle_data_write( \
     // 填充数据
     cfs_data_block temp_data_block;
     temp_data_block.data_id = write_id;
-    temp_data_block.data_len = len;
-    temp_data_block.data_pointer = data;
+    cfs_system_oc_object_block_buffer_set(temp_object, &temp_data_block);
+    memcpy(temp_data_block.data_pointer, data, len);
 
     // 每次增加的ID不能跳，只能一个一个往上加
     if((write_id > temp_id && ((write_id - temp_id) == 1))|| \
@@ -307,7 +304,7 @@ static uint32_t cfs_filesystem_cycle_data_write( \
                 temp_object, cfs_system_oc_valid_data_number(temp_object));
         }
     }
-    else if((temp_id-temp_valid_id) < write_id <= temp_id)
+    else if((temp_id-temp_valid_id) < write_id && write_id <= temp_id)
     {
         read_result = cfs_system_oc_set_write_flash_data(temp_object, &temp_data_block);
     }
@@ -327,17 +324,17 @@ static uint32_t cfs_filesystem_flsh_data_read( \
     uint32_t read_id, uint8_t *data, uint16_t len)
 {
     cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
+    
     cfs_data_block temp_data_block;
-
     temp_data_block.data_id = read_id;
-    temp_data_block.data_len = len;
-    temp_data_block.data_pointer = data;
+    cfs_system_oc_object_block_buffer_set(temp_object, &temp_data_block);
 
     // 读取内存中的数据,会验证crc8
     read_result = cfs_system_oc_read_flash_data(temp_object, &temp_data_block);
 
     if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
     {
+        memcpy(data, temp_data_block.data_pointer, len);
         return len;
     }
     

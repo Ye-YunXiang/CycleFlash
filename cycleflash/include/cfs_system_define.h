@@ -84,6 +84,7 @@ typedef struct cfs_linked_list
     uint32_t data_id;                      	                // 数据块ID
     struct cfs_linked_list *prior;                          // 链表上一个节点
     struct cfs_linked_list *next;                           // 链表下一个节点
+    uint8_t * buffer;                                       // 中转要存入的数据
     uint16_t valid_id_number;                               // 有效ID个数
     uint16_t this_linked_addr_crc_16;                       // 这个链表对象地址的crc-16-xmodem值
 }cfs_object_linked_list;

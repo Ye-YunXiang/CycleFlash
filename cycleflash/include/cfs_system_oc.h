@@ -124,6 +124,10 @@ cfs_system *cfs_system_oc_system_object_get(const cfs_object_linked_list *temp_o
 cfs_object_linked_list *cfs_system_oc_object_linked_crc_16_verify( \
     cfs_system_handle_t temp_cfs_handle);
 
+/*设置读取数据块的缓存*/
+bool cfs_system_oc_object_block_buffer_set( \
+    cfs_object_linked_list * temp_cfs_handle, cfs_data_block *temp_block);
+
 
 
 #endif /* __CFS_SYSTEM_OC_H__ */
