@@ -124,11 +124,21 @@ cfs_object_linked_list *cfs_system_oc_add_object(cfs_system *object_pointer)
         /* Allocation failure */
         return NULL;
     }
+
     new_cfs_node->addr_handle = object_pointer->addr_handle;
     new_cfs_node->sector_size = object_pointer->sector_size;
     new_cfs_node->sector_count = object_pointer->sector_count;
     new_cfs_node->data_size = object_pointer->data_size;
     new_cfs_node->struct_type = object_pointer->struct_type; 
+
+    uint8_t *new_cfs_buffer = (uint8_t *)CFS_MALLOC(sizeof(new_cfs_node->data_size));
+    if (new_cfs_node == NULL) 
+    {
+        CFS_FREE(new_node);
+        CFS_FREE(new_cfs_node);
+        /* Allocation failure */
+        return NULL;
+    }
 
     if (cfs_system_object_head == NULL)
     {
@@ -145,6 +155,7 @@ cfs_object_linked_list *cfs_system_oc_add_object(cfs_system *object_pointer)
         cfs_system_object_tail = new_node;
     }
 
+    new_node->buffer = new_cfs_buffer;
     new_node->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
     new_node->valid_id_number = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     new_node->object_handle = new_cfs_node;
@@ -233,9 +244,11 @@ static bool __read_flash_data_block( \
 {
     cfs_port_system_flash_read(\
         addr, (uint8_t *)(&block->data_id), sizeof(block->data_id));
+
     addr += sizeof(block->data_id);
     cfs_port_system_flash_read(\
         addr, block->data_pointer, block->data_len);
+        
     addr += temp_cfs->data_size;
     cfs_port_system_flash_read(\
         addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
@@ -248,7 +261,11 @@ static bool __erasing_page_flash_data( volatile uint32_t addr, uint16_t page)
 {
     cfs_port_system_flash_lock_enable();
 
+<<<<<<< HEAD
     cfs_port_system_flash_erasing_page(addr, 1);
+=======
+    cfs_port_system_flash_erasing_page(addr, page);
+>>>>>>> develop
 
     cfs_port_system_flash_lock_disable();
 
@@ -299,8 +316,10 @@ static bool __write_flash_data_block( \
     cfs_port_system_flash_lock_enable();
 
     __write_flash_data(addr, (uint8_t *)(&block->data_id), sizeof(block->data_id));
+
     addr += sizeof(block->data_id);
     __write_flash_data(addr, block->data_pointer, block->data_len);
+
     addr += temp_cfs->data_size;
     __write_flash_data(addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
 
@@ -527,6 +546,12 @@ bool cfs_system_oc_object_delete(cfs_object_linked_list *temp_object)
         temp_object->object_handle = NULL;
     }
 
+    if(temp_object->buffer != NULL)
+    {
+        CFS_FREE(temp_object->buffer);
+        temp_object->buffer = NULL;
+    }
+
     if(cfs_system_object_head == temp_object)
     {
         if(cfs_system_object_tail == temp_object)
@@ -621,4 +646,17 @@ cfs_object_linked_list * cfs_system_oc_object_linked_crc_16_verify( \
     }
 
     return NULL;
+}
+
+
+/*设置数据数据对象的可用ID*/
+bool cfs_system_oc_object_block_buffer_set( \
+    cfs_object_linked_list * temp_cfs_handle, cfs_data_block *temp_block)
+{
+    memset(temp_cfs_handle->buffer, 0, temp_cfs_handle->object_handle->data_size);
+
+    temp_block->data_pointer = temp_cfs_handle->buffer;
+    temp_block->data_len = temp_cfs_handle->object_handle->data_size;
+
+    return true;
 }

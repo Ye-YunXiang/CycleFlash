@@ -152,9 +152,15 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
+<<<<<<< HEAD
           <LineNumber>33</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>9742</Address>
+=======
+          <LineNumber>36</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>9584</Address>
+>>>>>>> develop
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -163,7 +169,27 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\source\main.c</Filename>
           <ExecCommand></ExecCommand>
+<<<<<<< HEAD
           <Expression>\\cfs_test\../source/main.c\33</Expression>
+=======
+          <Expression>\\cfs_test\../source/main.c\36</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>307</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>4726</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\..\..\..\src\cycle_flash_system.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\cfs_test\../../../../src/cycle_flash_system.c\307</Expression>
+>>>>>>> develop
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -196,6 +222,44 @@
           <count>5</count>
           <WinNumber>1</WinNumber>
           <ItemText>data</ItemText>
+<<<<<<< HEAD
+=======
+        </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>write_id</ItemText>
+        </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>temp_id,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>8</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>temp_id-temp_valid_id,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>9</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>read_result</ItemText>
+        </Ww>
+        <Ww>
+          <count>10</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>write_id</ItemText>
+        </Ww>
+        <Ww>
+          <count>11</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>temp_id,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>12</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>flag</ItemText>
+>>>>>>> develop
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -229,7 +293,7 @@
       <DebugFlag>
         <trace>0</trace>
         <periodic>0</periodic>
-        <aLwin>0</aLwin>
+        <aLwin>1</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
@@ -764,8 +828,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>C:\GitRepository\CycleFlash\cycleflash\src\cfs_system_oc.c</PathWithFileName>
-      <FilenameWithoutPath>cfs_system_oc.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\..\..\src\cycle_flash_system.c</PathWithFileName>
+      <FilenameWithoutPath>cycle_flash_system.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -776,7 +840,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>C:\GitRepository\CycleFlash\cycleflash\src\cfs_system_utils.c</PathWithFileName>
+      <PathWithFileName>..\..\..\..\src\cfs_system_utils.c</PathWithFileName>
       <FilenameWithoutPath>cfs_system_utils.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -788,8 +852,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>C:\GitRepository\CycleFlash\cycleflash\src\cycle_flash_system.c</PathWithFileName>
-      <FilenameWithoutPath>cycle_flash_system.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\..\..\src\cfs_system_oc.c</PathWithFileName>
+      <FilenameWithoutPath>cfs_system_oc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

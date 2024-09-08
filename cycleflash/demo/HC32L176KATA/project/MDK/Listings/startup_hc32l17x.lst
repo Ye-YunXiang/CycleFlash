@@ -426,11 +426,11 @@ ARM Macro Assembler    Page 7
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M0+ --apcs=inter
 work --depend=.\objects\startup_hc32l17x.d -o.\objects\startup_hc32l17x.o -I.\R
-TE\_CycleFlash -IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\C
-ore\Include -IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device
-\Include --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 52
-8" --predefine="_RTE_ SETA 1" --list=.\listings\startup_hc32l17x.lst ..\..\comm
-on\startup_hc32l17x.s
+TE\_CycleFlash -IC:\Users\poetry\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\
+Core\Include -IC:\Users\poetry\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Devi
+ce\Include --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 
+528" --predefine="_RTE_ SETA 1" --list=.\listings\startup_hc32l17x.lst ..\..\co
+mmon\startup_hc32l17x.s
 
 
 
