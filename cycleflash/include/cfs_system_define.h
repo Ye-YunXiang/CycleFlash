@@ -73,7 +73,7 @@ typedef struct cfs_filesystem_object
 
 
 /*无ID状态*/
-#define CFS_CONFIG_NOT_LINKED_DATA_ID       UINT_MAX
+#define CFS_CONFIG_NOT_LINKED_DATA_ID       UINT32_MAX
 /*无有效ID*/
 #define CFS_CONFIG_NOT_LINKED_VALID_DATA_ID   0
 
