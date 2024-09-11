@@ -401,26 +401,27 @@ cfs_oc_action_data_result cfs_system_oc_read_flash_data( \
 cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer)
 {
-    assert(buffer != NULL && \
+    assert(buffer != NULL && 
         buffer->data_len >= 1 && buffer->data_id != CFS_CONFIG_NOT_LINKED_DATA_ID);
 
     cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
     cfs_system *temp_cfs = cfs_system_oc_system_object_get(temp_object);
-    const uint32_t data_addr = \
+    const uint32_t data_addr = 
         cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
-    const uint32_t start_addr = \
+    const uint32_t start_addr = 
         (data_addr / temp_cfs->sector_size) * temp_cfs->sector_size;
     const uint32_t max_addr = start_addr + temp_cfs->sector_size;
-    const uint32_t data_block_lent = \
+    const uint32_t data_block_lent = 
         temp_cfs->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
 
     buffer->data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer, true);
 
-    if(data_addr == temp_cfs->addr_handle) 
+    if(data_addr == temp_cfs->addr_handle && 
+        temp_cfs->struct_type != CFS_FILESYSTEM_OBJECT_TYPE_FIXED_DATA_STORAGE) 
     {
         __erasing_page_flash_data(data_addr, 1);
     }
-    else if((data_addr + data_block_lent) >= max_addr && max_addr < \
+    else if((data_addr + data_block_lent) >= max_addr && max_addr < 
         (temp_cfs->addr_handle + temp_cfs->sector_size * temp_cfs->sector_count))
     {
         __erasing_page_flash_data(max_addr, 1);
@@ -442,22 +443,22 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
 uint8_t data_buffer_temp[CFS_BUFFER_SIZE];
 
 // 修改内存中的数据
-cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
+cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( 
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer)
 {
-    assert(buffer != NULL && \
+    assert(buffer != NULL && 
         buffer->data_len >= 1 && buffer->data_id != CFS_CONFIG_NOT_LINKED_DATA_ID);
         
     cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
     cfs_system *temp_cfs_objecr = cfs_system_oc_system_object_get(temp_object);
     // 数据地址
-    const uint32_t data_addr = \
+    const uint32_t data_addr = 
         cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
     // 数据所在页开始地址
-    const uint32_t start_addr = \
+    const uint32_t start_addr = 
         (data_addr / temp_cfs_objecr->sector_size) * temp_cfs_objecr->sector_size;
     // 数据块的长度
-    const uint32_t data_block_lent = \
+    const uint32_t data_block_lent = 
         temp_cfs_objecr->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
 
     uint8_t *read_sector_data = NULL;
@@ -472,7 +473,7 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
     if((data_addr + data_block_lent - 1) >= start_addr + temp_cfs_objecr->sector_size)
     {
         cfs_port_system_flash_read(start_addr, read_sector_data, temp_cfs_objecr->sector_size);
-        memset(read_sector_data + data_addr - start_addr, CFS_FLASH_ERASURE, \
+        memset(read_sector_data + data_addr - start_addr, CFS_FLASH_ERASURE, 
             start_addr + temp_cfs_objecr->sector_size - data_addr);
 
         __erasing_page_flash_data(start_addr, 1);
