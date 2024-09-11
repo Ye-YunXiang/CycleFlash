@@ -131,7 +131,7 @@ cfs_object_linked_list *cfs_system_oc_add_object(cfs_system *object_pointer)
     new_cfs_node->data_size = object_pointer->data_size;
     new_cfs_node->struct_type = object_pointer->struct_type; 
 
-    uint8_t *new_cfs_buffer = (uint8_t *)CFS_MALLOC(sizeof(new_cfs_node->data_size));
+    uint8_t *new_cfs_buffer = (uint8_t *)CFS_MALLOC(new_cfs_node->data_size);
     if (new_cfs_node == NULL) 
     {
         CFS_FREE(new_node);
