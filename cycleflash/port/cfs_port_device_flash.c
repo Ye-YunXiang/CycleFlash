@@ -103,7 +103,7 @@ bool cfs_port_system_flash_read( \
     return true;
 }
 
-// 如果相同返回true
+//@def 如果相同返回true
 bool cfs_port_system_flash_read_contrast( \
     volatile uint32_t addr, uint8_t * buffer, uint16_t len)
 {
@@ -117,7 +117,7 @@ bool cfs_port_system_flash_read_contrast( \
     }
 }
 
-// 如果是空值返回true
+//@def 如果是空值返回true
 bool cfs_port_system_flash_read_checking_null_values( \
     volatile uint32_t addr, uint16_t len)
 {
