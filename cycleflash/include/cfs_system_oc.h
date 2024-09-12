@@ -38,22 +38,22 @@
 
 typedef enum
 {
-    // cfs操作的数据为空
+    //@def cfs操作的数据为空
     CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL       = 0,
-    // cfs数据页非空
+    //@def cfs数据页非空
     CFS_OC_READ_OR_WRITE_DATA_RESULT_NONEMPTY   = 1,
-    // cfs写入或读取数据错误
+    //@def cfs写入或读取数据错误
     CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE      = 2,
-    // cfs写入或读取数据有效
+    //@def cfs写入或读取数据有效
     CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED    = 3,
 }cfs_oc_action_data_result;
 
-// 检查flash制定地址的block是否有数据
-// 如果为空值返回true
+//@def 检查flash制定地址的block是否有数据
+//@def 如果为空值返回true
 bool cfs_system_oc_flash_checking_null_values( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer);
 
-// 根据ID计算有效数据个数
+//@def 根据ID计算有效数据个数
 uint32_t cfs_system_oc_valid_data_number(const cfs_object_linked_list *temp_linked_object);
 
 /*遍历数据页，初始化ID值*/
@@ -65,37 +65,37 @@ uint32_t cfs_system_oc_traverse_list_page_id_init(uint32_t temp_cfs_handle);
 // 链表添加一个数据对象
 cfs_object_linked_list *cfs_system_oc_add_object(cfs_system *object_pointer);
 
-// 检查设置的文件的地址和将要存入数据的地址片区有没有重复
+//@def 检查设置的文件的地址和将要存入数据的地址片区有没有重复
 bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object);
 
 
-// 根据ID得到本ID对应的内存地址
+//@def 根据ID得到本ID对应的内存地址
 uint32_t cfs_system_oc_via_id_calculate_addr( \
     const cfs_object_linked_list *temp_object, uint32_t temp_id);
 
 // *****************************************************************************************************
-// 写入和读取数据 —— 接口
+//@def 写入和读取数据 —— 接口
 
-// 读取内存中的数据
+//@def 读取内存中的数据
 cfs_oc_action_data_result cfs_system_oc_read_flash_data( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer);
 
-// 往内存中写入新的数据，增加式
+//@def 往内存中写入新的数据，增加式
 cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer);
 
-// 修改内存中的数据
+//@def 修改内存中的数据
 cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( \
     const cfs_object_linked_list *temp_object, cfs_data_block * buffer);
 
-// 清除对象在内存中的数据
+//@def 清除对象在内存中的数据
 bool cfs_system_oc_flash_data_clear(const cfs_object_linked_list *temp_object);
 
-// 删除内核对象
+//@def 删除内核对象
 bool cfs_system_oc_object_delete(cfs_object_linked_list *temp_object);
 
 // *****************************************************************************************************
-// 设置和获取对象接口
+//@def 设置和获取对象接口
 
 /*设置数据数据对象的ID*/
 bool cfs_system_oc_object_id_set( \
@@ -120,7 +120,7 @@ uint8_t cfs_system_oc_object_struct_type_get( \
 cfs_system *cfs_system_oc_system_object_get(const cfs_object_linked_list *temp_object);
 
 /*使用初始化链表对象后返回的句柄，在通过crc-16-xmodem标识验证链表对象是否存在*/
-// 存在返回链表对象，不存在返回NULL
+//@def 存在返回链表对象，不存在返回NULL
 cfs_object_linked_list *cfs_system_oc_object_linked_crc_16_verify( \
     cfs_system_handle_t temp_cfs_handle);
 

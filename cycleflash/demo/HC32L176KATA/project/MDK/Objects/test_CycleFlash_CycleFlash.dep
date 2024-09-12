@@ -1,5 +1,6 @@
 Dependencies for Project 'test_CycleFlash', Target 'CycleFlash': (DO NOT MODIFY !)
 <<<<<<< HEAD
+<<<<<<< HEAD
 F (..\..\common\interrupts_hc32l17x.c)(0x66BF15C5)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs-I.\RTE\_CycleFlash-IC:\Users\11983\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\11983\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\interrupts_hc32l17x.o --omf_browse .\objects\interrupts_hc32l17x.crf --depend .\objects\interrupts_hc32l17x.d)
 I (..\..\driver\inc\ddl.h)(0x66BF15C5)
 I (..\..\common\base_types.h)(0x66BF15C5)
@@ -779,6 +780,8 @@ I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
 I (C:\Software\Programme\Keil_v5\ARM\ARMCC\include\rt_sys.h)(0x5CEB79E0)
 I (.\RTE\_CycleFlash\RTE_Components.h)(0x66BF15C5)
 =======
+=======
+>>>>>>> develop
 F (..\..\common\interrupts_hc32l17x.c)(0x66DD294B)(--c99 --gnu -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\user -I ..\user\user_int -I ..\user\user_src -I ..\source -I ..\..\common -I ..\..\driver\inc -I ..\..\driver\src -I ..\..\openpaygo -I ..\..\openpaygo\opaygo_decoder -I ..\..\openpaygo\opaygo_decoder\extended -I ..\..\nexus -I C:\GitRepository\CycleFlash\cycleflash\include -I C:\GitRepository\CycleFlash\cycleflash\port -I ..\..\cfs -I ..\..\cfs -I ..\..\..\..\include -I ..\..\..\..\port-I.\RTE\_CycleFlash-IC:\Users\poetry\AppData\Local\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include-IC:\Users\poetry\AppData\Local\Arm\Packs\HDSC\HC32L17X\1.0.0\Device\Include-D__UVISION_VERSION="528" -D_RTE_-o .\objects\interrupts_hc32l17x.o --omf_browse .\objects\interrupts_hc32l17x.crf --depend .\objects\interrupts_hc32l17x.d)
 I (..\..\driver\inc\ddl.h)(0x66DD294B)
 I (..\..\common\base_types.h)(0x66DD294B)
@@ -1557,4 +1560,7 @@ I (C:\Software\keil5\ARM\ARMCC\include\stdlib.h)(0x5CEB79E2)
 I (C:\Software\keil5\ARM\ARMCC\include\assert.h)(0x5CEB79D6)
 I (C:\Software\keil5\ARM\ARMCC\include\rt_sys.h)(0x5CEB79E0)
 I (.\RTE\_CycleFlash\RTE_Components.h)(0x66DD294B)
+<<<<<<< HEAD
+>>>>>>> develop
+=======
 >>>>>>> develop

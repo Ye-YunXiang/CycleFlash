@@ -39,7 +39,7 @@ uint8_t cfs_system_utils_crc_8_check(const uint8_t *data, uint32_t data_length, 
 
 uint16_t cfs_system_utils_crc16_xmodem_check(const uint8_t *data, uint32_t data_length, bool inversion_bit);
 
-// 直接传入数据块，验证数据块内的数据，然后得出CRC16-xmodem
+//@def 直接传入数据块，验证数据块内的数据，然后得出CRC16-xmodem
 uint16_t cfs_system_utils_crc16_xmodem_check_data_block(const cfs_data_block *data, bool inversion_bit);
 
 #endif /* __CFS_SYSTEM_UTILS_H__ */

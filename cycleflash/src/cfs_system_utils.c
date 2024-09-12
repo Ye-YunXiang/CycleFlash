@@ -96,7 +96,7 @@ uint16_t cfs_system_utils_crc16_xmodem_check(const uint8_t *data, uint32_t data_
  * 参数： uint8_t * 起始指针
  *       uint32_t  数据
 */
-// 根据cfs系统专门创建的验证数据块函数, 这个数据块的crc16不参与验证
+//@def 根据cfs系统专门创建的验证数据块函数, 这个数据块的crc16不参与验证
 uint16_t cfs_system_utils_crc16_xmodem_check_data_block(const cfs_data_block *data, bool inversion_bit)
 {
     assert(data->data_len != 0 && data->data_pointer != NULL);
@@ -127,7 +127,7 @@ uint16_t cfs_system_utils_crc16_xmodem_check_data_block(const cfs_data_block *da
         data_block_length--;
     }
 
-    // 是否按位取反
+    //@def 是否按位取反
     if(inversion_bit == true)
     {
         return ~(crc_int^0);

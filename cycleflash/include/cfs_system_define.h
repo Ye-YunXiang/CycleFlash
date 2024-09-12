@@ -50,13 +50,13 @@ typedef uint64_t cfs_system_handle_t;
 
 enum cycle_object_type
 {
-    // 没有数据类型
+    //@def 没有数据类型
     CFS_FILESYSTEM_OBJECT_TYPE_NULL                 = 0,
-    // 存储固定数据
+    //@def 存储固定数据
     CFS_FILESYSTEM_OBJECT_TYPE_FIXED_DATA_STORAGE   = 1,
-    // 循环存储数据
+    //@def 循环存储数据
     CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH    = 2,
-    // OTA升级缓存区
+    //@def OTA升级缓存区
     CFS_FILESYSTEM_OBJECT_TYPE_OTA_BUFFER           = 3,
 };
 
@@ -73,7 +73,7 @@ typedef struct cfs_filesystem_object
 
 
 /*无ID状态*/
-#define CFS_CONFIG_NOT_LINKED_DATA_ID       UINT_MAX
+#define CFS_CONFIG_NOT_LINKED_DATA_ID       UINT32_MAX
 /*无有效ID*/
 #define CFS_CONFIG_NOT_LINKED_VALID_DATA_ID   0
 
