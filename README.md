@@ -8,8 +8,6 @@ It is used to circulate data into the specified area of FLASH in MCU to ensure d
 
 CycleFlash 是一个用于管理MCU内置flash的轻量级管理系统，有简陋的循环写入某个片区的功能，只要实现了相关的接口，就可以实现通过ID把数据存入内存中，做了写平衡、数据错误校验、内存可用数据回溯的功能。
 
-目前还在集成OAT升级的相关接口。
-
 主要是为了实现循环存入数据功能，方便用于于需要不断往flash中写入暂存数据的需求。  
 比如记录一天的临时数据，后面在统一取出；或者防止断电丢失系统状态而间断存系统数据。
 
