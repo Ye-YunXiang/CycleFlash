@@ -56,8 +56,11 @@ enum cycle_object_type
     CFS_FILESYSTEM_OBJECT_TYPE_FIXED_DATA_STORAGE   = 1,
     //@def 循环存储数据
     CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH    = 2,
+<<<<<<< HEAD
     //@def OTA升级缓存区
     CFS_FILESYSTEM_OBJECT_TYPE_OTA_BUFFER           = 3,
+=======
+>>>>>>> develop
 };
 
 

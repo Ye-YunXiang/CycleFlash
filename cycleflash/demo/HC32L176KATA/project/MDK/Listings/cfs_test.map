@@ -245,6 +245,7 @@ Section Cross References
     system_uart.o(i.system_uart0_port_init) refers to gpio.o(i.Gpio_SetAfMode) for Gpio_SetAfMode
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     cfs_system_oc.o(i.__contrast_flash_data_block) refers to cfs_port_device_flash.o(i.cfs_port_system_flash_read_contrast) for cfs_port_system_flash_read_contrast
     cfs_system_oc.o(i.__erasing_page_flash_data) refers to cfs_port_device_flash.o(i.cfs_port_system_flash_lock_enable) for cfs_port_system_flash_lock_enable
     cfs_system_oc.o(i.__erasing_page_flash_data) refers to cfs_port_device_flash.o(i.cfs_port_system_flash_erasing_page) for cfs_port_system_flash_erasing_page
@@ -302,6 +303,8 @@ Section Cross References
     cfs_system_oc.o(i.cfs_system_oc_via_id_calculate_addr) refers to retarget_io.o(i.__aeabi_assert) for __aeabi_assert
     cfs_system_oc.o(i.cfs_system_oc_via_id_calculate_addr) refers to uidiv.o(.text) for __aeabi_uidivmod
     cfs_system_utils.o(i.cfs_system_utils_crc16_xmodem_check_data_block) refers to retarget_io.o(i.__aeabi_assert) for __aeabi_assert
+=======
+>>>>>>> develop
 =======
 >>>>>>> develop
 =======
@@ -1360,6 +1363,7 @@ Image Symbol Table
     RESET                                    0x00000000   Section      192  startup_hc32l17x.o(RESET)
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     ../clib/microlib/division.c              0x00000000   Number         0  idiv.o ABSOLUTE
     ../clib/microlib/division.c              0x00000000   Number         0  uidiv.o ABSOLUTE
     ../clib/microlib/division.c              0x00000000   Number         0  uldiv.o ABSOLUTE
@@ -1376,12 +1380,16 @@ Image Symbol Table
 =======
     ../clib/microlib/division.c              0x00000000   Number         0  uldiv.o ABSOLUTE
 >>>>>>> develop
+=======
+    ../clib/microlib/division.c              0x00000000   Number         0  uldiv.o ABSOLUTE
+>>>>>>> develop
     ../clib/microlib/division.c              0x00000000   Number         0  uidiv.o ABSOLUTE
     ../clib/microlib/division.c              0x00000000   Number         0  idiv.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8b.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11b.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7b.o ABSOLUTE
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> develop
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11a.o ABSOLUTE
@@ -1392,6 +1400,11 @@ Image Symbol Table
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9b.o ABSOLUTE
 =======
+=======
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10b.o ABSOLUTE
+>>>>>>> develop
 =======
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9b.o ABSOLUTE
@@ -1404,6 +1417,9 @@ Image Symbol Table
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> develop
+=======
 >>>>>>> develop
 =======
 >>>>>>> develop
@@ -1413,6 +1429,7 @@ Image Symbol Table
     ../clib/microlib/malloc/malloc.c         0x00000000   Number         0  malloca.o ABSOLUTE
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     ../clib/microlib/malloc/malloc.c         0x00000000   Number         0  mallocra.o ABSOLUTE
     ../clib/microlib/malloc/malloc.c         0x00000000   Number         0  mallocr.o ABSOLUTE
     ../clib/microlib/malloc/malloc.c         0x00000000   Number         0  malloc.o ABSOLUTE
@@ -1439,6 +1456,12 @@ Image Symbol Table
     ../clib/microlib/malloc/malloc.c         0x00000000   Number         0  mallocra.o ABSOLUTE
     ../clib/microlib/malloc/mvars.c          0x00000000   Number         0  mvars.o ABSOLUTE
 >>>>>>> develop
+=======
+    ../clib/microlib/malloc/malloc.c         0x00000000   Number         0  mallocr.o ABSOLUTE
+    ../clib/microlib/malloc/malloc.c         0x00000000   Number         0  malloc.o ABSOLUTE
+    ../clib/microlib/malloc/malloc.c         0x00000000   Number         0  mallocra.o ABSOLUTE
+    ../clib/microlib/malloc/mvars.c          0x00000000   Number         0  mvars.o ABSOLUTE
+>>>>>>> develop
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf1.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf7.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfa.o ABSOLUTE
@@ -1451,6 +1474,9 @@ Image Symbol Table
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfb.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf0.o ABSOLUTE
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> develop
+=======
 >>>>>>> develop
 =======
 >>>>>>> develop
@@ -1669,6 +1695,7 @@ Image Symbol Table
     i.cfs_filesystem_cycle_data_write        0x00001204   Section        0  cycle_flash_system.o(i.cfs_filesystem_cycle_data_write)
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     cfs_filesystem_cycle_data_write          0x00001205   Thumb Code   146  cycle_flash_system.o(i.cfs_filesystem_cycle_data_write)
     i.cfs_filesystem_fixed_data_write        0x00001298   Section        0  cycle_flash_system.o(i.cfs_filesystem_fixed_data_write)
     cfs_filesystem_fixed_data_write          0x00001299   Thumb Code   134  cycle_flash_system.o(i.cfs_filesystem_fixed_data_write)
@@ -1740,6 +1767,8 @@ Image Symbol Table
     .conststring                             0x00002c10   Section       92  cfs_system_oc.o(.conststring)
     .conststring                             0x00002c6c   Section      201  cycle_flash_system.o(.conststring)
 =======
+=======
+>>>>>>> develop
 =======
 >>>>>>> develop
     cfs_filesystem_cycle_data_write          0x00001205   Thumb Code   152  cycle_flash_system.o(i.cfs_filesystem_cycle_data_write)
@@ -1814,6 +1843,9 @@ Image Symbol Table
     .conststring                             0x00002b50   Section      201  cycle_flash_system.o(.conststring)
     .conststring                             0x00002c1c   Section       92  cfs_system_oc.o(.conststring)
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> develop
+=======
 >>>>>>> develop
 =======
 >>>>>>> develop
@@ -2040,6 +2072,7 @@ Image Symbol Table
     abort                                    0x000011e7   Thumb Code     4  retarget_io.o(i.abort)
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     cfs_nv_clear                             0x000015e5   Thumb Code    60  cycle_flash_system.o(i.cfs_nv_clear)
     cfs_nv_get_current_id                    0x00001669   Thumb Code    32  cycle_flash_system.o(i.cfs_nv_get_current_id)
     cfs_nv_get_current_valid_id              0x00001689   Thumb Code    32  cycle_flash_system.o(i.cfs_nv_get_current_valid_id)
@@ -2096,6 +2129,8 @@ Image Symbol Table
     Region$$Table$$Base                      0x00002d38   Number         0  anon$$obj.o(Region$$Table)
     Region$$Table$$Limit                     0x00002d58   Number         0  anon$$obj.o(Region$$Table)
 =======
+=======
+>>>>>>> develop
 =======
 >>>>>>> develop
     cfs_nv_clear                             0x000015bd   Thumb Code    58  cycle_flash_system.o(i.cfs_nv_clear)
@@ -2155,6 +2190,9 @@ Image Symbol Table
     Region$$Table$$Base                      0x00002c78   Number         0  anon$$obj.o(Region$$Table)
     Region$$Table$$Limit                     0x00002c98   Number         0  anon$$obj.o(Region$$Table)
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> develop
+=======
 >>>>>>> develop
 =======
 >>>>>>> develop
@@ -2184,9 +2222,15 @@ Memory Map of the image
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   Load Region LR_IROM1 (Base: 0x00000000, Size: 0x00002dc0, Max: 0x00020000, ABSOLUTE)
 
     Execution Region ER_IROM1 (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x00002d58, Max: 0x00020000, ABSOLUTE)
+=======
+  Load Region LR_IROM1 (Base: 0x00000000, Size: 0x00002d00, Max: 0x00020000, ABSOLUTE)
+
+    Execution Region ER_IROM1 (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x00002c98, Max: 0x00020000, ABSOLUTE)
+>>>>>>> develop
 =======
   Load Region LR_IROM1 (Base: 0x00000000, Size: 0x00002d00, Max: 0x00020000, ABSOLUTE)
 
@@ -2201,6 +2245,7 @@ Memory Map of the image
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
     0x00000000   0x00000000   0x000000c0   Data   RO          338    RESET               startup_hc32l17x.o
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     0x000000c0   0x000000c0   0x00000000   Code   RO         4600  * .ARM.Collect$$$$00000000  mc_p.l(entry.o)
@@ -2227,6 +2272,32 @@ Memory Map of the image
     0x00000338   0x00000338   0x00000082   Code   RO         4939    .text               mf_p.l(fepilogue.o)
     0x000003ba   0x000003ba   0x00000002   PAD
     0x000003bc   0x000003bc   0x00000024   Code   RO         4951    .text               mc_p.l(init.o)
+=======
+    0x000000c0   0x000000c0   0x00000000   Code   RO         4606  * .ARM.Collect$$$$00000000  mc_p.l(entry.o)
+    0x000000c0   0x000000c0   0x00000004   Code   RO         4925    .ARM.Collect$$$$00000001  mc_p.l(entry2.o)
+    0x000000c4   0x000000c4   0x00000004   Code   RO         4928    .ARM.Collect$$$$00000004  mc_p.l(entry5.o)
+    0x000000c8   0x000000c8   0x00000000   Code   RO         4930    .ARM.Collect$$$$00000008  mc_p.l(entry7b.o)
+    0x000000c8   0x000000c8   0x00000000   Code   RO         4932    .ARM.Collect$$$$0000000A  mc_p.l(entry8b.o)
+    0x000000c8   0x000000c8   0x00000008   Code   RO         4933    .ARM.Collect$$$$0000000B  mc_p.l(entry9a.o)
+    0x000000d0   0x000000d0   0x00000000   Code   RO         4935    .ARM.Collect$$$$0000000D  mc_p.l(entry10a.o)
+    0x000000d0   0x000000d0   0x00000000   Code   RO         4937    .ARM.Collect$$$$0000000F  mc_p.l(entry11a.o)
+    0x000000d0   0x000000d0   0x00000004   Code   RO         4926    .ARM.Collect$$$$00002712  mc_p.l(entry2.o)
+    0x000000d4   0x000000d4   0x0000003c   Code   RO          339    .text               startup_hc32l17x.o
+    0x00000110   0x00000110   0x0000002c   Code   RO         4614    .text               mc_p.l(uidiv.o)
+    0x0000013c   0x0000013c   0x00000028   Code   RO         4616    .text               mc_p.l(idiv.o)
+    0x00000164   0x00000164   0x00000024   Code   RO         4618    .text               mc_p.l(memcpya.o)
+    0x00000188   0x00000188   0x00000024   Code   RO         4620    .text               mc_p.l(memseta.o)
+    0x000001ac   0x000001ac   0x0000000e   Code   RO         4622    .text               mc_p.l(strlen.o)
+    0x000001ba   0x000001ba   0x0000001a   Code   RO         4624    .text               mc_p.l(memcmp.o)
+    0x000001d4   0x000001d4   0x000000b2   Code   RO         4917    .text               mf_p.l(fadd.o)
+    0x00000286   0x00000286   0x0000007c   Code   RO         4919    .text               mf_p.l(fdiv.o)
+    0x00000302   0x00000302   0x0000000e   Code   RO         4921    .text               mf_p.l(ffltui.o)
+    0x00000310   0x00000310   0x00000028   Code   RO         4923    .text               mf_p.l(ffixui.o)
+    0x00000338   0x00000338   0x00000000   Code   RO         4944    .text               mc_p.l(iusefp.o)
+    0x00000338   0x00000338   0x00000082   Code   RO         4945    .text               mf_p.l(fepilogue.o)
+    0x000003ba   0x000003ba   0x00000002   PAD
+    0x000003bc   0x000003bc   0x00000024   Code   RO         4957    .text               mc_p.l(init.o)
+>>>>>>> develop
 =======
     0x000000c0   0x000000c0   0x00000000   Code   RO         4606  * .ARM.Collect$$$$00000000  mc_p.l(entry.o)
     0x000000c0   0x000000c0   0x00000004   Code   RO         4925    .ARM.Collect$$$$00000001  mc_p.l(entry2.o)
@@ -2338,6 +2409,7 @@ Memory Map of the image
     0x00000c1e   0x00000c1e   0x00000008   Code   RO           37    i.WDT_IRQHandler    interrupts_hc32l17x.o
     0x00000c26   0x00000c26   0x00000002   PAD
     0x00000c28   0x00000c28   0x00000048   Code   RO          291    i._InitHidePin      system_hc32l17x.o
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     0x00000c70   0x00000c70   0x00000028   Code   RO         4713    i.__0sprintf$3      mc_p.l(printf3.o)
@@ -2680,6 +2752,120 @@ Memory Map of the image
     0x200000f4        -       0x00000200   Zero   RW         4290    .bss                cfs_system_oc.o
     0x200002f4   0x00002d00   0x00000004   PAD
 >>>>>>> develop
+=======
+    0x00000c70   0x00000c70   0x00000028   Code   RO         4719    i.__0sprintf$3      mc_p.l(printf3.o)
+    0x00000c98   0x00000c98   0x0000001c   Code   RO          528    i.__ARM_common_switch8  adc.o
+    0x00000cb4   0x00000cb4   0x0000009c   Code   RO         4554    i.__aeabi_assert    retarget_io.o
+    0x00000d50   0x00000d50   0x00000050   Code   RO         4267    i.__contrast_flash_data_block  cfs_system_oc.o
+    0x00000da0   0x00000da0   0x00000018   Code   RO         4268    i.__erasing_page_flash_data  cfs_system_oc.o
+    0x00000db8   0x00000db8   0x00000038   Code   RO         4269    i.__read_flash_data_block  cfs_system_oc.o
+    0x00000df0   0x00000df0   0x0000000e   Code   RO         4971    i.__scatterload_copy  mc_p.l(handlers.o)
+    0x00000dfe   0x00000dfe   0x00000002   Code   RO         4972    i.__scatterload_null  mc_p.l(handlers.o)
+    0x00000e00   0x00000e00   0x0000000e   Code   RO         4973    i.__scatterload_zeroinit  mc_p.l(handlers.o)
+    0x00000e0e   0x00000e0e   0x000000c6   Code   RO         4270    i.__write_flash_data  cfs_system_oc.o
+    0x00000ed4   0x00000ed4   0x00000040   Code   RO         4271    i.__write_flash_data_block  cfs_system_oc.o
+    0x00000f14   0x00000f14   0x0000007c   Code   RO         4411    i._internal_flash_filesystem_read_nv  cfs_demo.o
+    0x00000f90   0x00000f90   0x00000080   Code   RO         4412    i._internal_flash_filesystem_write_nv  cfs_demo.o
+    0x00001010   0x00001010   0x000001cc   Code   RO         4724    i._printf_core      mc_p.l(printf3.o)
+    0x000011dc   0x000011dc   0x0000000a   Code   RO         4726    i._sputc            mc_p.l(printf3.o)
+    0x000011e6   0x000011e6   0x00000004   Code   RO         4556    i.abort             retarget_io.o
+    0x000011ea   0x000011ea   0x0000001a   Code   RO         4138    i.cfs_filesystem_check_flash_repeat_address  cycle_flash_system.o
+    0x00001204   0x00001204   0x00000098   Code   RO         4139    i.cfs_filesystem_cycle_data_write  cycle_flash_system.o
+    0x0000129c   0x0000129c   0x000000d4   Code   RO         4140    i.cfs_filesystem_fixed_data_write  cycle_flash_system.o
+    0x00001370   0x00001370   0x00000038   Code   RO         4141    i.cfs_filesystem_flsh_data_read  cycle_flash_system.o
+    0x000013a8   0x000013a8   0x0000003c   Code   RO         4142    i.cfs_filesystem_object_add_oc_object  cycle_flash_system.o
+    0x000013e4   0x000013e4   0x00000098   Code   RO         4143    i.cfs_filesystem_object_id_init  cycle_flash_system.o
+    0x0000147c   0x0000147c   0x00000140   Code   RO         4144    i.cfs_filesystem_tight_data_page_id_init  cycle_flash_system.o
+    0x000015bc   0x000015bc   0x00000070   Code   RO         4145    i.cfs_nv_clear      cycle_flash_system.o
+    0x0000162c   0x0000162c   0x00000020   Code   RO         4146    i.cfs_nv_get_current_id  cycle_flash_system.o
+    0x0000164c   0x0000164c   0x00000020   Code   RO         4147    i.cfs_nv_get_current_valid_id  cycle_flash_system.o
+    0x0000166c   0x0000166c   0x0000001e   Code   RO         4148    i.cfs_nv_object_delete  cycle_flash_system.o
+    0x0000168a   0x0000168a   0x00000002   PAD
+    0x0000168c   0x0000168c   0x0000011c   Code   RO         4149    i.cfs_nv_object_init  cycle_flash_system.o
+    0x000017a8   0x000017a8   0x00000108   Code   RO         4150    i.cfs_nv_read       cycle_flash_system.o
+    0x000018b0   0x000018b0   0x000000b4   Code   RO         4151    i.cfs_nv_write      cycle_flash_system.o
+    0x00001964   0x00001964   0x0000002a   Code   RO         4476    i.cfs_port_system_flash_erasing_page  cfs_port_device_flash.o
+    0x0000198e   0x0000198e   0x00000002   PAD
+    0x00001990   0x00001990   0x00000018   Code   RO         4477    i.cfs_port_system_flash_init  cfs_port_device_flash.o
+    0x000019a8   0x000019a8   0x00000004   Code   RO         4478    i.cfs_port_system_flash_lock_disable  cfs_port_device_flash.o
+    0x000019ac   0x000019ac   0x00000004   Code   RO         4479    i.cfs_port_system_flash_lock_enable  cfs_port_device_flash.o
+    0x000019b0   0x000019b0   0x00000014   Code   RO         4480    i.cfs_port_system_flash_read  cfs_port_device_flash.o
+    0x000019c4   0x000019c4   0x00000024   Code   RO         4481    i.cfs_port_system_flash_read_checking_null_values  cfs_port_device_flash.o
+    0x000019e8   0x000019e8   0x0000001c   Code   RO         4482    i.cfs_port_system_flash_read_contrast  cfs_port_device_flash.o
+    0x00001a04   0x00001a04   0x00000026   Code   RO         4483    i.cfs_port_system_flash_write_byte  cfs_port_device_flash.o
+    0x00001a2a   0x00001a2a   0x0000003a   Code   RO         4484    i.cfs_port_system_flash_write_half_word  cfs_port_device_flash.o
+    0x00001a64   0x00001a64   0x00000044   Code   RO         4485    i.cfs_port_system_flash_write_word  cfs_port_device_flash.o
+    0x00001aa8   0x00001aa8   0x000000ac   Code   RO         4272    i.cfs_system_oc_add_object  cfs_system_oc.o
+    0x00001b54   0x00001b54   0x000000dc   Code   RO         4273    i.cfs_system_oc_add_write_flash_data  cfs_system_oc.o
+    0x00001c30   0x00001c30   0x0000001e   Code   RO         4274    i.cfs_system_oc_flash_checking_null_values  cfs_system_oc.o
+    0x00001c4e   0x00001c4e   0x00000012   Code   RO         4275    i.cfs_system_oc_flash_data_clear  cfs_system_oc.o
+    0x00001c60   0x00001c60   0x00000070   Code   RO         4276    i.cfs_system_oc_flash_repeat_address  cfs_system_oc.o
+    0x00001cd0   0x00001cd0   0x0000001e   Code   RO         4277    i.cfs_system_oc_object_block_buffer_set  cfs_system_oc.o
+    0x00001cee   0x00001cee   0x00000002   PAD
+    0x00001cf0   0x00001cf0   0x00000084   Code   RO         4278    i.cfs_system_oc_object_delete  cfs_system_oc.o
+    0x00001d74   0x00001d74   0x00000006   Code   RO         4279    i.cfs_system_oc_object_id_get  cfs_system_oc.o
+    0x00001d7a   0x00001d7a   0x00000008   Code   RO         4280    i.cfs_system_oc_object_id_set  cfs_system_oc.o
+    0x00001d82   0x00001d82   0x0000001e   Code   RO         4281    i.cfs_system_oc_object_linked_crc_16_verify  cfs_system_oc.o
+    0x00001da0   0x00001da0   0x00000008   Code   RO         4282    i.cfs_system_oc_object_struct_type_get  cfs_system_oc.o
+    0x00001da8   0x00001da8   0x00000006   Code   RO         4283    i.cfs_system_oc_object_valid_id_number_get  cfs_system_oc.o
+    0x00001dae   0x00001dae   0x00000008   Code   RO         4284    i.cfs_system_oc_object_valid_id_number_set  cfs_system_oc.o
+    0x00001db6   0x00001db6   0x00000002   PAD
+    0x00001db8   0x00001db8   0x000000dc   Code   RO         4285    i.cfs_system_oc_read_flash_data  cfs_system_oc.o
+    0x00001e94   0x00001e94   0x00000198   Code   RO         4286    i.cfs_system_oc_set_write_flash_data  cfs_system_oc.o
+    0x0000202c   0x0000202c   0x00000006   Code   RO         4287    i.cfs_system_oc_system_object_get  cfs_system_oc.o
+    0x00002032   0x00002032   0x000000ca   Code   RO         4288    i.cfs_system_oc_valid_data_number  cfs_system_oc.o
+    0x000020fc   0x000020fc   0x000000e4   Code   RO         4289    i.cfs_system_oc_via_id_calculate_addr  cfs_system_oc.o
+    0x000021e0   0x000021e0   0x00000050   Code   RO         4240    i.cfs_system_utils_crc16_xmodem_check  cfs_system_utils.o
+    0x00002230   0x00002230   0x000000d4   Code   RO         4241    i.cfs_system_utils_crc16_xmodem_check_data_block  cfs_system_utils.o
+    0x00002304   0x00002304   0x00000020   Code   RO         1529    i.ddl_memclr        ddl.o
+    0x00002324   0x00002324   0x00000058   Code   RO         1532    i.delay1ms          ddl.o
+    0x0000237c   0x0000237c   0x00000010   Code   RO         4413    i.flash_filesystem_erase_product_nv  cfs_demo.o
+    0x0000238c   0x0000238c   0x0000005c   Code   RO         4414    i.flash_filesystem_init  cfs_demo.o
+    0x000023e8   0x000023e8   0x00000010   Code   RO         4415    i.flash_filesystem_product_current_id_get  cfs_demo.o
+    0x000023f8   0x000023f8   0x00000010   Code   RO         4416    i.flash_filesystem_product_current_valid_id_get  cfs_demo.o
+    0x00002408   0x00002408   0x00000010   Code   RO         4417    i.flash_filesystem_product_delete_object  cfs_demo.o
+    0x00002418   0x00002418   0x00000028   Code   RO         4418    i.flash_filesystem_read_product_nv  cfs_demo.o
+    0x00002440   0x00002440   0x00000028   Code   RO         4419    i.flash_filesystem_write_product_nv  cfs_demo.o
+    0x00002468   0x00002468   0x00000020   Code   RO         4558    i.fputc             retarget_io.o
+    0x00002488   0x00002488   0x00000018   Code   RO         4609    i.fputs             mc_p.l(fputs.o)
+    0x000024a0   0x000024a0   0x00000054   Code   RO         4889    i.free              mc_p.l(malloc.o)
+    0x000024f4   0x000024f4   0x000004d0   Code   RO         4029    i.main              main.o
+    0x000029c4   0x000029c4   0x0000006c   Code   RO         4890    i.malloc            mc_p.l(malloc.o)
+    0x00002a30   0x00002a30   0x00000004   Code   RO         4559    i.stderr_putchar    retarget_io.o
+    0x00002a34   0x00002a34   0x00000026   Code   RO         4092    i.system_ble_uart0_send_string  system_uart.o
+    0x00002a5a   0x00002a5a   0x00000002   PAD
+    0x00002a5c   0x00002a5c   0x0000008c   Code   RO         4093    i.system_uart0_config_init  system_uart.o
+    0x00002ae8   0x00002ae8   0x00000048   Code   RO         4095    i.system_uart0_port_init  system_uart.o
+    0x00002b30   0x00002b30   0x00000018   Data   RO         3179    .constdata          sysctrl.o
+    0x00002b48   0x00002b48   0x00000008   Data   RO         3785    .constdata          uart.o
+    0x00002b50   0x00002b50   0x000000c9   Data   RO         4152    .conststring        cycle_flash_system.o
+    0x00002c19   0x00002c19   0x00000003   PAD
+    0x00002c1c   0x00002c1c   0x0000005c   Data   RO         4291    .conststring        cfs_system_oc.o
+    0x00002c78   0x00002c78   0x00000020   Data   RO         4969    Region$$Table       anon$$obj.o
+
+
+    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x00002c98, Size: 0x00000af8, Max: 0x00004000, ABSOLUTE)
+
+    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x20000000   0x00002c98   0x00000004   Data   RW          292    .data               system_hc32l17x.o
+    0x20000004   0x00002c9c   0x00000001   Data   RW         3180    .data               sysctrl.o
+    0x20000005   0x00002c9d   0x00000003   PAD
+    0x20000008   0x00002ca0   0x0000003a   Data   RW         4031    .data               main.o
+    0x20000042   0x00002cda   0x00000002   PAD
+    0x20000044   0x00002cdc   0x00000004   Data   RW         4153    .data               cycle_flash_system.o
+    0x20000048   0x00002ce0   0x00000008   Data   RW         4292    .data               cfs_system_oc.o
+    0x20000050   0x00002ce8   0x00000009   Data   RW         4420    .data               cfs_demo.o
+    0x20000059   0x00002cf1   0x00000001   Data   RW         4486    .data               cfs_port_device_flash.o
+    0x2000005a   0x00002cf2   0x00000002   PAD
+    0x2000005c   0x00002cf4   0x00000004   Data   RW         4613    .data               mc_p.l(stderr.o)
+    0x20000060   0x00002cf8   0x00000004   Data   RW         4942    .data               mc_p.l(mvars.o)
+    0x20000064   0x00002cfc   0x00000004   Data   RW         4943    .data               mc_p.l(mvars.o)
+    0x20000068        -       0x00000080   Zero   RW         4030    .bss                main.o
+    0x200000e8        -       0x0000000c   Zero   RW         4096    .bss                system_uart.o
+    0x200000f4        -       0x00000200   Zero   RW         4290    .bss                cfs_system_oc.o
+    0x200002f4   0x00002d00   0x00000004   PAD
+>>>>>>> develop
     0x200002f8        -       0x00000400   Zero   RW          337    HEAP                startup_hc32l17x.o
     0x200006f8        -       0x00000400   Zero   RW          336    STACK               startup_hc32l17x.o
 
@@ -2692,6 +2878,7 @@ Image component sizes
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
         28          0          0          0          0         76   adc.o
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
        488        114          0          9          0       6766   cfs_demo.o
@@ -2731,6 +2918,19 @@ Image component sizes
       1232        536          0         58        128       3220   main.o
        196         52          0          0          0       4289   retarget_io.o
 >>>>>>> develop
+=======
+       488        114          0          9          0       6730   cfs_demo.o
+       322          4          0          1          0       7258   cfs_port_device_flash.o
+      2266        270         92          8        512      17566   cfs_system_oc.o
+       292         96          0          0          0       2543   cfs_system_utils.o
+      1912        394        201          4          0      13256   cycle_flash_system.o
+       150         12          0          0          0       2129   ddl.o
+       788         96          0          0          0       4864   flash.o
+       176         16          0          0          0      39061   gpio.o
+       312          0          0          0          0     162076   interrupts_hc32l17x.o
+      1232        536          0         58        128       3220   main.o
+       196         52          0          0          0       4289   retarget_io.o
+>>>>>>> develop
         60         22        192          0       2048        640   startup_hc32l17x.o
        484         38         24          1          0       3516   sysctrl.o
        166         24          0          4          0       2148   system_hc32l17x.o
@@ -2740,7 +2940,11 @@ Image component sizes
     ----------------------------------------------------------------------
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       9560       1960        552         92       2704     275669   Object Totals
+=======
+      9368       1684        552         92       2704     276741   Object Totals
+>>>>>>> develop
 =======
       9368       1684        552         92       2704     276741   Object Totals
 >>>>>>> develop
@@ -2805,6 +3009,7 @@ Image component sizes
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
      11056       2004        552        104       2704     271369   Grand Totals
      11056       2004        552        104       2704     271369   ELF Image Totals
      11056       2004        552        104          0          0   ROM Totals
@@ -2814,6 +3019,17 @@ Image component sizes
     Total RO  Size (Code + RO Data)                11608 (  11.34kB)
     Total RW  Size (RW Data + ZI Data)              2808 (   2.74kB)
     Total ROM Size (Code + RO Data + RW Data)      11712 (  11.44kB)
+=======
+     10864       1728        552        104       2704     272397   Grand Totals
+     10864       1728        552        104       2704     272397   ELF Image Totals
+     10864       1728        552        104          0          0   ROM Totals
+
+==============================================================================
+
+    Total RO  Size (Code + RO Data)                11416 (  11.15kB)
+    Total RW  Size (RW Data + ZI Data)              2808 (   2.74kB)
+    Total ROM Size (Code + RO Data + RW Data)      11520 (  11.25kB)
+>>>>>>> develop
 =======
      10864       1728        552        104       2704     272397   Grand Totals
      10864       1728        552        104       2704     272397   ELF Image Totals
