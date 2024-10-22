@@ -1,8 +1,6 @@
 # Cycle Flash
 
 It is used to circulate data into the specified area of FLASH in MCU to ensure data safety and extend the life of FLASH area.  
-> 本项目借鉴开源的flash管理系统EasyFlash，还在拜读大佬写的代码；CFS这里有很多不合理的地方，后续在进行改进。
-> 菜鸡自用，如果有大佬翻牌轻喷。
 
 ## 1、介绍
 
