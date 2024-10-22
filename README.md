@@ -1,6 +1,8 @@
-# Cycle Flash
+# Cycle Flash_v1
 
 It is used to circulate data into the specified area of FLASH in MCU to ensure data safety and extend the life of FLASH area.  
+> 已经开始迭代 v2 版本，本版本做了很多无用的功夫，以及存入flash的数据结构也有些不满意，V2版本重点关注解决存入的数据结构问题等。
+> v2 版本请切换当前项目的分支到 CycleFlash_v2。
 
 ## 1、介绍
 
