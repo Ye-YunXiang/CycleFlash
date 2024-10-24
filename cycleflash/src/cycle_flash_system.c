@@ -21,9 +21,6 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * Function: It is the definitions head file for this library.
- * Created on: 2024-7-26
  */
 // Encoding:UTF-8
 
@@ -225,8 +222,8 @@ static cfs_system_handle_t cfs_filesystem_object_add_oc_object(cfs_system *temp_
     
     cfs_system_handle_t return_handle = \
         (((cfs_system_handle_t)temp_linked_object) << 16) + \
-        cfs_system_utils_crc16_xmodem_check( \
-        (uint8_t *)temp_linked_object, sizeof(temp_linked_object), true);
+        cfs_system_utils_crc16_check( \
+        (uint8_t *)temp_linked_object, sizeof(temp_linked_object));
 
     return return_handle;
 }

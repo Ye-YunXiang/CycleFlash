@@ -21,9 +21,6 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * Function: It is the definitions head file for this library.
- * Created on: 2024-7-26
  */
 // Encoding:UTF-8
 
@@ -163,8 +160,8 @@ cfs_object_linked_list *cfs_system_oc_add_object(cfs_system *object_pointer)
     new_node->valid_id_number = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     new_node->object_handle = new_cfs_node;
     new_node->this_linked_addr_crc_16 = \
-        cfs_system_utils_crc16_xmodem_check( \
-        (uint8_t *)(new_node), sizeof(new_node->object_handle), true);
+        cfs_system_utils_crc16_check( \
+        (uint8_t *)(new_node), sizeof(new_node->object_handle));
 
     return new_node;
 }
@@ -476,7 +473,7 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data(
     if((data_addr + data_block_lent - 1) >= start_addr + temp_cfs_objecr->sector_size)
     {
         cfs_port_system_flash_read(start_addr, read_sector_data, temp_cfs_objecr->sector_size);
-        memset(read_sector_data + data_addr - start_addr, CFS_FLASH_ERASURE, 
+        memset(read_sector_data + data_addr - start_addr, CFS_FLASH_SECTOR_SIZE, 
             start_addr + temp_cfs_objecr->sector_size - data_addr);
 
         __erasing_page_flash_data(start_addr, 1);
@@ -485,7 +482,7 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data(
         cfs_port_system_flash_lock_disable();
 
         cfs_port_system_flash_read(start_addr + temp_cfs_objecr->sector_size, read_sector_data, temp_cfs_objecr->sector_size);
-        memset(read_sector_data, CFS_FLASH_ERASURE, data_addr - start_addr + data_block_lent - temp_cfs_objecr->sector_size);
+        memset(read_sector_data, CFS_FLASH_SECTOR_SIZE, data_addr - start_addr + data_block_lent - temp_cfs_objecr->sector_size);
 
         __erasing_page_flash_data(start_addr + temp_cfs_objecr->sector_size, 1);
         __write_flash_data( start_addr + temp_cfs_objecr->sector_size, read_sector_data, temp_cfs_objecr->sector_size);
@@ -498,7 +495,7 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data(
         cfs_port_system_flash_read(start_addr, read_sector_data, \
             temp_cfs_objecr->sector_size * read_page_count);
         temo_read_sector_data = read_sector_data + data_addr - start_addr;
-        memset(temo_read_sector_data, CFS_FLASH_ERASURE, data_block_lent);
+        memset(temo_read_sector_data, CFS_FLASH_SECTOR_SIZE, data_block_lent);
         memcpy(temo_read_sector_data, &buffer->data_id, sizeof(buffer->data_id));
         temo_read_sector_data += sizeof(buffer->data_id);
         memcpy(temo_read_sector_data, buffer->data_pointer, buffer->data_len);
