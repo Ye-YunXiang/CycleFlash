@@ -36,6 +36,11 @@
 
 typedef uint64_t cfs_system_handle_t;
 
+// 数据定义
+typedef uint32_t cfs_data_id_t;
+typedef uint16_t cfs_data_len_t;
+typedef uint16_t cfs_data_crc_t;
+
 enum cycle_object_type
 {
     //@def 没有数据类型
@@ -74,34 +79,23 @@ typedef struct cfs_linked_list
 }cfs_object_linked_list;
 
 
+
 /*不算数据长度，通过数据块算包头包尾的长度*/
 // SIZEOF(data_id) + SIZEOF(data_crc_16)
 #define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN  6
 // 读取数据块的偏移长度
 // SIZEOF(data_id)
 #define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN    4
-/*系统存入内存的数据块*/
-// 存入数据结构：`ID(4byte) | 数据(最大为1页大小-7) | CRC16(2byte)`
-typedef struct 
-{
-    uint32_t data_id;               // 数据块ID
-    uint8_t *data_pointer;          // 存入数据的指针
-    uint16_t data_len;              // 存入数据的长度
-    uint16_t data_crc_16;           // 数据的crc8校验码
-}cfs_data_block;
-
-
-
 
 // 这里要重新定义存入数据的格式
 // 这里打算让后面分配好的地址直接分配过来这个结构体。
 // 存入数据结构：`ID(4byte) | 长度(2byte) | 数据 | CRC16(2byte)`
 typedef struct cfs_data_block
 {
-    uint32_t *data_id;
-    uint16_t *data_len;
-    uint8_t *data;
-    uint16_t *data_crc_16;
+    uint32_t *data_id;          // 数据块
+    uint16_t *data_len;         // 存入数据的指针
+    uint8_t *data;              // 存入数据的长度ID
+    uint16_t *data_crc_16;      // 数据的crc8校验码
 }cfs_data_block_t;
 
 #endif /* __CFS_SYSTEM_DEFINE_H__ */
