@@ -29,6 +29,8 @@
 
 #include "cfs_system_oc.h"
 #include "cycle_flash_system.h"
+
+
 #include "cfs_port_device_flash.h" 
 #include "cfs_system_utils.h"
 
@@ -338,6 +340,7 @@ static uint32_t cfs_filesystem_flsh_data_read( \
     return false;
 }
 
+
 //*******************************************************************************************
 //-- 对外接口  
 //*******************************************************************************************
@@ -372,12 +375,7 @@ cfs_system_handle_t cfs_nv_object_init(cfs_system *temp_object)
         return false;
     }
 
-    //@def 初始化本地flash
-    if(cfs_port_system_flash_init() != true)
-    {
-        return false;
-    }
-    
+
     /*开始初始化*/
     cfs_system_handle_t new_cfs_object_handle = \
         cfs_filesystem_object_add_oc_object(temp_object);		

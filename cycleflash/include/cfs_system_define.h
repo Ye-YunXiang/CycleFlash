@@ -76,8 +76,6 @@ typedef struct cfs_object
     const uint16_t sector_count;                    // 扇区数量，建议至少3页
     const uint16_t data_size;                       // 存入的数据大小
     const enum cycle_object_type type :8;           // 结构体类型
-
-    uint8_t * buffer;                               // 中转要存入的数据
 //}cfs_system;
 }cfs_object_t;
 
@@ -87,7 +85,9 @@ typedef struct cfs_object_list
 {
     struct cfs_object_list *next;                   // 链表对象
     struct cfs_object *object_handle;               // 存储对象
+
     uint8_t *name;                                  // 对象的名字
+    uint8_t * buffer;                               // 中转要存入的数据
     uint32_t data_id;                      	        // 数据块ID
     uint16_t valid_id_number;                       // 有效ID个数
 }cfs_object_list_t;

@@ -30,15 +30,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-/** 初始化本地设备的flash外设
- * 
- * 如果需要就根据应用的设备进行初始化，不需要可以无视。
- *
- * \param 无
- * \return 初始化返回true，否则false
- */
-bool cfs_port_system_flash_init(void);
-
 
 /** 往flash中存储数据(字节写)
  * 

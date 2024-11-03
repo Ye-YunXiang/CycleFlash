@@ -9,7 +9,8 @@
         "cfs_system_utils.h": "c",
         "limits.h": "c",
         "assert.h": "c",
-        "cfs_user_config.h": "c"
+        "cfs_user_config.h": "c",
+        "cfs_system_abstract.h": "c"
     },
     "files.encoding": "utf8"
 }

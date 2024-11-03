@@ -29,24 +29,6 @@
 #include "flash.h"
 
 
-// 下方代码是根据HC32L176写的案例，仅供参考
-
-static bool cfs_port_flash_init_flag = false;
-
-
-bool cfs_port_system_flash_init(void)
-{
-    if(cfs_port_flash_init_flag == true)
-    {
-        return true;
-    }
-
-    /*User initialization code*/
-
-    cfs_port_flash_init_flag = true;
-    return true;
-}
-
 bool cfs_port_system_flash_write_byte( \
     volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
 {
