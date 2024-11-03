@@ -70,8 +70,6 @@ uint16_t cfs_system_utils_crc16_check(const uint8_t *data, uint32_t data_length)
     return ~(crc);
 }
 
-#endif // CFS_CRC16
-
 /* 初始值（0）、多项式（0x1021）、结果异或值（0）、输入翻转（falsh）、输出翻转（falsh）
  * 参数： uint8_t * 起始指针
  *       uint32_t  数据
@@ -117,3 +115,13 @@ uint16_t cfs_system_utils_crc16_xmodem_check_data_block(const cfs_data_block *da
         return (crc_int^0);
     }
 }
+
+#else
+
+// 这里用于自己实现的CRC16，其实也不一定是CRC啦，可以是校验和
+uint16_t cfs_system_utils_crc16_check(const uint8_t *data, uint32_t data_length)
+{
+    return CRC
+}
+
+#endif // CFS_CRC16

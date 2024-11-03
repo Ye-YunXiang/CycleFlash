@@ -24,8 +24,8 @@
  */
 // Encoding:UTF-8
 
-#ifndef __CFS_SYSTEM_DEFINE_H__
-#define __CFS_SYSTEM_DEFINE_H__
+#ifndef __CYCLE_ABSTRACT_H__
+#define __CYCLE_ABSTRACT_H__
 
 #include <stdint.h>
 #include <limits.h>
@@ -87,12 +87,16 @@ typedef struct cfs_object_list
 {
     struct cfs_object_list *next;                   // 链表对象
     struct cfs_object *object_handle;               // 存储对象
+
     uint8_t *name;                                  // 对象的名字
     uint32_t data_id;                      	        // 数据块ID
     uint16_t valid_id_number;                       // 有效ID个数
 }cfs_object_list_t;
 
-
+typedef struct cfs_object_ops
+{
+    uint32_t (*write)()
+}cfs_object_ops_t;
 
 // 这里要重新定义存入数据的格式
 // 这里打算让后面分配好的地址直接分配过来这个结构体。
@@ -105,4 +109,5 @@ typedef struct cfs_data_block
     uint16_t *data_crc_16;      // 数据的crc8校验码
 }cfs_data_block_t;
 
-#endif /* __CFS_SYSTEM_DEFINE_H__ */
+
+#endif
