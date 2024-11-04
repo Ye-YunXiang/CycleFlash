@@ -338,26 +338,21 @@ static uint32_t cfs_filesystem_flsh_data_read( \
 //-- 对外接口  
 //*******************************************************************************************
 
-cfs_system_handle_t cfs_nv_object_init(cfs_system *temp_object)
+//cfs_system_handle_t cfs_nv_object_init(cfs_system *temp_object)
+cfs_system_handle_t cfs_nv_object_init(
+    const uint8_t *name, 
+    const uint32_t address,
+    const uint16_t sector_count, 
+    const enum cycle_object_type type)
 {
     //@def 判断参数有效性
-    assert(temp_object->sector_size % 64 == 0);
+    assert(name != NULL || type != CFS_FILESYSTEM_OBJECT_TYPE_NULL);
 
-    assert((temp_object->struct_type != CFS_FILESYSTEM_OBJECT_TYPE_NULL) ||\
-        (temp_object->sector_count != 0) || \
-        (temp_object->addr_handle != 0) || \
-        (temp_object->sector_size != 0) || \
-        (temp_object->data_size != 0));
-
-    if((temp_object->struct_type == CFS_FILESYSTEM_OBJECT_TYPE_NULL) ||\
-        (temp_object->sector_count == 0) || \
-        (temp_object->addr_handle == 0) || \
-        (temp_object->sector_size == 0) || \
-        (temp_object->data_size == 0))
-    {
-        //@def 检查参数
-        return false;
-    }
+    cfs_object_t object = {
+        .name = name;
+        .address = address;
+        .sector_count = sector_count;
+    };
 
     //@def 在判断地址有没有重复
     if(true == cfs_filesystem_check_flash_repeat_address(temp_object))

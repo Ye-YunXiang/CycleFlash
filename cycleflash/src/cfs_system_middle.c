@@ -24,10 +24,15 @@
  */
 // Encoding:UTF-8
 
+#include <string.h>
+#include <assert.h>
+
 #include "cfs_system_middle.h"
 #include "cfs_system_oc.h"
 
 // XXX:这里负责对象管理。。。。。。。。。。。。。
+
+static cfs_object_list_t *object_list_head = NULL;
 
 
 //*******************************************************************************************
@@ -43,11 +48,23 @@ bool cfs_middle_object_init(const cfs_object_t *object)
 //@def 查找对象对象
 cfs_object_list_t cfs_middle_find_object(const cfs_object_t *object)
 {
+    assert(object != NULL);
+    assert(object->name != NULL);
+  
+    cfs_object_list_t *find_object = object_list_head;
+    while (find_object != NULL)
+    {
+        if (strcmp(find_object->object_handle->name, object->name) == 0)
+        {
+            break;
+        }
+        find_object = find_object->next;
+    }
 
+    return find_object;
 }
 
 //@def 检查重复地址， 通过返回 true， 不通过返回 false
-// TODO: 还要继续完善
 bool cfs_middle_check_address(const cfs_object_t *object)
 {
     if(object == NULL)
@@ -55,30 +72,28 @@ bool cfs_middle_check_address(const cfs_object_t *object)
         return false;
     }
 
-    uint32_t head_1 = temp_object->addr_handle;
-
-    uint32_t tail_1 = temp_object->addr_handle + \
-        (temp_object->sector_size * temp_object->sector_count) - 1;
-
-    cfs_object_list_t *temp_pointer = cfs_system_object_head->next;
+    cfs_object_list_t *list_pointer = cfs_system_object_head->next;
+    uint32_t current_head = object->address;
+    uint32_t current_tail = 
+        object->address + (object->sector_count * CFS_FLASH_SECTOR_SIZE) - 1;
     
-    while(temp_pointer != NULL) 
+    // 遍历内存并检查和之前的数据对象是否有交叉
+    while(list_pointer != NULL) 
     {
-        uint32_t head_2 = temp_pointer->object_handle->addr_handle;
-        uint32_t tail_2 = temp_pointer->object_handle->addr_handle + \
-            (temp_pointer->object_handle->sector_size * \
-            temp_pointer->object_handle->sector_count) - 1;
+        uint32_t next_head = list_pointer->object_handle->addr_handle;
+        uint32_t next_tail = list_pointer->object_handle->addr_handle + \
+            (CFS_FLASH_SECTOR_SIZE * list_pointer->object_handle->sector_count) - 1;
 
-        if((head_1 <= tail_2 && tail_1 >= head_2) || \
-            (head_2 <= tail_1 && tail_2 >= head_1) || \
-            (head_1 <= head_2 && tail_1 >= tail_2) || \
-            (head_2 <= head_1 && tail_2 >= tail_1))
+        if((current_head <= next_tail && current_tail >= next_head) || \
+            (next_head <= current_tail && next_tail >= current_head) || \
+            (current_head <= next_head && current_tail >= next_tail) || \
+            (next_head <= current_head && next_tail >= current_tail))
         {
             /*分配的内存地址交叉了*/
             return false;
         }
 
-        temp_pointer = temp_pointer->next;
+        list_pointer = list_pointer->next;
     }
 
     return true;
