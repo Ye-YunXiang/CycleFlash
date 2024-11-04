@@ -32,10 +32,12 @@
 #include "cfs_port_device_flash.h"
 #include "cfs_system_utils.h"
 
+// XXX:这里负责对象存储相关的。。。。。。。。。。。。。
+
 
 /*数据对象的头指针*/
-static cfs_object_linked_list *cfs_system_object_head = NULL;
-static cfs_object_linked_list *cfs_system_object_tail = NULL;
+static cfs_object_list_t *cfs_system_object_head = NULL;
+static cfs_object_list_t *cfs_system_object_tail = NULL;
 
 //@def 1页大小的数据缓存
 uint8_t data_buffer_temp[CFS_BUFFER_SIZE];
@@ -45,7 +47,7 @@ uint8_t data_buffer_temp[CFS_BUFFER_SIZE];
 
 //@def 如果为空值返回true
 bool cfs_system_oc_flash_checking_null_values( \
-    const cfs_object_linked_list *temp_object, cfs_data_block * buffer)
+    const cfs_object_list_t *temp_object, cfs_data_block * buffer)
 {
     uint32_t addr = cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
     uint32_t data_block_len = \
@@ -56,7 +58,7 @@ bool cfs_system_oc_flash_checking_null_values( \
 
 //@def 根据ID计算有效数据个数
 uint32_t cfs_system_oc_valid_data_number( \
-    const cfs_object_linked_list *temp_linked_object)
+    const cfs_object_list_t *temp_linked_object)
 {
     uint32_t result_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
 
@@ -108,10 +110,10 @@ uint32_t cfs_system_oc_valid_data_number( \
 }
 
 //@def 链表添加一个数据对象
-cfs_object_linked_list *cfs_system_oc_add_object(cfs_system *object_pointer) 
+cfs_object_list_t *cfs_system_oc_add_object(cfs_system *object_pointer) 
 {
-    cfs_object_linked_list *new_node = 
-        (cfs_object_linked_list *)CFS_MALLOC(sizeof(cfs_object_linked_list)); // malloc*******************************
+    cfs_object_list_t *new_node = 
+        (cfs_object_list_t *)CFS_MALLOC(sizeof(cfs_object_list_t)); // malloc*******************************
     if (new_node == NULL) 
     {
         /* Allocation failure */
@@ -178,7 +180,7 @@ bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object)
         uint32_t tail_1 = temp_object->addr_handle + \
             (temp_object->sector_size * temp_object->sector_count) - 1;
 
-        cfs_object_linked_list *temp_pointer = cfs_system_object_head->next;
+        cfs_object_list_t *temp_pointer = cfs_system_object_head->next;
         
         while(temp_pointer != NULL) 
         {
@@ -206,7 +208,7 @@ bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object)
 
 //@def 根据ID得到ID对应的内存地址
 uint32_t cfs_system_oc_via_id_calculate_addr( \
-    const cfs_object_linked_list *temp_object, uint32_t temp_id)
+    const cfs_object_list_t *temp_object, uint32_t temp_id)
 {
     assert(temp_id != CFS_CONFIG_NOT_LINKED_DATA_ID);
     cfs_system *temp_cfs_object = temp_object->object_handle;
@@ -365,7 +367,7 @@ static bool __contrast_flash_data_block( \
 
 //@def 读取内存中的数据,会验证crc8
 cfs_oc_action_data_result cfs_system_oc_read_flash_data( \
-    const cfs_object_linked_list *temp_object, cfs_data_block * buffer)
+    const cfs_object_list_t *temp_object, cfs_data_block * buffer)
 {
     assert(buffer->data_pointer != NULL || buffer->data_len >= 1);
 
@@ -401,7 +403,7 @@ cfs_oc_action_data_result cfs_system_oc_read_flash_data( \
 
 //@def 往内存中写入新的数据，增加式
 cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
-    const cfs_object_linked_list *temp_object, cfs_data_block * buffer)
+    const cfs_object_list_t *temp_object, cfs_data_block * buffer)
 {
     assert(buffer != NULL && 
         buffer->data_len >= 1 && buffer->data_id != CFS_CONFIG_NOT_LINKED_DATA_ID);
@@ -444,7 +446,7 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
 
 //@def 修改内存中的数据
 cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( 
-    const cfs_object_linked_list *temp_object, cfs_data_block * buffer)
+    const cfs_object_list_t *temp_object, cfs_data_block * buffer)
 {
     assert(buffer != NULL && 
         buffer->data_len >= 1 && buffer->data_id != CFS_CONFIG_NOT_LINKED_DATA_ID);
@@ -522,7 +524,7 @@ cfs_oc_action_data_result cfs_system_oc_set_write_flash_data(
     return read_result;
 }
 
-bool cfs_system_oc_flash_data_clear(const cfs_object_linked_list *temp_object)
+bool cfs_system_oc_flash_data_clear(const cfs_object_list_t *temp_object)
 {
     __erasing_page_flash_data( \
         temp_object->object_handle->addr_handle, \
@@ -530,7 +532,7 @@ bool cfs_system_oc_flash_data_clear(const cfs_object_linked_list *temp_object)
     return true;
 }
 
-bool cfs_system_oc_object_delete(cfs_object_linked_list *temp_object)
+bool cfs_system_oc_object_delete(cfs_object_list_t *temp_object)
 {
     if(temp_object == NULL)
     {
@@ -584,7 +586,7 @@ bool cfs_system_oc_object_delete(cfs_object_linked_list *temp_object)
 
 /*设置数据数据对象的ID*/
 bool cfs_system_oc_object_id_set( \
-    cfs_object_linked_list * temp_cfs_handle, uint32_t temp_id)
+    cfs_object_list_t * temp_cfs_handle, uint32_t temp_id)
 {
     temp_cfs_handle->data_id = temp_id;
     return true;
@@ -592,14 +594,14 @@ bool cfs_system_oc_object_id_set( \
 
 
 /* 得到数据数据对象的ID */
-uint32_t cfs_system_oc_object_id_get(const cfs_object_linked_list *temp_cfs_handle)
+uint32_t cfs_system_oc_object_id_get(const cfs_object_list_t *temp_cfs_handle)
 {
     return temp_cfs_handle->data_id;
 } 
 
 /*设置数据数据对象的可用ID*/
 bool cfs_system_oc_object_valid_id_number_set( \
-    cfs_object_linked_list * temp_cfs_handle, uint16_t temp_id)
+    cfs_object_list_t * temp_cfs_handle, uint16_t temp_id)
 {
     temp_cfs_handle->valid_id_number = temp_id;
     return true;
@@ -608,21 +610,21 @@ bool cfs_system_oc_object_valid_id_number_set( \
 
 /* 得到数据数据对象的可用ID */
 uint16_t cfs_system_oc_object_valid_id_number_get( \
-    const cfs_object_linked_list *temp_cfs_handle)
+    const cfs_object_list_t *temp_cfs_handle)
 {
     return temp_cfs_handle->valid_id_number;
 } 
 
 /* 得到数据对象的类型*/
 uint8_t cfs_system_oc_object_struct_type_get( \
-    const cfs_object_linked_list *temp_cfs_handle)
+    const cfs_object_list_t *temp_cfs_handle)
 {
     return (uint8_t)temp_cfs_handle->object_handle->struct_type;
 } 
 
 
 /*得到系统数据对象指针*/
-cfs_system *cfs_system_oc_system_object_get(const cfs_object_linked_list *temp_object)
+cfs_system *cfs_system_oc_system_object_get(const cfs_object_list_t *temp_object)
 {
     return temp_object->object_handle;
 }
@@ -630,11 +632,11 @@ cfs_system *cfs_system_oc_system_object_get(const cfs_object_linked_list *temp_o
 
 /*使用初始化链表对象后返回的句柄，在通过crc-16-xmodem标识验证链表对象是否存在*/
 //@def 存在返回链表对象，不存在返回NULL
-cfs_object_linked_list * cfs_system_oc_object_linked_crc_16_verify( \
+cfs_object_list_t * cfs_system_oc_object_linked_crc_16_verify( \
     cfs_system_handle_t temp_cfs_handle)
 {
-    cfs_object_linked_list *temp_object = \
-        (cfs_object_linked_list *)((uint32_t)(temp_cfs_handle>>16));
+    cfs_object_list_t *temp_object = \
+        (cfs_object_list_t *)((uint32_t)(temp_cfs_handle>>16));
     uint16_t temp_crc_16 = (uint16_t)(temp_cfs_handle);
 
     if(temp_object->this_linked_addr_crc_16 == temp_crc_16)
@@ -648,7 +650,7 @@ cfs_object_linked_list * cfs_system_oc_object_linked_crc_16_verify( \
 
 /*设置数据数据对象的可用ID*/
 bool cfs_system_oc_object_block_buffer_set( \
-    cfs_object_linked_list * temp_cfs_handle, cfs_data_block *temp_block)
+    cfs_object_list_t * temp_cfs_handle, cfs_data_block *temp_block)
 {
     memset(temp_cfs_handle->buffer, 0, temp_cfs_handle->object_handle->data_size);
 

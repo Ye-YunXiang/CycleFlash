@@ -34,15 +34,12 @@
 #include "cfs_port_device_flash.h" 
 #include "cfs_system_utils.h"
 
-// 测试-------
-cfs_object_linked_list *temp_cfs_object_linked_list;
-// ------------
 
 
 //@def 紧密存储遍历内存ID初始化
 //@def 偷懒，后续在优化吧
 static uint32_t cfs_filesystem_tight_data_page_id_init( \
-    cfs_object_linked_list *temp_linked_object)
+    cfs_object_list_t *temp_linked_object)
 {
     uint32_t temp_data_MAX_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
     cfs_system *temp_cfs_handle = cfs_system_oc_system_object_get(temp_linked_object);
@@ -179,7 +176,7 @@ static bool cfs_filesystem_check_flash_repeat_address(const cfs_system *temp_obj
 //@def 进行ID初始化操作
 static uint32_t cfs_filesystem_object_id_init( cfs_system_handle_t temp_cfs_handle)
 {
-    cfs_object_linked_list *temp_object = \
+    cfs_object_list_t *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_cfs_handle);
     assert(temp_object != NULL);
 
@@ -212,15 +209,11 @@ static uint32_t cfs_filesystem_object_id_init( cfs_system_handle_t temp_cfs_hand
 
 static cfs_system_handle_t cfs_filesystem_object_add_oc_object(cfs_system *temp_object)
 {
-    cfs_object_linked_list *temp_linked_object = cfs_system_oc_add_object(temp_object);
+    cfs_object_list_t *temp_linked_object = cfs_system_oc_add_object(temp_object);
     if(temp_linked_object == NULL)
     {
         return 0;
     }
-    
-    // 测试-------
-    temp_cfs_object_linked_list = temp_linked_object;
-    // ------------
     
     cfs_system_handle_t return_handle = \
         (((cfs_system_handle_t)temp_linked_object) << 16) + \
@@ -232,7 +225,7 @@ static cfs_system_handle_t cfs_filesystem_object_add_oc_object(cfs_system *temp_
 
 //@def 存储固定数据——写入数据,写入成功返回写入的原始数据长度
 static uint32_t cfs_filesystem_fixed_data_write( \
-    cfs_object_linked_list *temp_object, \
+    cfs_object_list_t *temp_object, \
     uint32_t write_id, uint8_t *data, uint16_t len)
 {
     cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
@@ -277,7 +270,7 @@ static uint32_t cfs_filesystem_fixed_data_write( \
 
 //@def 循环存储数据——写入数据,写入成功返回写入的原始数据长度
 static uint32_t cfs_filesystem_cycle_data_write( \
-    cfs_object_linked_list *temp_object, \
+    cfs_object_list_t *temp_object, \
     uint32_t write_id, uint8_t *data, uint16_t len)
 {
     cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
@@ -319,7 +312,7 @@ static uint32_t cfs_filesystem_cycle_data_write( \
 
 //@def 读取数据,读取成功返回读取的原始数据长度
 static uint32_t cfs_filesystem_flsh_data_read( \
-    cfs_object_linked_list *temp_object, \
+    cfs_object_list_t *temp_object, \
     uint32_t read_id, uint8_t *data, uint16_t len)
 {
     cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
@@ -393,7 +386,7 @@ cfs_system_handle_t cfs_nv_object_init(cfs_system *temp_object)
 
 bool cfs_nv_object_delete(cfs_system_handle_t temp_object_handle)
 {
-    cfs_object_linked_list *temp_object = \
+    cfs_object_list_t *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
     if(temp_object == NULL)
     {
@@ -408,7 +401,7 @@ uint32_t cfs_nv_write(cfs_system_handle_t temp_object_handle, \
 	uint32_t temp_id, uint8_t *data, uint16_t len)
 {
     uint32_t result_len = NULL;
-    cfs_object_linked_list *temp_object = \
+    cfs_object_list_t *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
     cfs_system *temp_cfs_object = cfs_system_oc_system_object_get(temp_object);
     if(temp_object == NULL || temp_id == CFS_CONFIG_NOT_LINKED_DATA_ID || \
@@ -446,7 +439,7 @@ uint32_t cfs_nv_read(cfs_system_handle_t temp_object_handle, \
 	uint32_t read_id, uint8_t *data, uint32_t len)
 {
     uint32_t result_len = NULL;
-    cfs_object_linked_list *temp_object = \
+    cfs_object_list_t *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
     cfs_system *temp_cfs_object = cfs_system_oc_system_object_get(temp_object);
     if(temp_object == NULL || read_id == CFS_CONFIG_NOT_LINKED_DATA_ID || \
@@ -498,7 +491,7 @@ uint32_t cfs_nv_read(cfs_system_handle_t temp_object_handle, \
 //@def 清除指定对象的存储空间
 bool cfs_nv_clear(cfs_system_handle_t temp_object_handle)
 {
-    cfs_object_linked_list *temp_object = \
+    cfs_object_list_t *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
     if(temp_object == NULL)
     {
@@ -523,7 +516,7 @@ bool cfs_nv_clear(cfs_system_handle_t temp_object_handle)
 //@def 返回目前存储对象的ID
 uint32_t cfs_nv_get_current_id(cfs_system_handle_t temp_object_handle)
 {
-    cfs_object_linked_list *temp_object = \
+    cfs_object_list_t *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
     if(temp_object == NULL)
     {
@@ -536,7 +529,7 @@ uint32_t cfs_nv_get_current_id(cfs_system_handle_t temp_object_handle)
 //@def 返回目前存储对象的可用ID
 uint32_t cfs_nv_get_current_valid_id(cfs_system_handle_t temp_object_handle)
 {
-    cfs_object_linked_list *temp_object = \
+    cfs_object_list_t *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
     if(temp_object == NULL)
     {
