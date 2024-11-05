@@ -62,8 +62,8 @@ uint32_t cfs_system_oc_traverse_list_page_id_init(uint32_t temp_cfs_handle);
 // 链表添加一个数据对象
 cfs_object_list_t *cfs_system_oc_add_object(cfs_system *object_pointer);
 
-//@def 检查设置的文件的地址和将要存入数据的地址片区有没有重复
-bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object);
+// //@def 检查设置的文件的地址和将要存入数据的地址片区有没有重复
+// bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object);
 
 
 //@def 根据ID得到本ID对应的内存地址
@@ -119,7 +119,7 @@ cfs_system *cfs_system_oc_system_object_get(const cfs_object_list_t *temp_object
 /*使用初始化链表对象后返回的句柄，在通过crc-16-xmodem标识验证链表对象是否存在*/
 //@def 存在返回链表对象，不存在返回NULL
 cfs_object_list_t *cfs_system_oc_object_linked_crc_16_verify( \
-    cfs_system_handle_t temp_cfs_handle);
+    cfs_object_handle_ptr temp_cfs_handle);
 
 /*设置读取数据块的缓存*/
 bool cfs_system_oc_object_block_buffer_set( \

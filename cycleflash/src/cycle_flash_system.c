@@ -157,24 +157,24 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
 }
 
 
-//@def 检查重复地址
-static bool cfs_filesystem_check_flash_repeat_address(const cfs_system *temp_object)
-{
-    //@def 肯定不能超过uint32类型最大值
-    assert((temp_object->addr_handle + \
-        (temp_object->sector_size * temp_object->sector_count)) <= UINT_MAX);
+// //@def 检查重复地址
+// static bool cfs_filesystem_check_flash_repeat_address(const cfs_system *temp_object)
+// {
+//     //@def 肯定不能超过uint32类型最大值
+//     assert((temp_object->addr_handle + \
+//         (temp_object->sector_size * temp_object->sector_count)) <= UINT_MAX);
 
-    if(cfs_system_oc_flash_repeat_address(temp_object) == true)
-    {
-        return true;
-    }
+//     if(cfs_system_oc_flash_repeat_address(temp_object) == true)
+//     {
+//         return true;
+//     }
 
-    return false;
-}
+//     return false;
+// }
 
 
 //@def 进行ID初始化操作
-static uint32_t cfs_filesystem_object_id_init( cfs_system_handle_t temp_cfs_handle)
+static uint32_t cfs_filesystem_object_id_init( cfs_object_handle_ptr temp_cfs_handle)
 {
     cfs_object_list_t *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_cfs_handle);
@@ -207,7 +207,7 @@ static uint32_t cfs_filesystem_object_id_init( cfs_system_handle_t temp_cfs_hand
     return true;
 }
 
-static cfs_system_handle_t cfs_filesystem_object_add_oc_object(cfs_system *temp_object)
+static cfs_object_handle_ptr cfs_filesystem_object_add_oc_object(cfs_system *temp_object)
 {
     cfs_object_list_t *temp_linked_object = cfs_system_oc_add_object(temp_object);
     if(temp_linked_object == NULL)
@@ -215,10 +215,10 @@ static cfs_system_handle_t cfs_filesystem_object_add_oc_object(cfs_system *temp_
         return 0;
     }
     
-    cfs_system_handle_t return_handle = \
-        (((cfs_system_handle_t)temp_linked_object) << 16) + \
-        cfs_system_utils_crc16_check( \
-        (uint8_t *)temp_linked_object, sizeof(temp_linked_object));
+    // cfs_object_handle_ptr return_handle = \
+    //     (((cfs_object_handle_ptr)temp_linked_object) << 16) + \
+    //     cfs_system_utils_crc16_check( \
+    //     (uint8_t *)temp_linked_object, sizeof(temp_linked_object));
 
     return return_handle;
 }
@@ -338,8 +338,8 @@ static uint32_t cfs_filesystem_flsh_data_read( \
 //-- 对外接口  
 //*******************************************************************************************
 
-//cfs_system_handle_t cfs_nv_object_init(cfs_system *temp_object)
-cfs_system_handle_t cfs_nv_object_init(
+//cfs_object_handle_ptr cfs_nv_object_init(cfs_system *temp_object)
+cfs_object_handle_ptr cfs_nv_object_init(
     const uint8_t *name, 
     const uint32_t address,
     const uint16_t sector_count, 
@@ -348,38 +348,39 @@ cfs_system_handle_t cfs_nv_object_init(
     //@def 判断参数有效性
     assert(name != NULL || type != CFS_FILESYSTEM_OBJECT_TYPE_NULL);
 
+    //@def 创建一个临时的对象
     cfs_object_t object = {
         .name = name;
         .address = address;
         .sector_count = sector_count;
+        .type = type;
     };
 
-    //@def 在判断地址有没有重复
-    if(true == cfs_filesystem_check_flash_repeat_address(temp_object))
+    //@def 在判断地址有没有重复，没通过返回false
+    if (false == cfs_middle_check_address(&object))
     {
-			cfs_filesystem_check_flash_repeat_address(temp_object);
         /*内存参数交叉了！*/
-        assert(false);
+        assert(cfs_middle_check_address(&object));
         return false;
     }
 
-
-    /*开始初始化*/
-    cfs_system_handle_t new_cfs_object_handle = \
-        cfs_filesystem_object_add_oc_object(temp_object);		
-    if(new_cfs_object_handle == false)
+    //@def 开始初始化，新建一个内存对象
+    cfs_object_handle_ptr new_object_handle =
+        cfs_filesystem_object_add_oc_object(&object);		
+    if(new_object_handle == false)
     {
+        assert(new_object_handle);
         return false;
     }
 
     //@def 初始化对象的各种ID
-    cfs_filesystem_object_id_init(new_cfs_object_handle);
+    cfs_filesystem_object_id_init(new_object_handle);
 
     /*初始化工作结束，返回初始化的句柄*/
-    return new_cfs_object_handle;
+    return new_object_handle;
 }
 
-bool cfs_nv_object_delete(cfs_system_handle_t temp_object_handle)
+bool cfs_nv_object_delete(cfs_object_handle_ptr temp_object_handle)
 {
     cfs_object_list_t *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
@@ -392,7 +393,7 @@ bool cfs_nv_object_delete(cfs_system_handle_t temp_object_handle)
 }
 
 //@def 根据id往内存中写入数据
-uint32_t cfs_nv_write(cfs_system_handle_t temp_object_handle, \
+uint32_t cfs_nv_write(cfs_object_handle_ptr temp_object_handle, \
 	uint32_t temp_id, uint8_t *data, uint16_t len)
 {
     uint32_t result_len = NULL;
@@ -430,7 +431,7 @@ uint32_t cfs_nv_write(cfs_system_handle_t temp_object_handle, \
 }
 
 //@def 根据ID读取内存中的数据
-uint32_t cfs_nv_read(cfs_system_handle_t temp_object_handle, \
+uint32_t cfs_nv_read(cfs_object_handle_ptr temp_object_handle, \
 	uint32_t read_id, uint8_t *data, uint32_t len)
 {
     uint32_t result_len = NULL;
@@ -484,7 +485,7 @@ uint32_t cfs_nv_read(cfs_system_handle_t temp_object_handle, \
 }
 
 //@def 清除指定对象的存储空间
-bool cfs_nv_clear(cfs_system_handle_t temp_object_handle)
+bool cfs_nv_clear(cfs_object_handle_ptr temp_object_handle)
 {
     cfs_object_list_t *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
@@ -509,7 +510,7 @@ bool cfs_nv_clear(cfs_system_handle_t temp_object_handle)
 }
 
 //@def 返回目前存储对象的ID
-uint32_t cfs_nv_get_current_id(cfs_system_handle_t temp_object_handle)
+uint32_t cfs_nv_get_current_id(cfs_object_handle_ptr temp_object_handle)
 {
     cfs_object_list_t *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
@@ -522,7 +523,7 @@ uint32_t cfs_nv_get_current_id(cfs_system_handle_t temp_object_handle)
 }
 
 //@def 返回目前存储对象的可用ID
-uint32_t cfs_nv_get_current_valid_id(cfs_system_handle_t temp_object_handle)
+uint32_t cfs_nv_get_current_valid_id(cfs_object_handle_ptr temp_object_handle)
 {
     cfs_object_list_t *temp_object = \
         cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);

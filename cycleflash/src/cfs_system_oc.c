@@ -169,41 +169,41 @@ cfs_object_list_t *cfs_system_oc_add_object(cfs_system *object_pointer)
 }
 
 
-//@def 检查设置的文件的地址和将要存入数据的地址片区有没有重复
-//@def 有交叉返回 true， 没有交叉返回 false
-bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object)
-{
-    if(cfs_system_object_head != NULL)
-    {
-        uint32_t head_1 = temp_object->addr_handle;
+// //@def 检查设置的文件的地址和将要存入数据的地址片区有没有重复
+// //@def 有交叉返回 true， 没有交叉返回 false
+// bool cfs_system_oc_flash_repeat_address(const cfs_system *temp_object)
+// {
+//     if(cfs_system_object_head != NULL)
+//     {
+//         uint32_t head_1 = temp_object->addr_handle;
 
-        uint32_t tail_1 = temp_object->addr_handle + \
-            (temp_object->sector_size * temp_object->sector_count) - 1;
+//         uint32_t tail_1 = temp_object->addr_handle + \
+//             (temp_object->sector_size * temp_object->sector_count) - 1;
 
-        cfs_object_list_t *temp_pointer = cfs_system_object_head->next;
+//         cfs_object_list_t *temp_pointer = cfs_system_object_head->next;
         
-        while(temp_pointer != NULL) 
-        {
-            uint32_t head_2 = temp_pointer->object_handle->addr_handle;
-            uint32_t tail_2 = temp_pointer->object_handle->addr_handle + \
-                (temp_pointer->object_handle->sector_size * \
-                temp_pointer->object_handle->sector_count) - 1;
+//         while(temp_pointer != NULL) 
+//         {
+//             uint32_t head_2 = temp_pointer->object_handle->addr_handle;
+//             uint32_t tail_2 = temp_pointer->object_handle->addr_handle + \
+//                 (temp_pointer->object_handle->sector_size * \
+//                 temp_pointer->object_handle->sector_count) - 1;
 
-            if((head_1 <= tail_2 && tail_1 >= head_2) || \
-                (head_2 <= tail_1 && tail_2 >= head_1) || \
-                (head_1 <= head_2 && tail_1 >= tail_2) || \
-                (head_2 <= head_1 && tail_2 >= tail_1))
-            {
-                /*分配的内存地址交叉了*/
-                return true;
-            }
+//             if((head_1 <= tail_2 && tail_1 >= head_2) || \
+//                 (head_2 <= tail_1 && tail_2 >= head_1) || \
+//                 (head_1 <= head_2 && tail_1 >= tail_2) || \
+//                 (head_2 <= head_1 && tail_2 >= tail_1))
+//             {
+//                 /*分配的内存地址交叉了*/
+//                 return true;
+//             }
 
-            temp_pointer = temp_pointer->next;
-        }
-    }
-    /*No object name*/
-    return false;
-}
+//             temp_pointer = temp_pointer->next;
+//         }
+//     }
+//     /*No object name*/
+//     return false;
+// }
 
 
 //@def 根据ID得到ID对应的内存地址
@@ -633,7 +633,7 @@ cfs_system *cfs_system_oc_system_object_get(const cfs_object_list_t *temp_object
 /*使用初始化链表对象后返回的句柄，在通过crc-16-xmodem标识验证链表对象是否存在*/
 //@def 存在返回链表对象，不存在返回NULL
 cfs_object_list_t * cfs_system_oc_object_linked_crc_16_verify( \
-    cfs_system_handle_t temp_cfs_handle)
+    cfs_object_handle_ptr temp_cfs_handle)
 {
     cfs_object_list_t *temp_object = \
         (cfs_object_list_t *)((uint32_t)(temp_cfs_handle>>16));

@@ -1,6 +1,6 @@
 #include "cycle_flash_system.h"
 
-cfs_system_handle_t object = {
+cfs_object_handle_ptr object = {
     .name = "object",
     .address = 0x000000,
     .sector_count = 4,

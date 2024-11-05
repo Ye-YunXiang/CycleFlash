@@ -18,9 +18,9 @@ CycleFlash 是一个用于管理MCU内置flash的轻量级管理系统，有简�
 使用时先实现 cycleflash\port_device_flash.h 的接口。
 使用时包含头文件 #include "cycle_flash_system.h" 即可。
 
-- 初始化函数 `cfs_system_handle_t cfs_nv_object_init( cfs_system *temp_object, const char * const name)`
+- 初始化函数 `cfs_object_handle_ptr cfs_nv_object_init( cfs_system *temp_object, const char * const name)`
   - 需要填充结构体 `cfs_system cfs_system_init` 的系统配置，在通过函数初始化内存。
-  - 函数会返回类型为 `cfs_system_handle_t` cfs对象句柄，后续对数据库的操作都要通过它来使用。
+  - 函数会返回类型为 `cfs_object_handle_ptr` cfs对象句柄，后续对数据库的操作都要通过它来使用。
 
 初始化完毕后不需要考虑存入地址在哪里，只要给它ID就行。
 ID从0开始，如果ID为 FFFF FFFF 就是无ID。
