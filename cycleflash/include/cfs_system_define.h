@@ -50,11 +50,11 @@ typedef uint16_t cfs_data_crc_t;
 #define CFS_CONFIG_NOT_LINKED_VALID_DATA_ID   0
 
 /*不算数据长度，通过数据块算包头包尾的长度*/
-// SIZEOF(data_id) + SIZEOF(data_crc_16)
-#define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN  6
+// SIZEOF(data_id) + SIZEOF(data_len) + SIZEOF(data_crc_16)
+#define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN  8
 // 读取数据块的偏移长度
-// SIZEOF(data_id)
-#define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN    4
+// SSIZEOF(data_id) + SIZEOF(data_len)
+#define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN    6
 
 
 enum cycle_object_type
@@ -91,7 +91,6 @@ typedef struct cfs_object_list
     uint32_t data_id;                      	        // 数据块ID
     uint16_t valid_id_number;                       // 有效ID个数
 }cfs_object_list_t;
-
 
 
 // 这里要重新定义存入数据的格式

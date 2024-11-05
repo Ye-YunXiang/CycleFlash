@@ -42,7 +42,65 @@ static cfs_object_list_t *object_list_head = NULL;
 //@def 初始化数据对象
 bool cfs_middle_object_init(const cfs_object_t *object)
 {
+    // malloc********************************************************************
+    cfs_object_list_t *new_cfs_list = 
+        (cfs_object_list_t *)CFS_MALLOC(sizeof(cfs_object_list_t));
+    if (new_cfs_list == NULL) 
+    {
+        /* Allocation failure */
+        asster(new_cfs_list);
+        return NULL;
+    }
 
+    // malloc********************************************************************
+    cfs_object_t *new_cfs_object = (cfs_object_t *)CFS_MALLOC(sizeof(cfs_object_t)); 
+    if (new_cfs_object == NULL) 
+    {
+        /* Allocation failure */
+        asster(new_cfs_object);
+        CFS_FREE(new_cfs_object);
+        return NULL;
+    }
+
+    new_cfs_node->addr_handle = object_pointer->addr_handle;
+    new_cfs_node->sector_size = object_pointer->sector_size;
+    new_cfs_node->sector_count = object_pointer->sector_count;
+    new_cfs_node->data_size = object_pointer->data_size;
+    new_cfs_node->struct_type = object_pointer->struct_type; 
+
+    uint8_t *new_cfs_buffer = (uint8_t *)CFS_MALLOC(new_cfs_node->data_size); // malloc*******************************
+    if (new_cfs_node == NULL) 
+    {
+        CFS_FREE(new_node);
+        CFS_FREE(new_cfs_node);
+        /* Allocation failure */
+        return NULL;
+    }
+
+    if (cfs_system_object_head == NULL)
+    {
+        cfs_system_object_head = new_node;
+        new_node->prior = NULL;
+        new_node->next = NULL;
+        cfs_system_object_tail = new_node;
+    }
+    else
+    {
+        cfs_system_object_tail->next = new_node;
+        new_node->prior = cfs_system_object_tail;
+        new_node->next = NULL;
+        cfs_system_object_tail = new_node;
+    }
+
+    new_node->buffer = new_cfs_buffer;
+    new_node->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
+    new_node->valid_id_number = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
+    new_node->object_handle = new_cfs_node;
+    new_node->this_linked_addr_crc_16 = \
+        cfs_system_utils_crc16_check( \
+        (uint8_t *)(new_node), sizeof(new_node->object_handle));
+
+    return new_node;
 }
 
 //@def 查找对象对象

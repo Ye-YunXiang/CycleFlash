@@ -6,6 +6,15 @@
 // 擦除FLASH的默认值
 #define CFS_FLASH_ERASURE 0xFF
 
+// 可写入的最小颗粒
+#define CFS_WRITE_MIN_PARTICLE 1
+// 可使用写入方式，没有的请注释
+// 配置好可用的方式之后，请去port文件中去实现它。
+#define CFS_WRITE_PORT_ONE_BYTE     1    // 1 byte
+#define CFS_WRITE_PORT_HALF_WORD    2    // 2 byte
+#define CFS_WRITE_PORT_ONE_WORD     4    // 4 byte
+#define CFS_WRITE_PORT_DOUBLE_WORD  8    // 8 byte
+
 // 定义初始化内存的方式
 #define CFS_MALLOC      malloc 
 #define CFS_FREE        free
