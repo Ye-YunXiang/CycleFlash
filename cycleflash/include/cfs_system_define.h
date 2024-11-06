@@ -41,7 +41,7 @@ typedef (cfs_object_t *) cfs_object_handle_ptr;
 
 // 数据定义
 typedef uint32_t cfs_data_id_t;
-typedef uint16_t cfs_data_len_t;
+typedef uint16_t cfs_data_size_t;
 typedef uint16_t cfs_data_crc_t;
 
 /*无ID状态*/
@@ -74,7 +74,7 @@ typedef struct cfs_object
     const uint8_t *name;                            // 对象的名字
     const uint32_t address;                         // 文件系统在flash中的句柄
     const uint16_t sector_count;                    // 扇区数量，建议至少3页
-    const uint16_t data_size;                       // 存入的数据大小
+    const cfs_data_size_t data_size;                // 存入的数据大小
     const enum cycle_object_type type :8;           // 结构体类型
 //}cfs_system;
 }cfs_object_t;
@@ -88,7 +88,7 @@ typedef struct cfs_object_list
 
     uint8_t *name;                                  // 对象的名字
     uint8_t * buffer;                               // 中转要存入的数据
-    uint32_t data_id;                      	        // 数据块ID
+    cfs_data_id_t data_id;                      	        // 数据块ID
     uint16_t valid_id_number;                       // 有效ID个数
 }cfs_object_list_t;
 
@@ -98,10 +98,10 @@ typedef struct cfs_object_list
 // 存入数据结构：`ID(4byte) | 长度(2byte) | 数据 | CRC16(2byte)`
 typedef struct cfs_data_block
 {
-    uint32_t *data_id;          // 数据块
-    uint16_t *data_len;         // 存入数据的指针
+    cfs_data_id_t *data_id;          // 数据块
+    cfs_data_size_t *data_size;         // 存入数据的指针
     uint8_t *data;              // 存入数据的长度ID
-    uint16_t *data_crc_16;      // 数据的crc8校验码
+    cfs_data_crc_t *data_crc_16;      // 数据的crc8校验码
 }cfs_data_block_t;
 
 #endif /* __CFS_SYSTEM_DEFINE_H__ */

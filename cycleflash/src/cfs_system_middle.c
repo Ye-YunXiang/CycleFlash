@@ -30,6 +30,13 @@
 #include "cfs_system_middle.h"
 #include "cfs_system_oc.h"
 
+// 计算需要分配的数据大小，这里先随便宏一下，后面在建立函数
+#define COMPUTE_MEMORY_LENGTH(x)    (x) \
+                                    + (CFS_WRITE_MIN_PARTICLE - \
+                                    ((x + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN) \
+                                    % CFS_WRITE_MIN_PARTICLE))
+
+
 // XXX:这里负责对象管理。。。。。。。。。。。。。
 
 static cfs_object_list_t *object_list_head = NULL;
@@ -61,6 +68,10 @@ bool cfs_middle_object_init(const cfs_object_t *object)
         CFS_FREE(new_cfs_object);
         return NULL;
     }
+
+    memcpy(new_cfs_object, object, sizeof(cfs_object_t));
+    cfs_data_size_t *data_size = &object->data_size;
+    *data_size = object->data_size
 
     new_cfs_node->addr_handle = object_pointer->addr_handle;
     new_cfs_node->sector_size = object_pointer->sector_size;
