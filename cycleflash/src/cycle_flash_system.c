@@ -157,22 +157,6 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
 }
 
 
-// //@def 检查重复地址
-// static bool cfs_filesystem_check_flash_repeat_address(const cfs_system *temp_object)
-// {
-//     //@def 肯定不能超过uint32类型最大值
-//     assert((temp_object->addr_handle + \
-//         (temp_object->sector_size * temp_object->sector_count)) <= UINT_MAX);
-
-//     if(cfs_system_oc_flash_repeat_address(temp_object) == true)
-//     {
-//         return true;
-//     }
-
-//     return false;
-// }
-
-
 //@def 进行ID初始化操作
 static uint32_t cfs_filesystem_object_id_init( cfs_object_handle_ptr temp_cfs_handle)
 {
@@ -207,21 +191,6 @@ static uint32_t cfs_filesystem_object_id_init( cfs_object_handle_ptr temp_cfs_ha
     return true;
 }
 
-static cfs_object_handle_ptr cfs_filesystem_object_add_oc_object(cfs_system *temp_object)
-{
-    cfs_object_list_t *temp_linked_object = cfs_system_oc_add_object(temp_object);
-    if(temp_linked_object == NULL)
-    {
-        return 0;
-    }
-    
-    // cfs_object_handle_ptr return_handle = \
-    //     (((cfs_object_handle_ptr)temp_linked_object) << 16) + \
-    //     cfs_system_utils_crc16_check( \
-    //     (uint8_t *)temp_linked_object, sizeof(temp_linked_object));
-
-    return return_handle;
-}
 
 //@def 存储固定数据——写入数据,写入成功返回写入的原始数据长度
 static uint32_t cfs_filesystem_fixed_data_write( \
@@ -349,37 +318,28 @@ cfs_object_handle_ptr cfs_nv_object_init(
     //@def 判断参数有效性
     assert(name != NULL || type != CFS_FILESYSTEM_OBJECT_TYPE_NULL);
 
-    //@def 创建一个临时的对象
-    cfs_object_t object = {
-        .name = name;
-        .address = address;
-        .sector_count = sector_count;
-        .data_id = data_size
-        .type = type;
-    };
-
     //@def 在判断地址有没有重复，没通过返回false
-    if (false == cfs_middle_check_address(&object))
+    if (false == cfs_middle_check_address(address, sector_count))
     {
         /*内存参数交叉了！*/
-        assert(cfs_middle_check_address(&object));
+        assert(cfs_middle_check_address(address, sector_count));
         return false;
     }
 
     //@def 开始初始化，新建一个内存对象
-    cfs_object_handle_ptr new_object_handle =
-        cfs_filesystem_object_add_oc_object(&object);		
-    if(new_object_handle == false)
+    cfs_object_handle_ptr object_handle = 
+        cfs_middle_add_object_init(name, address, sector_count, data_size, type);
+    if(object_handle == false)
     {
-        assert(new_object_handle);
+        assert(object_handle);
         return false;
     }
 
     //@def 初始化对象的各种ID
-    cfs_filesystem_object_id_init(new_object_handle);
+    cfs_filesystem_object_id_init(object_handle);
 
     /*初始化工作结束，返回初始化的句柄*/
-    return new_object_handle;
+    return object_handle;
 }
 
 bool cfs_nv_object_delete(cfs_object_handle_ptr temp_object_handle)

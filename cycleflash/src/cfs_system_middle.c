@@ -31,15 +31,21 @@
 #include "cfs_system_oc.h"
 
 // 计算需要分配的数据大小，这里先随便宏一下，后面在建立函数
-#define COMPUTE_MEMORY_LENGTH(x)    (x) \
-                                    + (CFS_WRITE_MIN_PARTICLE - \
+#define COMPUTE_MEMORY_LENGTH(x)    ((x) + (CFS_WRITE_MIN_PARTICLE - \
                                     ((x + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN) \
-                                    % CFS_WRITE_MIN_PARTICLE))
+                                    % CFS_WRITE_MIN_PARTICLE)))
+
+// 内存分配三部曲，分配失败打算直接死掉在断言里面
+#define APPLY_MEMORY_FAIL_DISPOSE(x)  if(x == NULL){asster(x);while(1);}
 
 
 // XXX:这里负责对象管理。。。。。。。。。。。。。
 
 static cfs_object_list_t *object_list_head = NULL;
+
+//*******************************************************************************************
+//-- 内部管理接口
+//*******************************************************************************************
 
 
 //*******************************************************************************************
@@ -47,71 +53,42 @@ static cfs_object_list_t *object_list_head = NULL;
 //*******************************************************************************************
 
 //@def 初始化数据对象
-bool cfs_middle_object_init(const cfs_object_t *object)
+cfs_object_handle_ptr cfs_middle_add_object_init(
+    const uint8_t *name, 
+    const uint32_t address,
+    const uint16_t sector_count, 
+    const uint16_t data_size,
+    const enum cycle_object_type type)
 {
-    // malloc********************************************************************
-    cfs_object_list_t *new_cfs_list = 
+    // malloc******
+    cfs_object_t *cfs_object = (cfs_object_t *)CFS_MALLOC(sizeof(cfs_object_t)); 
+    APPLY_MEMORY_FAIL_DISPOSE(cfs_object);
+    *(uint8_t *)&cfs_object->name = name;
+    *(uint32_t *)&cfs_object->address = address;
+    *(uint16_t *)&cfs_object->sector_count = sector_count;
+    *(cfs_data_size_t *)&cfs_object->data_size = COMPUTE_MEMORY_LENGTH(data_size);
+    *(uint8_t *)&cfs_object->type = type;
+
+    // malloc*****
+    cfs_object_list_t *cfs_list = 
         (cfs_object_list_t *)CFS_MALLOC(sizeof(cfs_object_list_t));
-    if (new_cfs_list == NULL) 
-    {
-        /* Allocation failure */
-        asster(new_cfs_list);
-        return NULL;
-    }
+    APPLY_MEMORY_FAIL_DISPOSE(cfs_list);
 
-    // malloc********************************************************************
-    cfs_object_t *new_cfs_object = (cfs_object_t *)CFS_MALLOC(sizeof(cfs_object_t)); 
-    if (new_cfs_object == NULL) 
-    {
-        /* Allocation failure */
-        asster(new_cfs_object);
-        CFS_FREE(new_cfs_object);
-        return NULL;
-    }
+    // malloc******
+    cfs_list->buffer = (uint8_t *)CFS_MALLOC(
+        cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN); 
+    APPLY_MEMORY_FAIL_DISPOSE(cfs_list->buffer);
 
-    memcpy(new_cfs_object, object, sizeof(cfs_object_t));
-    cfs_data_size_t *data_size = &object->data_size;
-    *data_size = object->data_size
+    // 添加入list中
+    cfs_list->next = object_list_head;
+    object_list_head = cfs_list;
 
-    new_cfs_node->addr_handle = object_pointer->addr_handle;
-    new_cfs_node->sector_size = object_pointer->sector_size;
-    new_cfs_node->sector_count = object_pointer->sector_count;
-    new_cfs_node->data_size = object_pointer->data_size;
-    new_cfs_node->struct_type = object_pointer->struct_type; 
+    cfs_list->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
+    cfs_list->valid_id_number = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
+    cfs_list->name = cfs_object->name;
+    cfs_list->object_handle = cfs_object;
 
-    uint8_t *new_cfs_buffer = (uint8_t *)CFS_MALLOC(new_cfs_node->data_size); // malloc*******************************
-    if (new_cfs_node == NULL) 
-    {
-        CFS_FREE(new_node);
-        CFS_FREE(new_cfs_node);
-        /* Allocation failure */
-        return NULL;
-    }
-
-    if (cfs_system_object_head == NULL)
-    {
-        cfs_system_object_head = new_node;
-        new_node->prior = NULL;
-        new_node->next = NULL;
-        cfs_system_object_tail = new_node;
-    }
-    else
-    {
-        cfs_system_object_tail->next = new_node;
-        new_node->prior = cfs_system_object_tail;
-        new_node->next = NULL;
-        cfs_system_object_tail = new_node;
-    }
-
-    new_node->buffer = new_cfs_buffer;
-    new_node->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
-    new_node->valid_id_number = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
-    new_node->object_handle = new_cfs_node;
-    new_node->this_linked_addr_crc_16 = \
-        cfs_system_utils_crc16_check( \
-        (uint8_t *)(new_node), sizeof(new_node->object_handle));
-
-    return new_node;
+    return cfs_list;
 }
 
 //@def 查找对象对象
@@ -119,6 +96,7 @@ cfs_object_list_t cfs_middle_find_object(const cfs_object_t *object)
 {
     assert(object != NULL);
     assert(object->name != NULL);
+    assert(object_list_head != NULL);
   
     cfs_object_list_t *find_object = object_list_head;
     while (find_object != NULL)
@@ -134,17 +112,11 @@ cfs_object_list_t cfs_middle_find_object(const cfs_object_t *object)
 }
 
 //@def 检查重复地址， 通过返回 true， 不通过返回 false
-bool cfs_middle_check_address(const cfs_object_t *object)
+bool cfs_middle_check_address(const uint32_t address, const uint16_t sector_count)
 {
-    if(object == NULL)
-    {
-        return false;
-    }
-
     cfs_object_list_t *list_pointer = cfs_system_object_head->next;
-    uint32_t current_head = object->address;
-    uint32_t current_tail = 
-        object->address + (object->sector_count * CFS_FLASH_SECTOR_SIZE) - 1;
+    uint32_t current_head = address;
+    uint32_t current_tail = address + (sector_count*CFS_FLASH_SECTOR_SIZE) - 1;
     
     // 遍历内存并检查和之前的数据对象是否有交叉
     while(list_pointer != NULL) 
@@ -153,10 +125,10 @@ bool cfs_middle_check_address(const cfs_object_t *object)
         uint32_t next_tail = list_pointer->object_handle->addr_handle + \
             (CFS_FLASH_SECTOR_SIZE * list_pointer->object_handle->sector_count) - 1;
 
-        if((current_head <= next_tail && current_tail >= next_head) || \
-            (next_head <= current_tail && next_tail >= current_head) || \
-            (current_head <= next_head && current_tail >= next_tail) || \
-            (next_head <= current_head && next_tail >= current_tail))
+        if(((current_head<=next_tail) && (current_tail>=next_head)) 
+            || ((next_head<=current_tail) && (next_tail>=current_head)) 
+            || ((current_head<=next_head) && (current_tail>=next_tail)) 
+            || ((next_head<=current_head) && (next_tail>=current_tail)))
         {
             /*分配的内存地址交叉了*/
             return false;

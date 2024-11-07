@@ -37,7 +37,7 @@
 //typedef uint64_t cfs_object_handle_ptr;
 
 // 声明一个比较正经的名字
-typedef (cfs_object_t *) cfs_object_handle_ptr;
+typedef  cfs_object_t*  cfs_object_handle_ptr;
 
 // 数据定义
 typedef uint32_t cfs_data_id_t;
