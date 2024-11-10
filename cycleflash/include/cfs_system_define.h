@@ -34,10 +34,9 @@
 
 /*存储初始化文件系统返回的对象句柄*/
 
-//typedef uint64_t cfs_object_handle_ptr;
 
 // 声明一个比较正经的名字
-typedef  cfs_object_t*  cfs_object_handle_ptr;
+typedef  struct cfs_object*  cfs_object_handle_ptr;
 
 // 数据定义
 typedef uint32_t cfs_data_id_t;

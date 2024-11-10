@@ -30,7 +30,7 @@
 #include "cfs_system_define.h"
 
 //@def 初始化数据对象
-cfs_object_handle_ptr cfs_middle_add_object_init(
+cfs_object_t * cfs_middle_add_object_init(
     const uint8_t *name, 
     const uint32_t address,
     const uint16_t sector_count, 
