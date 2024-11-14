@@ -53,7 +53,7 @@ static cfs_object_list_t *object_list_head = NULL;
 //*******************************************************************************************
 
 //@def 初始化数据对象
-cfs_object_handle_ptr cfs_middle_add_object_init(
+cfs_object_t * cfs_middle_add_object_init(
     const uint8_t *name, 
     const uint32_t address,
     const uint16_t sector_count, 
@@ -144,15 +144,14 @@ bool cfs_middle_check_address(const uint32_t address, const uint16_t sector_coun
 uint32_t cfs_middle_data_read(
     cfs_object_list_t *object_list, uint32_t read_id, uint8_t *data, uint16_t len)
 {
-    
+    // TODO
 }
 
 //@def 写入数据,写入成功返回写入的原始数据长度
 uint32_t cfs_middle_data_write(
     cfs_object_list_t *object_list, uint32_t write_id, uint8_t *data, uint16_t len)
 {
-
-
+// TODO
     
     return false;
 }
