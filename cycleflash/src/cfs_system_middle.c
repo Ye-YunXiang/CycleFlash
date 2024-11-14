@@ -67,7 +67,7 @@ cfs_object_handle_ptr cfs_middle_add_object_init(
     *(uint32_t *)&cfs_object->address = address;
     *(uint16_t *)&cfs_object->sector_count = sector_count;
     *(cfs_data_size_t *)&cfs_object->data_size = COMPUTE_MEMORY_LENGTH(data_size);
-    *(uint8_t *)&cfs_object->type = type;
+    *(cycle_object_type_t *)&cfs_object->type = type;
 
     // malloc*****
     cfs_object_list_t *cfs_list = 

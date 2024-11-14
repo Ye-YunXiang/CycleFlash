@@ -57,7 +57,7 @@ typedef uint16_t cfs_data_crc_t;
 #define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN    6
 
 
-enum cycle_object_type
+typedef enum cycle_object_type
 {
     //@def 没有数据类型
     CFS_FILESYSTEM_OBJECT_TYPE_NULL                 = 0,
@@ -65,7 +65,7 @@ enum cycle_object_type
     CFS_FILESYSTEM_OBJECT_TYPE_FIXED_DATA_STORAGE   = 1,
     //@def 循环存储数据
     CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH    = 2,
-};
+}cycle_object_type_t;
 
 
 /*系统的存储对象，不定长对象记录每个存储区对象的内容*/
