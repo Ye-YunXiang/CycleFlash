@@ -125,11 +125,11 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
         {
             memset(data_block.data_pointer, NULL, temp_cfs_handle->data_size);
             data_block.data_id = data_start_id;
-            read_result = cfs_system_oc_read_flash_data( \
+            read_result = cfs_system_oc_read_flash_data(
                 temp_linked_object, &data_block);
             
             //@def 读错就在往前读一数据块，读空直接退出
-            if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED && \
+            if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED &&
                 data_block.data_id > temp_data_MAX_id)
             {
                 temp_data_MAX_id = data_block.data_id;
@@ -141,7 +141,7 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
 
             //@def 下方ID+1计算出地址后加上两个数据块的大小后，
             //@def 在减 1 得出在往上加上一个ID长度有没有超过这一页。
-            if(data_max_addr > (cfs_system_oc_via_id_calculate_addr( \
+            if(data_max_addr > (cfs_system_oc_via_id_calculate_addr(
                 temp_linked_object, data_start_id) + data_block_size * 2 - 1))
             {
                 data_start_id++;
