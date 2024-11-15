@@ -63,7 +63,7 @@ cfs_object_t * cfs_middle_add_object_init(
     // malloc******
     cfs_object_t *cfs_object = (cfs_object_t *)CFS_MALLOC(sizeof(cfs_object_t)); 
     APPLY_MEMORY_FAIL_DISPOSE(cfs_object);
-    *(uint8_t *)&cfs_object->name = name;
+    memcpy((uint8_t *)&cfs_object->name, name, (strlen(name)+1));
     *(uint32_t *)&cfs_object->address = address;
     *(uint16_t *)&cfs_object->sector_count = sector_count;
     *(cfs_data_size_t *)&cfs_object->data_size = COMPUTE_MEMORY_LENGTH(data_size);

@@ -19,6 +19,9 @@
 #define CFS_MALLOC      malloc 
 #define CFS_FREE        free
 
+// 名字的最大长度
+#define CFS_NAME_LEN_MAX    (10u)
+
 // DeBug 部分,不需要注释
 #define CFS_DEBUG
 #define CFS_DEBUG_OUT(x) printf(x)
