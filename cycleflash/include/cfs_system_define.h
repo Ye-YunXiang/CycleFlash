@@ -62,17 +62,17 @@ typedef enum cycle_object_type
 {
     //@def 没有数据类型
     CFS_FILESYSTEM_OBJECT_TYPE_NULL                 = 0,
+    //@def 循环存储数据
+    CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH    = 1,
     //@def 存储固定数据
     CFS_FILESYSTEM_OBJECT_TYPE_FIXED_DATA_STORAGE   = 1,
-    //@def 循环存储数据
-    CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH    = 2,
 }cycle_object_type_t;
 
 
 /*系统的存储对象，不定长对象记录每个存储区对象的内容*/
 typedef struct cfs_object 
 {
-    const uint8_t name[CFS_NAME_LEN_MAX];           // 对象的名字
+    const uint8_t *name;           // 对象的名字
     const uint32_t address;                         // 文件系统在flash中的句柄
     const uint16_t sector_count;                    // 扇区数量，建议至少3页
     const cfs_data_size_t data_size;                // 存入的数据大小

@@ -30,13 +30,14 @@
 #include "cfs_system_middle.h"
 #include "cfs_system_oc.h"
 
-// 计算需要分配的数据大小，这里先随便宏一下，后面在建立函数
-#define COMPUTE_MEMORY_LENGTH(x)    ((x) + (CFS_WRITE_MIN_PARTICLE - \
-                                    ((x + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN) \
-                                    % CFS_WRITE_MIN_PARTICLE)))
+// 计算需要填充的字节数
+#define COMPUTE_MEMORY_FILL_LENGTH(x)    ((x + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN) % CFS_WRITE_MIN_PARTICLE)
 
 // 内存分配三部曲，分配失败打算直接死掉在断言里面
 #define APPLY_MEMORY_FAIL_DISPOSE(x)  if(x == NULL){asster(x);while(1);}
+
+// 判断字符串的长度，加上\0，这里需要字符串指针
+#define STRING_ALL_SIZE(x)  (strlen(x) + 1)
 
 
 // XXX:这里负责对象管理。。。。。。。。。。。。。
@@ -46,7 +47,25 @@ static cfs_object_list_t *object_list_head = NULL;
 //*******************************************************************************************
 //-- 内部管理接口
 //*******************************************************************************************
+// 计算需要填充的字节数
+static uint8_t _compute_memory_fill_length(cfs_data_size_t data_size)
+{
+    // 判断一下不能为0
+    assert(data_size != 0);
 
+    uint8_t data_fill_len = 
+        (data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN) 
+        % CFS_WRITE_MIN_PARTICLE;
+
+    if (data_fill_len == 0)
+    {
+        return 0;
+    }
+    else
+    {
+        return (CFS_WRITE_MIN_PARTICLE - data_fill_len);
+    }
+}
 
 //*******************************************************************************************
 //-- 对上层接口  
@@ -60,21 +79,26 @@ cfs_object_t * cfs_middle_add_object_init(
     const uint16_t data_size,
     const enum cycle_object_type type)
 {
-    // malloc******
+    // name malloc******
+    uint8_t *name_ptr = (uint8_t *)CFS_MALLOC(STRING_ALL_SIZE(name));
+    APPLY_MEMORY_FAIL_DISPOSE(name_ptr);
+    memcpy(name_ptr, name, STRING_ALL_SIZE(name));
+
+    // cfs_object_t malloc******
     cfs_object_t *cfs_object = (cfs_object_t *)CFS_MALLOC(sizeof(cfs_object_t)); 
     APPLY_MEMORY_FAIL_DISPOSE(cfs_object);
-    memcpy((uint8_t *)&cfs_object->name, name, (strlen(name)+1));
+    *(uint8_t *)&cfs_object->name = name_ptr;
     *(uint32_t *)&cfs_object->address = address;
     *(uint16_t *)&cfs_object->sector_count = sector_count;
     *(cfs_data_size_t *)&cfs_object->data_size = COMPUTE_MEMORY_LENGTH(data_size);
     *(cycle_object_type_t *)&cfs_object->type = type;
 
-    // malloc*****
+    // cfs_object_list_t malloc*****
     cfs_object_list_t *cfs_list = 
         (cfs_object_list_t *)CFS_MALLOC(sizeof(cfs_object_list_t));
     APPLY_MEMORY_FAIL_DISPOSE(cfs_list);
 
-    // malloc******
+    // buffer malloc******
     cfs_list->buffer = (uint8_t *)CFS_MALLOC(
         cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN); 
     APPLY_MEMORY_FAIL_DISPOSE(cfs_list->buffer);
