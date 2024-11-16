@@ -42,8 +42,7 @@ cfs_object_handle_ptr cfs_nv_object_init(
     const uint8_t *name, 
     const uint32_t address,
     const uint16_t sector_count,
-    const uint16_t data_size,
-    const enum cycle_object_type type);
+    const uint16_t data_size);
 
 
 /** 删除文件管理系统对象

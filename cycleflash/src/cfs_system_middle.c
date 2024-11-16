@@ -43,6 +43,7 @@
 // XXX:这里负责对象管理。。。。。。。。。。。。。
 
 static cfs_object_list_t *object_list_head = NULL;
+static cfs_block_buffer_t data_block_buffer = {0};
 
 //*******************************************************************************************
 //-- 内部管理接口
@@ -67,6 +68,23 @@ static uint8_t _compute_memory_fill_length(cfs_data_size_t data_size)
     }
 }
 
+// 数据块缓存区初始化
+static void _general_block_buffer_init(cfs_data_size_t data_buffer_size)
+{
+    // 判断一下不能为0
+    assert(data_buffer_size != 0);
+
+    if (data_block_buffer.buffer_size > data_buffer_size)
+    {
+        return;
+    }
+
+    // malloc*****
+    CFS_FREE(data_block_buffer.buffer_ptr);
+    data_block_buffer.buffer_ptr = (uint8_t *)CFS_MALLOC(data_buffer_size);
+    APPLY_MEMORY_FAIL_DISPOSE(data_block_buffer.buffer_ptr);
+}
+
 //*******************************************************************************************
 //-- 对上层接口  
 //*******************************************************************************************
@@ -76,8 +94,7 @@ cfs_object_t * cfs_middle_add_object_init(
     const uint8_t *name, 
     const uint32_t address,
     const uint16_t sector_count, 
-    const uint16_t data_size,
-    const enum cycle_object_type type)
+    const uint16_t data_size)
 {
     // name malloc******
     uint8_t *name_ptr = (uint8_t *)CFS_MALLOC(STRING_ALL_SIZE(name));
@@ -90,27 +107,27 @@ cfs_object_t * cfs_middle_add_object_init(
     *(uint8_t *)&cfs_object->name = name_ptr;
     *(uint32_t *)&cfs_object->address = address;
     *(uint16_t *)&cfs_object->sector_count = sector_count;
-    *(cfs_data_size_t *)&cfs_object->data_size = COMPUTE_MEMORY_LENGTH(data_size);
-    *(cycle_object_type_t *)&cfs_object->type = type;
+    *(cfs_data_size_t *)&cfs_object->data_size = data_size;
+    *(uint8_t *)&cfs_object->data_fill = _compute_memory_fill_length(data_size);
 
     // cfs_object_list_t malloc*****
     cfs_object_list_t *cfs_list = 
         (cfs_object_list_t *)CFS_MALLOC(sizeof(cfs_object_list_t));
     APPLY_MEMORY_FAIL_DISPOSE(cfs_list);
 
-    // buffer malloc******
-    cfs_list->buffer = (uint8_t *)CFS_MALLOC(
-        cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN); 
-    APPLY_MEMORY_FAIL_DISPOSE(cfs_list->buffer);
-
     // 添加入list中
     cfs_list->next = object_list_head;
     object_list_head = cfs_list;
 
-    cfs_list->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
-    cfs_list->valid_id_number = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     cfs_list->name = cfs_object->name;
     cfs_list->object_handle = cfs_object;
+    cfs_list->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
+    cfs_list->valid_id_number = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
+    cfs_list->data_buffer_size = CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN
+        + cfs_object->data_size + cfs_object->data_fill;
+
+
+    _general_block_buffer_init(cfs_list->data_buffer_size);
 
     return cfs_list;
 }

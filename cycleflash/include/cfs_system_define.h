@@ -34,6 +34,7 @@
 
 #include <stdint.h>
 #include <limits.h>
+#include <stdbool.h>
 
 
 #include "cfs_user_config.h"
@@ -44,7 +45,7 @@ typedef  struct cfs_object*  cfs_object_handle_ptr;
 // 数据定义
 typedef uint32_t cfs_data_id_t;
 typedef uint16_t cfs_data_size_t;
-typedef uint16_t cfs_data_crc_t;
+typedef uint16_t cfs_data_check_t;
 
 /*无ID状态*/
 #define CFS_CONFIG_NOT_LINKED_DATA_ID UINT32_MAX
@@ -58,25 +59,14 @@ typedef uint16_t cfs_data_crc_t;
 // SSIZEOF(data_id) + SIZEOF(data_len)
 #define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN    6
 
-typedef enum cycle_object_type
-{
-    //@def 没有数据类型
-    CFS_FILESYSTEM_OBJECT_TYPE_NULL                 = 0,
-    //@def 循环存储数据
-    CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH    = 1,
-    //@def 存储固定数据
-    CFS_FILESYSTEM_OBJECT_TYPE_FIXED_DATA_STORAGE   = 1,
-}cycle_object_type_t;
-
-
 /*系统的存储对象，不定长对象记录每个存储区对象的内容*/
-typedef struct cfs_object 
+typedef struct cfs_object
 {
     const uint8_t *name;           // 对象的名字
     const uint32_t address;                         // 文件系统在flash中的句柄
     const uint16_t sector_count;                    // 扇区数量，建议至少3页
     const cfs_data_size_t data_size;                // 存入的数据大小
-    const enum cycle_object_type type :8;           // 结构体类型
+    const uint8_t data_fill;                        // 数据填充大小
 //}cfs_system;
 }cfs_object_t;
 
@@ -88,10 +78,19 @@ typedef struct cfs_object_list
     struct cfs_object *object_handle;               // 存储对象
 
     uint8_t *name;                                  // 对象的名字
-    uint8_t * buffer;                               // 中转要存入的数据
     cfs_data_id_t data_id;                      	// 数据块ID
     uint16_t valid_id_number;                       // 有效ID个数
+    cfs_data_size_t data_buffer_size;               // 数据存入大小
 }cfs_object_list_t;
+
+
+// 通用数据块存入缓存区，用于存入数据块，数据块大小用对象中最长的大小。
+typedef struct cfs_block_buffer
+{
+    uint8_t *buffer_ptr;                            // 数据块缓存指针
+    cfs_data_size_t buffer_size;                   // 数据块缓存大小
+    bool use_flag;                                  // 本缓存目前有没有被占用
+}cfs_block_buffer_t;
 
 
 // 这里要重新定义存入数据的格式
@@ -102,9 +101,8 @@ typedef struct cfs_data_block
     cfs_data_id_t *data_id;          // 数据块
     cfs_data_size_t *data_size;         // 存入数据的指针
     uint8_t *data;              // 存入数据的长度ID
-    cfs_data_crc_t *data_crc_16;      // 数据的crc8校验码
+    cfs_data_check_t *data_check;      // 数据的crc8校验码
 }cfs_data_block_t;
-
 
 
 // 错误定义判断---------------------------------------------

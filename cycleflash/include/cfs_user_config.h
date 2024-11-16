@@ -28,9 +28,9 @@
 
 // CRC16部分，不需要使用库的查表法，请注释
 // 并且请自己实现 "cfs_system_utils.h" 中的 
-// "uint16_t cfs_system_utils_crc16_check(const uint8_t *data, uint32_t data_length)" 
+// "uint16_t cfs_system_utils_check(const uint8_t *data, uint32_t data_length)" 
 // 希望您能自己进cfs_system_utils中实现它
-#define CFS_CRC16
+#define CFS_CHECK
 
 
 

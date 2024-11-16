@@ -303,6 +303,9 @@ static uint32_t cfs_filesystem_flsh_data_read( \
 }
 
 
+
+
+
 //*******************************************************************************************
 //-- 对外接口  
 //*******************************************************************************************
@@ -312,8 +315,7 @@ cfs_object_handle_ptr cfs_nv_object_init(
     const uint8_t *name, 
     const uint32_t address,
     const uint16_t sector_count, 
-    const uint16_t data_size,
-    const enum cycle_object_type type)
+    const uint16_t data_size)
 {
     //@def 判断参数有效性
     assert(name != NULL);
@@ -330,7 +332,7 @@ cfs_object_handle_ptr cfs_nv_object_init(
 
     //@def 开始初始化，新建一个内存对象
     cfs_object_handle_ptr object_handle = 
-        cfs_middle_add_object_init(name, address, sector_count, data_size, type);
+        cfs_middle_add_object_init(name, address, sector_count, data_size);
     if(object_handle == false)
     {
         assert(object_handle);

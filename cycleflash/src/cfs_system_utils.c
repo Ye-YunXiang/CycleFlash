@@ -29,7 +29,7 @@
 #include "cfs_system_utils.h"
 
 
-#ifdef CFS_CRC16
+#ifdef CFS_CHECK
 
 const static uint16_t crc16_xmodem_tab[256] =
 {
@@ -55,7 +55,7 @@ const static uint16_t crc16_xmodem_tab[256] =
  * 参数： uint8_t * 起始指针
  *       uint32_t  数据
 */
-uint16_t cfs_system_utils_crc16_check(const uint8_t *data, uint32_t data_length)
+static uint16_t _utils_crc16_xmodem_check(const uint8_t *data, uint32_t data_length)
 {
      uint16_t crc = 0x0000;
 
@@ -75,53 +75,61 @@ uint16_t cfs_system_utils_crc16_check(const uint8_t *data, uint32_t data_length)
  *       uint32_t  数据
 */
 //@def 根据cfs系统专门创建的验证数据块函数, 这个数据块的crc16不参与验证
-uint16_t cfs_system_utils_crc16_xmodem_check_data_block(const cfs_data_block *data, bool inversion_bit)
-{
-    assert(data->data_len != 0 && data->data_pointer != NULL);
+// uint16_t cfs_system_utils_crc16_xmodem_check_data_block(const cfs_data_block *data, bool inversion_bit)
+// {
+//     assert(data->data_len != 0 && data->data_pointer != NULL);
 
-    uint8_t *data_block_handle = (uint8_t *)(&data->data_id);
-    uint32_t data_block_length = \
-        data->data_len + sizeof(data->data_id);
-    uint16_t crc_int = 0;
-    uint8_t temp_char = 0;
+//     uint8_t *data_block_handle = (uint8_t *)(&data->data_id);
+//     uint32_t data_block_length = \
+//         data->data_len + sizeof(data->data_id);
+//     uint16_t crc_int = 0;
+//     uint8_t temp_char = 0;
 
-    while (data_block_length)
-    {
-        if(data_block_length == data->data_len)
-        {
-            data_block_handle = data->data_pointer;
-        }
+//     while (data_block_length)
+//     {
+//         if(data_block_length == data->data_len)
+//         {
+//             data_block_handle = data->data_pointer;
+//         }
 
-        temp_char = *(data_block_handle++);
-        crc_int ^= (temp_char << 8);
-        for (int i = 0; i < 8; i++)
-        {
-            if (crc_int & 0x8000)
-                crc_int = (crc_int << 1) ^ (0x1021);
-            else
-                crc_int = crc_int << 1;
-        }
+//         temp_char = *(data_block_handle++);
+//         crc_int ^= (temp_char << 8);
+//         for (int i = 0; i < 8; i++)
+//         {
+//             if (crc_int & 0x8000)
+//                 crc_int = (crc_int << 1) ^ (0x1021);
+//             else
+//                 crc_int = crc_int << 1;
+//         }
         
-        data_block_length--;
-    }
+//         data_block_length--;
+//     }
 
-    //@def 是否按位取反
-    if(inversion_bit == true)
-    {
-        return ~(crc_int^0);
-    }
-    else
-    {
-        return (crc_int^0);
-    }
+//     //@def 是否按位取反
+//     if(inversion_bit == true)
+//     {
+//         return ~(crc_int^0);
+//     }
+//     else
+//     {
+//         return (crc_int^0);
+//     }
+// }
+
+
+cfs_data_check_t cfs_system_utils_check(const uint8_t *data, uint32_t data_length)
+{
+    cfs_data_check_t check_value = _utils_crc16_xmodem_check(data, data_length);
+    
+    return (cfs_data_check_t)check_value;
 }
 
 #else
 
-// 这里用于自己实现的CRC16，其实也不一定是CRC啦，可以是校验和
-uint16_t cfs_system_utils_crc16_check(const uint8_t *data, uint32_t data_length)
+//用户自己定义校验码格式
+uint16_t cfs_system_utils_check(const uint8_t *data, uint32_t data_length)
 {
-    return CRC
+    return check;
 }
 
-#endif // CFS_CRC16
+#endif // CFS_CHECK

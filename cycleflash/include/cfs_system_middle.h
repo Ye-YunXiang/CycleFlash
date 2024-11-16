@@ -34,8 +34,7 @@ cfs_object_t * cfs_middle_add_object_init(
     const uint8_t *name, 
     const uint32_t address,
     const uint16_t sector_count, 
-    const uint16_t data_size,
-    const enum cycle_object_type type);
+    const uint16_t data_size);
 
 //@def 查找对象对象
 cfs_object_list_t cfs_middle_find_object(const cfs_object_t *temp_object);
