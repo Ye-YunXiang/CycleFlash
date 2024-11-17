@@ -10,8 +10,14 @@
 */
 #define CFS_FLASH_ERASURE (0xFF)
 
-// 可写入的最小颗粒
+/* 可写入的最小颗粒，这里只能设定三个值.
+ * 根据芯片手册进行修改。
+ * value: 1    1Byte
+ * value: 2    半字
+ * value: 4    1字
+*/
 #define CFS_WRITE_MIN_PARTICLE      (1u)
+
 // 可使用写入方式，没有的请注释
 // 配置好可用的方式之后，请去port文件中去实现它。
 #define CFS_WRITE_PORT_ONE_BYTE     (1u)    // 1 byte

@@ -46,6 +46,11 @@ typedef uint32_t cfs_data_id_t;
 typedef uint16_t cfs_data_size_t;
 typedef uint16_t cfs_data_check_t;
 
+// 存储区状态，用于初始化flash后在第一页的头
+#define CFS_FLASH_STATE_INIT    (0x01010101)    // 初始化flash
+#define CFS_FLASH_STATE_USE     (0x0A0A0A0A)    // 使用本区域
+#define CFS_FLASH_STATE_CYCLE   (0x0F0F0F0F)    // ID开始循环使用
+
 /*无ID状态, 这里为uint32_t*/
 #ifdef CFS_FLASH_ERASURE == (0xFF)
     #define CFS_CONFIG_NOT_LINKED_DATA_ID (0xFFFFFFFF)
@@ -59,6 +64,7 @@ typedef uint16_t cfs_data_check_t;
 /*不算数据长度，通过数据块算包头包尾的长度*/
 // SIZEOF(data_id) + SIZEOF(data_len) + SIZEOF(data_crc_16)
 #define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN (8u)
+
 // 读取数据块的偏移长度
 // SSIZEOF(data_id) + SIZEOF(data_len)
 #define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN (6u)

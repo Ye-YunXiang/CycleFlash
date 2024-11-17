@@ -12,5 +12,6 @@ It is used to circulate data into the specified area of FLASH in MCU to ensure d
 
 第一页头8字节做循环状态显示：这里前面4字节和后面4字节做对比验证。
 获取数据优先级从高到底排序：
-1. 0F 0F 0F 0F (ID)
-1. 0x0A
+1. 0F 0F 0F 0F (ID循环利用)
+2. 0A 0A 0A 0A (开始使用)
+3. 01 01 01 01 (本区域已经初始化)
