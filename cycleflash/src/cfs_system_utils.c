@@ -28,8 +28,44 @@
 #include <stddef.h>
 #include "cfs_system_utils.h"
 
+#ifdef CFS_CHECK == 0   // CHECK_SUM
 
-#ifdef CFS_CHECK
+static uint16_t _utils_check_sum(const uint8_t *data, uint32_t data_length)
+{
+    uint16_t checksum = 0;
+    for (uint32_t i = 0; i < data_length; i++) {
+        checksum += data[i];
+    }
+    return ~checksum + 1;  // 取反加1，生成补码
+}
+
+#elif CFS_CHECK == 1   // CRC16_XMODEM
+
+/* 这里使用了crc16 xmodem协议，和标准不同的是，输出的值按位取反了。
+ * 参数： uint8_t * 起始指针
+ *       uint32_t  数据
+*/
+static uint16_t _utils_crc16_xmodem_check(const uint8_t *data, uint32_t data_length)
+{
+    uint16_t crc_int = 0;
+    uint8_t temp_char = 0;
+    while (data_length--)
+    {
+        temp_char = *(data++);
+        crc_int ^= (temp_char << 8);
+        for (int i = 0; i < 8; i++)
+        {
+            if (crc_int & 0x8000)
+                crc_int = (crc_int << 1) ^ (0x1021);
+            else
+                crc_int = crc_int << 1;
+        }
+    }
+    // 结果按位取反了
+    return ~(crc_int^0);
+}
+
+#elif CFS_CHECK == 2   // CRC16_XMODEM 查表法(占用256Byte的RAM)
 
 const static uint16_t crc16_xmodem_tab[256] =
 {
@@ -55,81 +91,50 @@ const static uint16_t crc16_xmodem_tab[256] =
  * 参数： uint8_t * 起始指针
  *       uint32_t  数据
 */
-static uint16_t _utils_crc16_xmodem_check(const uint8_t *data, uint32_t data_length)
+static uint16_t _utils_crc16_xmodem_table_check(const uint8_t *data, uint32_t data_length)
 {
-     uint16_t crc = 0x0000;
+    uint16_t crc = 0x0000;
 
     for (uint16_t i = 0; i < data_length; i++) 
     {
         uint8_t table_index = (crc >> 8) ^ data[i];
         crc = (crc << 8) ^ crc16_xmodem_tab[table_index];
     }
-
-    // 是否按位取反
+    // 结果按位取反
     // 这里的结果和标准的不同，标准的不需要取反
     return ~(crc);
 }
 
-/* 初始值（0）、多项式（0x1021）、结果异或值（0）、输入翻转（falsh）、输出翻转（falsh）
- * 参数： uint8_t * 起始指针
- *       uint32_t  数据
-*/
-//@def 根据cfs系统专门创建的验证数据块函数, 这个数据块的crc16不参与验证
-// uint16_t cfs_system_utils_crc16_xmodem_check_data_block(const cfs_data_block *data, bool inversion_bit)
-// {
-//     assert(data->data_len != 0 && data->data_pointer != NULL);
+#elif CFS_CHECK == 3   // 用户自定义，自己去实现
+    // 用户自定义实现相关的校验函数
+#endif // CFS_CHECK
 
-//     uint8_t *data_block_handle = (uint8_t *)(&data->data_id);
-//     uint32_t data_block_length = \
-//         data->data_len + sizeof(data->data_id);
-//     uint16_t crc_int = 0;
-//     uint8_t temp_char = 0;
-
-//     while (data_block_length)
-//     {
-//         if(data_block_length == data->data_len)
-//         {
-//             data_block_handle = data->data_pointer;
-//         }
-
-//         temp_char = *(data_block_handle++);
-//         crc_int ^= (temp_char << 8);
-//         for (int i = 0; i < 8; i++)
-//         {
-//             if (crc_int & 0x8000)
-//                 crc_int = (crc_int << 1) ^ (0x1021);
-//             else
-//                 crc_int = crc_int << 1;
-//         }
-        
-//         data_block_length--;
-//     }
-
-//     //@def 是否按位取反
-//     if(inversion_bit == true)
-//     {
-//         return ~(crc_int^0);
-//     }
-//     else
-//     {
-//         return (crc_int^0);
-//     }
-// }
-
-
+//********************************************************************* */
+// 对外的校验接口函数 ****************************************************
+/********************************************************************** */
 cfs_data_check_t cfs_system_utils_check(const uint8_t *data, uint32_t data_length)
 {
-    cfs_data_check_t check_value = _utils_crc16_xmodem_check(data, data_length);
+    cfs_data_check_t check_value = 0;
     
-    return (cfs_data_check_t)check_value;
-}
+#ifdef CFS_CHECK == 0   // CHECK_SUM
 
-#else
+    check_value = _utils_check_sum(data, data_length);
 
-//用户自己定义校验码格式
-uint16_t cfs_system_utils_check(const uint8_t *data, uint32_t data_length)
-{
-    return check;
-}
+#elif CFS_CHECK == 1   // CRC16_XMODEM
+
+    check_value = _utils_crc16_xmodem_check(data, data_length);
+
+#elif CFS_CHECK == 2   // CRC16_XMODEM 查表法(占用256Byte的RAM)
+
+    check_value = _utils_crc16_xmodem_table_check(data, data_length);
+
+#elif CFS_CHECK == 3   // 用户自定义，自己去实现
+
+    // <用户自定义实现相关的校验函数>
 
 #endif // CFS_CHECK
+    
+    return check_value;
+}
+
+

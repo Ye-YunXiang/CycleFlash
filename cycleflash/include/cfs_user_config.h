@@ -23,14 +23,22 @@
 #define CFS_NAME_LEN_MAX    (10u)
 
 // DeBug 部分,不需要注释
+// TODO:还没对这部分做定义
 #define CFS_DEBUG
 #define CFS_DEBUG_OUT(x) printf(x)
 
-// CRC16部分，不需要使用库的查表法，请注释
-// 并且请自己实现 "cfs_system_utils.h" 中的 
-// "uint16_t cfs_system_utils_check(const uint8_t *data, uint32_t data_length)" 
-// 希望您能自己进cfs_system_utils中实现它
-#define CFS_CHECK
+
+// 定义在 "cfs_system_utils.h" 中的 
+// "uint16_t cfs_system_utils_check(const uint8_t *data, uint32_t data_length)"
+/* 库里有三个添加校验方式，校验值类型一定要对上：
+ * value:0      CHECK_SUM       (结果按位取反)
+ * value:1      CRC16_XMODEM    (结果按位取反)
+ * value:2      CRC16_XMODEM 查表法(占用256Byte的RAM) (结果按位取反)
+ * value:3      用户自定义，自己去实现
+ * 
+ * 注释：上面按位取反是防止数据都是 0x00 的时候会校验不出来。
+*/ 
+#define CFS_CHECK 0
 
 
 

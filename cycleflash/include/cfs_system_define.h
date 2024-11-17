@@ -36,11 +36,10 @@
 #include <limits.h>
 #include <stdbool.h>
 
-
 #include "cfs_user_config.h"
 
 /*存储初始化文件系统返回的对象句柄*/
-typedef  struct cfs_object*  cfs_object_handle_ptr;
+typedef struct cfs_object *cfs_object_handle_ptr;
 
 // 数据定义
 typedef uint32_t cfs_data_id_t;
@@ -50,64 +49,58 @@ typedef uint16_t cfs_data_check_t;
 /*无ID状态*/
 #define CFS_CONFIG_NOT_LINKED_DATA_ID UINT32_MAX
 /*无有效ID*/
-#define CFS_CONFIG_NOT_LINKED_VALID_DATA_ID   0
+#define CFS_CONFIG_NOT_LINKED_VALID_DATA_ID 0
 
 /*不算数据长度，通过数据块算包头包尾的长度*/
 // SIZEOF(data_id) + SIZEOF(data_len) + SIZEOF(data_crc_16)
-#define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN  8
+#define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN 8
 // 读取数据块的偏移长度
 // SSIZEOF(data_id) + SIZEOF(data_len)
-#define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN    6
+#define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN 6
 
 /*系统的存储对象，不定长对象记录每个存储区对象的内容*/
 typedef struct cfs_object
 {
-    const uint8_t *name;           // 对象的名字
-    const uint32_t address;                         // 文件系统在flash中的句柄
-    const uint16_t sector_count;                    // 扇区数量，建议至少3页
-    const cfs_data_size_t data_size;                // 存入的数据大小
-    const uint8_t data_fill;                        // 数据填充大小
-//}cfs_system;
-}cfs_object_t;
-
+    const uint8_t *name;             // 对象的名字
+    const uint32_t address;          // 文件系统在flash中的句柄
+    const uint16_t sector_count;     // 扇区数量，建议至少3页
+    const cfs_data_size_t data_size; // 存入的数据大小
+    const uint8_t data_fill;         // 数据填充大小
+    //}cfs_system;
+} cfs_object_t;
 
 /*存储对象 - 对象类型 - 数据ID 单链表键值对*/
 typedef struct cfs_object_list
 {
-    struct cfs_object_list *next;                   // 链表对象
-    struct cfs_object *object_handle;               // 存储对象
+    struct cfs_object_list *next;     // 链表对象
+    struct cfs_object *object_handle; // 存储对象
 
-    uint8_t *name;                                  // 对象的名字
-    cfs_data_id_t data_id;                      	// 数据块ID
-    uint16_t valid_id_number;                       // 有效ID个数
-    cfs_data_size_t data_buffer_size;               // 数据存入大小
-}cfs_object_list_t;
-
+    uint8_t *name;                    // 对象的名字
+    cfs_data_id_t data_id;            // 数据块ID
+    uint16_t valid_id_number;         // 有效ID个数
+    cfs_data_size_t data_buffer_size; // 数据存入大小
+} cfs_object_list_t;
 
 // 通用数据块存入缓存区，用于存入数据块，数据块大小用对象中最长的大小。
 typedef struct cfs_block_buffer
 {
-    uint8_t *buffer_ptr;                            // 数据块缓存指针
-    cfs_data_size_t buffer_size;                   // 数据块缓存大小
-    bool use_flag;                                  // 本缓存目前有没有被占用
-}cfs_block_buffer_t;
-
+    uint8_t *buffer_ptr;         // 数据块缓存指针
+    cfs_data_size_t buffer_size; // 数据块缓存大小
+    bool use_flag;               // 本缓存目前有没有被占用
+} cfs_block_buffer_t;
 
 // 这里要重新定义存入数据的格式
 // 这里打算让后面分配好的地址直接分配过来这个结构体。
 // 存入数据结构：`ID(4byte) | 长度(2byte) | 数据 | CRC16(2byte)`
 typedef struct cfs_data_block
 {
-    cfs_data_id_t *data_id;          // 数据块
-    cfs_data_size_t *data_size;         // 存入数据的指针
-    uint8_t *data;              // 存入数据的长度ID
-    cfs_data_check_t *data_check;      // 数据的crc8校验码
-}cfs_data_block_t;
-
+    cfs_data_id_t *data_id;       // 数据块
+    cfs_data_size_t *data_size;   // 存入数据的指针
+    uint8_t *data;                // 存入数据的长度ID
+    cfs_data_check_t *data_check; // 数据的crc8校验码
+} cfs_data_block_t;
 
 // 错误定义判断---------------------------------------------
 // TODO: 需要对用户定义部分做判断
-
-
 
 #endif /* __CFS_SYSTEM_DEFINE_H__ */

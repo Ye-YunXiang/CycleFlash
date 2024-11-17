@@ -27,9 +27,9 @@
 #include <string.h>
 #include <assert.h>
 
-#include "cfs_system_oc.h"
 #include "cycle_flash_system.h"
-
+#include "cfs_system_middle.h"
+#include "cfs_system_oc.h"
 
 #include "cfs_port_device_flash.h" 
 #include "cfs_system_utils.h"
