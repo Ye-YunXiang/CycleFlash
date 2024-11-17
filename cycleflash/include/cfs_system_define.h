@@ -46,17 +46,22 @@ typedef uint32_t cfs_data_id_t;
 typedef uint16_t cfs_data_size_t;
 typedef uint16_t cfs_data_check_t;
 
-/*无ID状态*/
-#define CFS_CONFIG_NOT_LINKED_DATA_ID UINT32_MAX
+/*无ID状态, 这里为uint32_t*/
+#ifdef CFS_FLASH_ERASURE == (0xFF)
+    #define CFS_CONFIG_NOT_LINKED_DATA_ID (0xFFFFFFFF)
+#elif CFS_FLASH_ERASURE == (0x00)
+    #define CFS_CONFIG_NOT_LINKED_DATA_ID (0x00000000)
+#endif  // CFS_FLASH_ERASURE
+
 /*无有效ID*/
-#define CFS_CONFIG_NOT_LINKED_VALID_DATA_ID 0
+#define CFS_CONFIG_NOT_LINKED_VALID_DATA_ID (0u)
 
 /*不算数据长度，通过数据块算包头包尾的长度*/
 // SIZEOF(data_id) + SIZEOF(data_len) + SIZEOF(data_crc_16)
-#define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN 8
+#define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN (8u)
 // 读取数据块的偏移长度
 // SSIZEOF(data_id) + SIZEOF(data_len)
-#define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN 6
+#define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN (6u)
 
 /*系统的存储对象，不定长对象记录每个存储区对象的内容*/
 typedef struct cfs_object

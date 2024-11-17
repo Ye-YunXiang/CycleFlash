@@ -2,9 +2,13 @@
 #define __CFS_USER_CONFIG_H__
 
 // 一页FLASH大小
-#define CFS_FLASH_SECTOR_SIZE 512
-// 擦除FLASH的默认值
-#define CFS_FLASH_ERASURE 0xFF
+#define CFS_FLASH_SECTOR_SIZE (512u)
+/* 擦除FLASH的默认值，这里只能两个值.
+ * 根据芯片手册进行修改。
+ * value: (0xFF)     一般默认都是FF
+ * value: (0x00)    个别带有硬件校验的为00
+*/
+#define CFS_FLASH_ERASURE (0xFF)
 
 // 可写入的最小颗粒
 #define CFS_WRITE_MIN_PARTICLE      (1u)
