@@ -44,7 +44,7 @@ static cfs_block_buffer_t data_block_buffer = {0};
 //-- 内部管理接口
 //*******************************************************************************************
 // 计算需要填充的字节数
-static uint8_t _compute_memory_fill_length(cfs_data_size_t data_size)
+static uint8_t _compute_memory_fill_length(uint16_t data_size)
 {
     // 判断一下不能为0
     assert(data_size != 0);
@@ -64,7 +64,7 @@ static uint8_t _compute_memory_fill_length(cfs_data_size_t data_size)
 }
 
 // 数据块缓存区初始化
-static void _general_block_buffer_init(cfs_data_size_t data_buffer_size)
+static void _general_block_buffer_init(uint16_t data_buffer_size)
 {
     // 判断一下不能为0
     assert(data_buffer_size != 0);
@@ -212,7 +212,7 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
 cfs_object_t * cfs_middle_add_object_init(
     const uint8_t *name, 
     const uint32_t address,
-    const uint16_t sector_count, 
+    const cfs_data_id_t sector_count, 
     const uint16_t data_size)
 {
     // name malloc******
@@ -225,8 +225,8 @@ cfs_object_t * cfs_middle_add_object_init(
     APPLY_MEMORY_FAIL_DISPOSE(cfs_object);
     *(uint8_t *)&cfs_object->name = name_ptr;
     *(uint32_t *)&cfs_object->address = address;
-    *(uint16_t *)&cfs_object->sector_count = sector_count;
-    *(cfs_data_size_t *)&cfs_object->data_size = data_size;
+    *(uint32_t *)&cfs_object->sector_count = sector_count;
+    *(uint16_t *)&cfs_object->data_size = data_size;
     *(uint8_t *)&cfs_object->data_fill = _compute_memory_fill_length(data_size);
 
     // cfs_object_list_t malloc*****
@@ -256,8 +256,9 @@ bool cfs_middle_object_id_init(const cfs_object_t *object)
 {
     cfs_object_list_t *list_object_ptr = cfs_middle_find_object(object);
     assert(list_object_ptr!=NULL && object!=NULL);
+    cfs_data_id_t temp_data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
 
-    uint32_t temp_data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
+    // 先读取第一页存储区的前8个字节，判断内存状态
 
     temp_data_id = cfs_filesystem_tight_data_page_id_init(temp_object);
 
@@ -300,7 +301,7 @@ cfs_object_list_t *cfs_middle_find_object(const cfs_object_t *object)
 }
 
 //@def 检查重复地址， 通过返回 true， 不通过返回 false
-bool cfs_middle_check_address(const uint32_t address, const uint16_t sector_count)
+bool cfs_middle_check_address(const uint32_t address, const uint32_t sector_count)
 {
     cfs_object_list_t *list_pointer = object_list_head->name;
     uint32_t current_head = address;
@@ -330,7 +331,7 @@ bool cfs_middle_check_address(const uint32_t address, const uint16_t sector_coun
 
 //@def 读取数据,读取成功返回读取的原始数据长度
 uint32_t cfs_middle_data_read(
-    cfs_object_list_t *object_list, uint32_t read_id, uint8_t *data, uint16_t len)
+    cfs_object_list_t *object_list, cfs_data_id_t read_id, uint8_t *data, uint16_t len)
 {
     // TODO
 }

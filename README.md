@@ -13,3 +13,5 @@ It is used to circulate data into the specified area of FLASH in MCU to ensure d
 获取数据优先级从高到底排序：
 1. 0F 0F 0F 0F (开始使用)
 2. 01 01 01 01 (本区域已经初始化)
+
+每次存入的数据块大小，最大数据长度为 UINT16_T_MAX
