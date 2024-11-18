@@ -41,15 +41,18 @@
 /*存储初始化文件系统返回的对象句柄*/
 typedef struct cfs_object *cfs_object_handle_ptr;
 
-// 数据定义
-typedef uint32_t cfs_data_id_t;
+// 数据定义-----------------
+#ifdef CFS_ID_DATA_TYPE == (32u)
+    typedef uint32_t cfs_data_id_t;
+#elif CFS_FLASH_ERASURE == (0x00)
+    typedef uint64_t cfs_data_id_t;
+#endif  // CFS_ID_DATA_TYPE
 typedef uint16_t cfs_data_size_t;
 typedef uint16_t cfs_data_check_t;
 
 // 存储区状态，用于初始化flash后在第一页的头
 #define CFS_FLASH_STATE_INIT    (0x01010101)    // 初始化flash
-#define CFS_FLASH_STATE_USE     (0x0A0A0A0A)    // 使用本区域
-#define CFS_FLASH_STATE_CYCLE   (0x0F0F0F0F)    // ID开始循环使用
+#define CFS_FLASH_STATE_CYCLE   (0x0F0F0F0F)    // 开始使用
 
 /*无ID状态, 这里为uint32_t*/
 #ifdef CFS_FLASH_ERASURE == (0xFF)

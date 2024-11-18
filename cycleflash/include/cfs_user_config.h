@@ -3,12 +3,22 @@
 
 // 一页FLASH大小
 #define CFS_FLASH_SECTOR_SIZE (512u)
-/* 擦除FLASH的默认值，这里只能两个值.
- * 根据芯片手册进行修改。
- * value: (0xFF)     一般默认都是FF
- * value: (0x00)    个别带有硬件校验的为00
+
+/** 擦除FLASH的默认值，这里只能两个值.
+ *  根据芯片手册进行修改。
+ *  value: (0xFF)     一般默认都是FF
+ *  value: (0x00)    个别带有硬件校验的为00
 */
 #define CFS_FLASH_ERASURE (0xFF)
+
+/* 循环储存的ID使用类型，这里是全局修改.
+ * 默认使用uint32_t 类型，这里可以设置为uint64_t.
+ * 请自己计算是否用到这么多的ID，减少每个数据块占用的大小。
+ * value: (32)     这里设置为 uint32_t
+ * value: (64)     这里设置为 uint64_t
+*/
+// TODO:还没做到项目里
+#define CFS_ID_DATA_TYPE (32u)
 
 /* 可写入的最小颗粒，这里只能设定三个值.
  * 根据芯片手册进行修改。
@@ -36,7 +46,6 @@
 // TODO:还没对这部分做定义
 #define CFS_DEBUG
 #define CFS_DEBUG_OUT(x) printf(x)
-
 
 // 定义在 "cfs_system_utils.h" 中的 
 // "uint16_t cfs_system_utils_check(const uint8_t *data, uint32_t data_length)"
