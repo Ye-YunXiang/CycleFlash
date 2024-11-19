@@ -33,14 +33,12 @@
 #include "cfs_system_utils.h"
 
 // XXX:这里负责对象存储相关的。。。。。。。。。。。。。
-
-
 /*数据对象的头指针*/
-static cfs_object_list_t *cfs_system_object_head = NULL;
-static cfs_object_list_t *cfs_system_object_tail = NULL;
+// static cfs_object_list_t *cfs_system_object_head = NULL;
+// static cfs_object_list_t *cfs_system_object_tail = NULL;
 
 //@def 1页大小的数据缓存
-uint8_t data_buffer_temp[CFS_BUFFER_SIZE];
+
 
 // *****************************************************************************************************
 //@def 其他接口 —— 接口

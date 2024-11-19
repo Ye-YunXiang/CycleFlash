@@ -31,14 +31,35 @@
 #include "cfs_system_oc.h"
 
 // 分配失败打算直接死掉在断言里面
-#define APPLY_MEMORY_FAIL_DISPOSE(x)  if(x == NULL){asster(x);while(1);}
+#define APPLY_MEMORY_FAIL_DISPOSE(x)  if(x == NULL){assert(x);while(1);}
 // 判断字符串的长度，加上\0，这里需要字符串指针
-#define STRING_ALL_SIZE(x)  (strlen(x) + 1)
+#define STRING_ALL_SIZE(x)  (strlen((char *)x) + (1u))
 
 
 // XXX:这里负责对象管理。。。。。。。。。。。。。
-static cfs_object_list_t *object_list_head = NULL;
-static cfs_block_buffer_t data_block_buffer = {0};
+static struct
+{
+    
+#ifdef CFS_FLASH_SECTOR_BUFFER_DEF
+    uint8_t flash_one_sector_buffer[CFS_FLASH_SECTOR_SIZE];
+#endif // CFS_FLASH_SECTOR_BUFFER_DEF
+
+    cfs_object_list_t *object_list_head;
+    cfs_block_buffer_t data_block_buffer;
+}_this = {
+
+#ifdef CFS_FLASH_SECTOR_BUFFER_DEF
+    .flash_one_sector_buffer = {0},
+#endif // CFS_FLASH_SECTOR_BUFFER_DEF
+
+    .object_list_head = NULL,
+    .data_block_buffer = {
+        .buffer_ptr = NULL,
+        .buffer_size = 0,
+        .use_flag = false
+    }
+};
+
 
 //*******************************************************************************************
 //-- 内部管理接口
@@ -69,15 +90,15 @@ static void _general_block_buffer_init(uint16_t data_buffer_size)
     // 判断一下不能为0
     assert(data_buffer_size != 0);
 
-    if (data_block_buffer.buffer_size > data_buffer_size)
+    if (_this.data_block_buffer.buffer_size > data_buffer_size)
     {
         return;
     }
 
     // malloc*****
-    CFS_FREE(data_block_buffer.buffer_ptr);
-    data_block_buffer.buffer_ptr = (uint8_t *)CFS_MALLOC(data_buffer_size);
-    APPLY_MEMORY_FAIL_DISPOSE(data_block_buffer.buffer_ptr);
+    CFS_FREE(_this.data_block_buffer.buffer_ptr);
+    _this.data_block_buffer.buffer_ptr = (uint8_t *)CFS_MALLOC(data_buffer_size);
+    APPLY_MEMORY_FAIL_DISPOSE(_this.data_block_buffer.buffer_ptr);
 }
 
 //@def 紧密存储遍历内存ID初始化
@@ -235,8 +256,8 @@ cfs_object_t * cfs_middle_add_object_init(
     APPLY_MEMORY_FAIL_DISPOSE(cfs_list);
 
     // 添加入list中
-    cfs_list->next = object_list_head;
-    object_list_head = cfs_list;
+    cfs_list->next = _this.object_list_head;
+    _this.object_list_head = cfs_list;
 
     cfs_list->name = cfs_object->name;
     cfs_list->object_handle = cfs_object;
@@ -259,7 +280,6 @@ bool cfs_middle_object_id_init(const cfs_object_t *object)
     cfs_data_id_t temp_data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
 
     // 先读取第一页存储区的前8个字节，判断内存状态
-
     temp_data_id = cfs_filesystem_tight_data_page_id_init(temp_object);
 
 	//@def 设置遍历好的ID值
@@ -285,9 +305,13 @@ cfs_object_list_t *cfs_middle_find_object(const cfs_object_t *object)
 {
     assert(object != NULL);
     assert(object->name != NULL);
-    assert(object_list_head != NULL);
+    
+    if (_this.object_list_head == NULL)
+    {
+        return NULL;
+    }
   
-    cfs_object_list_t *find_object = object_list_head;
+    cfs_object_list_t *find_object = _this.object_list_head;
     while (find_object != NULL)
     {
         if (strcmp(find_object->object_handle->name, object->name) == 0)
@@ -303,18 +327,23 @@ cfs_object_list_t *cfs_middle_find_object(const cfs_object_t *object)
 //@def 检查重复地址， 通过返回 true， 不通过返回 false
 bool cfs_middle_check_address(const uint32_t address, const uint32_t sector_count)
 {
-    cfs_object_list_t *list_pointer = object_list_head->name;
+    if (_this.object_list_head == NULL)
+    {
+        return false;
+    }
+
+    cfs_object_list_t *list_pointer = _this.object_list_head->next;
     uint32_t current_head = address;
     uint32_t current_tail = address + (sector_count*CFS_FLASH_SECTOR_SIZE) - 1;
     
     // 遍历内存并检查和之前的数据对象是否有交叉
-    while(list_pointer != NULL) 
+    while (list_pointer != NULL) 
     {
         uint32_t next_head = list_pointer->object_handle->address;
         uint32_t next_tail = list_pointer->object_handle->address +
             (CFS_FLASH_SECTOR_SIZE*list_pointer->object_handle->sector_count) - 1;
 
-        if(((current_head<=next_tail) && (current_tail>=next_head)) 
+        if (((current_head<=next_tail) && (current_tail>=next_head)) 
             || ((next_head<=current_tail) && (next_tail>=current_head)) 
             || ((current_head<=next_head) && (current_tail>=next_tail)) 
             || ((next_head<=current_head) && (next_tail>=current_tail)))

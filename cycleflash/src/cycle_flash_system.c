@@ -319,7 +319,7 @@ cfs_object_handle_ptr cfs_nv_object_init(
     //@def 判断参数有效性
     assert(name != NULL);
     // 这里长度不要 
-    assert(strlen(name) < CFS_NAME_LEN_MAX);
+    assert(strlen((char *)name) < CFS_NAME_LEN_MAX);
 
     //@def 在判断地址有没有重复，没通过返回false
     if (false == cfs_middle_check_address(address, sector_count))

@@ -42,7 +42,7 @@
 typedef struct cfs_object *cfs_object_handle_ptr;
 
 // 数据定义-----------------
-#ifdef CFS_ID_DATA_TYPE == (32u)
+#if CFS_ID_DATA_TYPE == (32u)
     typedef uint32_t cfs_data_id_t;
 #elif CFS_FLASH_ERASURE == (0x00)
     typedef uint64_t cfs_data_id_t;
@@ -50,12 +50,14 @@ typedef struct cfs_object *cfs_object_handle_ptr;
 
 typedef uint16_t cfs_data_check_t;
 
+
 // 存储区状态，用于初始化flash后在第一页的头
 #define CFS_FLASH_STATE_INIT    (0x01010101)    // 初始化flash
 #define CFS_FLASH_STATE_CYCLE   (0x0F0F0F0F)    // 开始使用
 
+
 /*无ID状态, 这里为uint32_t*/
-#ifdef CFS_FLASH_ERASURE==(0xFF) && CFS_ID_DATA_TYPE==(32u)
+#if CFS_FLASH_ERASURE==(0xFF) && CFS_ID_DATA_TYPE==(32u)
     #define CFS_CONFIG_NOT_LINKED_DATA_ID   (UINT_MAX)
 #elif CFS_FLASH_ERASURE==(0xFF) && CFS_ID_DATA_TYPE==(64u)
     #define CFS_CONFIG_NOT_LINKED_DATA_ID   (ULLONG_MAX)
@@ -64,6 +66,7 @@ typedef uint16_t cfs_data_check_t;
 #endif  // CFS_FLASH_ERASURE
 /*无有效ID*/
 #define CFS_CONFIG_NOT_LINKED_VALID_DATA_ID (0u)
+
 
 /*不算数据长度，通过数据块算包头包尾的长度*/
 // SIZEOF(data_id) + SIZEOF(data_len) + SIZEOF(data_crc_16)
