@@ -11,7 +11,8 @@
         "assert.h": "c",
         "cfs_user_config.h": "c",
         "cfs_system_abstract.h": "c",
-        "cfs_system_middle.h": "c"
+        "cfs_system_middle.h": "c",
+        "cfs_system_memoryh": "cpp"
     },
     "files.encoding": "utf8"
 }

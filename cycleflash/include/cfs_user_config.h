@@ -72,6 +72,6 @@
  * 打开后可以对指定ID进行修改，这里擦除页后，重写页。
  * 默认注释不使用，因为用不到，同时可以减少对RAM的负担。
 */
-// #define CFS_FLASH_SECTOR_BUFFER_DEF
+//  #define CFS_FLASH_SECTOR_BUFFER_DEF
 
 #endif //__CFS_USER_CONFIG_H__

@@ -279,7 +279,14 @@ bool cfs_middle_object_id_init(const cfs_object_t *object)
     assert(list_object_ptr!=NULL && object!=NULL);
     cfs_data_id_t temp_data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
 
-    // 先读取第一页存储区的前8个字节，判断内存状态
+
+    /** 
+     * 这里判断第一页存储区的前8个字节的状态：
+     * 8个字节一半，只要有4byte符合存储区状态，就算通过。
+     * value: 0x01010101       初始化过存储区。
+     * value: 0x0F0F0F0F       开始使用内存。
+     */
+    // 先读取，判断内存状态
     temp_data_id = cfs_filesystem_tight_data_page_id_init(temp_object);
 
 	//@def 设置遍历好的ID值
