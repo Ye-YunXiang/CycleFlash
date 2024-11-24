@@ -52,7 +52,7 @@ typedef struct cfs_object *cfs_object_handle_ptr;
 #elif CFS_FLASH_ERASURE == (0x00)
     typedef uint64_t cfs_data_id_t;
 #endif  // CFS_ID_DATA_TYPE
-typedef uint16_t cfs_data_check_t;
+
 
 /*无ID状态, 这里为uint32_t*/
 #if CFS_FLASH_ERASURE==(0xFF) && CFS_ID_DATA_TYPE==(32u)
@@ -107,7 +107,7 @@ typedef struct cfs_object_list
     uint8_t *name;                    // 对象的名字
     cfs_data_id_t data_id;            // 数据块ID
     uint32_t valid_id_number;         // 有效ID个数
-    uint16_t data_buffer_size; // 数据存入大小
+    uint16_t data_buffer_size;        // 数据存入大小
 } cfs_object_list_t;
 
 // 通用数据块存入缓存区，用于存入数据块，数据块大小用对象中最长的大小。
@@ -126,7 +126,7 @@ typedef struct cfs_data_block
     cfs_data_id_t *data_id;       // 数据块
     uint16_t *data_size;          // 存入数据的指针
     uint8_t *data;                // 存入数据的长度ID
-    cfs_data_check_t *data_check; // 数据的crc8校验码
+    uint16_t *data_check;         // 数据的校验码
 } cfs_data_block_t;
 
 // 错误定义判断---------------------------------------------

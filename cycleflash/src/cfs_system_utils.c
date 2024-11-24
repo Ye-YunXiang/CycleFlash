@@ -112,9 +112,9 @@ static uint16_t _utils_crc16_xmodem_table_check(const uint8_t *data, uint32_t da
 //********************************************************************* */
 // 对外的校验接口函数 ****************************************************
 /********************************************************************** */
-cfs_data_check_t cfs_system_utils_check(const uint8_t *data, uint32_t data_length)
+uint16_t cfs_system_utils_check(const uint8_t *data, uint32_t data_length)
 {
-    cfs_data_check_t check_value = 0;
+    uint16_t check_value = 0;
     
 #ifdef CFS_CHECK == 0   // CHECK_SUM
 

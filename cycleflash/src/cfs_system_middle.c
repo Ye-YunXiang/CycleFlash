@@ -269,7 +269,7 @@ cfs_object_t * cfs_middle_add_object_init(
     // 重新分配数据块的缓存区
     _general_block_buffer_init(cfs_list->data_buffer_size);
 
-    return cfs_list;
+    return cfs_object;
 }
 
 //@def 初始化遍历ID
@@ -277,7 +277,9 @@ bool cfs_middle_object_id_init(const cfs_object_t *object)
 {
     cfs_object_list_t *list_object_ptr = cfs_middle_find_object(object);
     assert(list_object_ptr!=NULL && object!=NULL);
+
     cfs_data_id_t data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
+    uint16_t vakud_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
 
     /** 
      * 这里判断第一页存储区的前8个字节的状态：
