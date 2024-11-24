@@ -34,10 +34,15 @@
 
 // 可使用写入方式，没有的请注释
 // 配置好可用的方式之后，请去port文件中去实现它。
+/**
+ * XXX: 这里说清楚，至少要实现上面说的最小颗粒存储大小的。
+ * XXX: 然后这里有用到请一定一定打开。
+ * XXX: 没用到的请一定一定注释, 不然出现未知错误。
+*/
 #define CFS_WRITE_PORT_ONE_BYTE     (1u)    // 1 byte
 #define CFS_WRITE_PORT_HALF_WORD    (2u)    // 2 byte
 #define CFS_WRITE_PORT_ONE_WORD     (4u)    // 4 byte
-#define CFS_WRITE_PORT_DOUBLE_WORD  (8u)    // 8 byte
+// #define CFS_WRITE_PORT_DOUBLE_WORD  (8u)    // 8 byte
 
 
 // 定义初始化内存的方式
@@ -72,6 +77,19 @@
  * 打开后可以对指定ID进行修改，这里擦除页后，重写页。
  * 默认注释不使用，因为用不到，同时可以减少对RAM的负担。
 */
+// TODO: 还没做相关的函数
 //  #define CFS_FLASH_SECTOR_BUFFER_DEF
+
+
+/* 打开变长存储的限制，可以存入变长长数据，开放几个专门使用变长存储的函数。
+ * 变长数据会在内存中维护属于自己的数据检索表。
+ * 由于变长数据，这里初始化的时候会检索flash中所有的数据，所以效率会比定长的慢很多。
+ * 对于数据出错，会尝试找到下一个数据在哪里。
+ * 如果寻找失败会直接使用最后读取到的数据，并直接对内存进行整理，有丢失数据的风险。
+ * 然后这里维护的数据表格为最大回溯10条数据，所以本模式请谨慎使用。
+ * 默认注释不使用，减少对RAM的负担。
+*/
+// TODO: 还没做相关的函数,这里预留，后面在添加。
+//  #define CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
 
 #endif //__CFS_USER_CONFIG_H__

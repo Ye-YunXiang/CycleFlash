@@ -39,8 +39,10 @@
 #include "cfs_user_config.h"
 
 // 存储区状态，用于初始化flash后在第一页的头
-#define CFS_FLASH_STATE_INIT    (0x01010101)    // 初始化flash
-#define CFS_FLASH_STATE_CYCLE   (0x0F0F0F0F)    // 开始使用
+#define CFS_FLASH_STATE_INIT            (0x01010101)    // 初始化flash
+#define CFS_FLASH_STATE_VARIABLE_CYCLE  (0x0A0A0A0A)    // 变长数据使用/预留
+#define CFS_FLASH_STATE_FIXED_CYCLE     (0x0F0F0F0F)    // 定长数据使用
+
 
 /*存储初始化文件系统返回的对象句柄*/
 typedef struct cfs_object *cfs_object_handle_ptr;
@@ -72,6 +74,18 @@ typedef uint16_t cfs_data_check_t;
 #define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN (6u)
 
 
+// 定义存储区的数据类型
+typedef enum cfs_object_type
+{
+    //@def 没有数据类型
+    CFS_OBJECT_TYPE_NULL,
+    //@def 初始化结束标志，没有存入数据
+    CFS_OBJECT_TYPE_INIT,
+    //@def 存储固定长度数据
+    CFS_OBJECT_TYPE_FIXED_DATA_STORAGE,
+    //@def 循环变长长度数据/ 预留，还未实现
+    CFS_OBJECT_TYPE_VARIABLE_DATA_LENGTH,
+}cfs_object_type_t;
 
 
 /*系统的存储对象，不定长对象记录每个存储区对象的内容*/

@@ -277,32 +277,53 @@ bool cfs_middle_object_id_init(const cfs_object_t *object)
 {
     cfs_object_list_t *list_object_ptr = cfs_middle_find_object(object);
     assert(list_object_ptr!=NULL && object!=NULL);
-    cfs_data_id_t temp_data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
-
+    cfs_data_id_t data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
 
     /** 
      * 这里判断第一页存储区的前8个字节的状态：
      * 8个字节一半，只要有4byte符合存储区状态，就算通过。
      * value: 0x01010101       初始化过存储区。
+     * value: 0x0A0A0A0A       变长数据存储区。TODO: 还未实现
      * value: 0x0F0F0F0F       开始使用内存。
      */
     // 先读取，判断内存状态
-    temp_data_id = cfs_filesystem_tight_data_page_id_init(temp_object);
+    cfs_object_type_t flash_typ = cfs_filesystem_tight_data_page_id_init(object);
+
+    // 根据不同的返回执行对应的操作
+    switch (flash_typ)
+    {
+        case CFS_OBJECT_TYPE_FIXED_DATA_STORAGE:
+            /* code */
+            break;
+
+        case CFS_OBJECT_TYPE_VARIABLE_DATA_LENGTH:
+            /* code */
+            break;
+        
+        case CFS_OBJECT_TYPE_INIT:
+            /* code */
+            break;
+
+        default:
+            break;
+    }
+
+
 
 	//@def 设置遍历好的ID值
-    cfs_system_oc_object_id_set(temp_object, temp_data_id);
+    cfs_system_oc_object_id_set(object, data_id);
 
     //@def 判断有没有ID
-    if(temp_data_id != CFS_CONFIG_NOT_LINKED_DATA_ID)
+    if(data_id != CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
-        temp_data_id = cfs_system_oc_valid_data_number(temp_object);
+        data_id = cfs_system_oc_valid_data_number(object);
     }
     else
     {
-        temp_data_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
+        data_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     }
     //@def 设置目前可用的ID数量
-    cfs_system_oc_object_valid_id_number_set(temp_object, temp_data_id);
+    cfs_system_oc_object_valid_id_number_set(object, data_id);
 
     return true;
 }

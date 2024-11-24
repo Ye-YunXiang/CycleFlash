@@ -46,11 +46,13 @@ typedef enum
 }cfs_oc_action_data_result;
 
 
+
 //@def 读取内存中第一页的前8字节，为了判断页面接下来的处理步骤。
 /**
- * 不为0f0f0f0f 都返回false，只要为01010101会直接初始化所有的内存。
+ * 如果读取出来的数据不为 0xoF/0x0A/0x01 这三个数据类型，不符合cfs_object_type_t
+ * 直接初始化缓存区后，设置头头的元数据为 0x01010101
  */
-bool cfs_memory_handing_flash_init_state(const cfs_object_t *object);
+cfs_object_type_t cfs_memory_handing_flash_init_state(const cfs_object_t *object);
 
 
 

@@ -252,22 +252,38 @@ uint32_t cfs_system_oc_via_id_calculate_addr( \
 // HACK: 新
 //@def 读取内存中第一页的前8字节，为了判断页面接下来的处理步骤。
 /**
- * 不为0f0f0f0f 都返回false，只要为01010101会直接初始化所有的内存。
+ * 如果读取出来的数据不为 0xoF/0x0A/0x01 这三个数据类型，不符合cfs_object_type_t
+ * 直接初始化缓存区后，设置头头的元数据为 0x01010101
  */
-bool cfs_memory_handing_flash_init_state(const cfs_object_t *object)
+cfs_object_type_t cfs_memory_handing_flash_init_state(const cfs_object_t *object)
 {
     if (true == cfs_port_system_flash_read_contrast(
                     object->address, 
-                    CFS_FLASH_STATE_CYCLE, 
-                    sizeof(CFS_FLASH_STATE_CYCLE))
+                    CFS_FLASH_STATE_FIXED_CYCLE, 
+                    sizeof(CFS_FLASH_STATE_FIXED_CYCLE))
         || true == cfs_port_system_flash_read_contrast(
-                    object->address + sizeof(CFS_FLASH_STATE_CYCLE),
-                    CFS_FLASH_STATE_CYCLE, 
-                    sizeof(CFS_FLASH_STATE_CYCLE)))
+                    object->address + sizeof(CFS_FLASH_STATE_FIXED_CYCLE),
+                    CFS_FLASH_STATE_FIXED_CYCLE, 
+                    sizeof(CFS_FLASH_STATE_FIXED_CYCLE)))
     {
-        // 如果前4个字节或者后面4个字节为 0x0f0f0f0f
-        return true;
+        // 如果前4个字节或者后面4个字节为 0x0f0f0f0f， 这里认定为定长数据
+        return CFS_OBJECT_TYPE_FIXED_DATA_STORAGE;
     }
+
+#ifdef CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
+    if (true == cfs_port_system_flash_read_contrast(
+                    object->address, 
+                    CFS_FLASH_STATE_VARIABLE_CYCLE, 
+                    sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE))
+        || true == cfs_port_system_flash_read_contrast(
+                    object->address + sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE),
+                    CFS_FLASH_STATE_VARIABLE_CYCLE, 
+                    sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE)))
+    {
+        // 如果前4个字节或者后面4个字节为 0x0A0A0A0A,认为变长数据
+        return CFS_OBJECT_TYPE_VARIABLE_DATA_LENGTH;
+    }
+#endif // CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
 
     if (true == cfs_port_system_flash_read_contrast(
                     object->address, 
@@ -278,13 +294,12 @@ bool cfs_memory_handing_flash_init_state(const cfs_object_t *object)
                     CFS_FLASH_STATE_INIT, 
                     sizeof(CFS_FLASH_STATE_INIT)))
     {
-        // 如果前4个字节或者后面4个字节为 0x01010101
-        return false;
+        // 如果前4个字节或者后面4个字节为 0x0A0A0A0A,认为变长数据
+        return CFS_OBJECT_TYPE_VARIABLE_DATA_LENGTH;
     }
 
     // 这里还是没有返回，直接初始化所有的页面
     __erasing_page_flash_data(object->address, object->sector_count);
-
     __write_flash_data(
         object->address, CFS_FLASH_STATE_INIT, sizeof(CFS_FLASH_STATE_INIT));
     __write_flash_data(
@@ -292,7 +307,7 @@ bool cfs_memory_handing_flash_init_state(const cfs_object_t *object)
         CFS_FLASH_STATE_INIT, 
         sizeof(CFS_FLASH_STATE_INIT));
 
-    return false;
+    return CFS_OBJECT_TYPE_INIT;
 }
 
 
