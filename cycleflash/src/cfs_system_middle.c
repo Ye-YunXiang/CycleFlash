@@ -101,12 +101,24 @@ static void _general_block_buffer_init(uint16_t data_buffer_size)
     APPLY_MEMORY_FAIL_DISPOSE(_this.data_block_buffer.buffer_ptr);
 }
 
-//@def 固定长度存储遍历内存ID初始化
+//@def 固定长度存储遍历内存ID初始化，这里使用二分查找法
+//@def 使用本区块总共能用的ID数进行二分查找，对半来找最大的ID。
 // TODO：正在构思，里面的内容仅限借鉴
-static uint32_t _fixed_data_storage_id_init( \
-    cfs_object_list_t *temp_linked_object)
+static cfs_data_id_t _fixed_data_storage_id_search(const cfs_object_list_t *object_list)
 {
-    uint32_t temp_data_MAX_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
+    cfs_data_id_t data_max_id = 0;
+
+    // 创建数组，数组结构 { 遍历时的检索ID，遍历到的最大ID }
+    cfs_data_id_t data_left_id[2] = {1, NULL};
+    cfs_data_id_t data_right_id[2] = {NULL, NULL};
+    // 计算本存储区能存储的ID总数
+    data_right_id[0] = 
+        ((object_list->object_handle->sector_count * CFS_FLASH_SECTOR_SIZE)
+        - CFS_FLASH_STATE_ALL_LEN) / object_list->data_buffer_size;
+
+
+        
+
     cfs_system *temp_cfs_handle = cfs_system_oc_system_object_get(temp_linked_object);
 
     //@def 初始化缓冲数据块

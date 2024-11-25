@@ -42,6 +42,7 @@
 #define CFS_FLASH_STATE_INIT            (0x01010101)    // 初始化flash
 #define CFS_FLASH_STATE_VARIABLE_CYCLE  (0x0A0A0A0A)    // 变长数据使用/预留
 #define CFS_FLASH_STATE_FIXED_CYCLE     (0x0F0F0F0F)    // 定长数据使用
+#define CFS_FLASH_STATE_ALL_LEN         (8u)            // 存储区元数据长度
 
 
 /*存储初始化文件系统返回的对象句柄*/
