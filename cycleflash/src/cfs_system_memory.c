@@ -246,7 +246,7 @@ uint32_t cfs_system_oc_via_id_calculate_addr( \
 }
 
 
-// *****************************************************************************************************
+// **************************************************************************
 //@def 写入、读取数据、删除 —— 接口
 
 // HACK: 新
@@ -255,16 +255,17 @@ uint32_t cfs_system_oc_via_id_calculate_addr( \
  * 如果读取出来的数据不为 0xoF/0x0A/0x01 这三个数据类型，不符合cfs_object_type_t
  * 直接初始化缓存区后，设置头头的元数据为 0x01010101
  */
-cfs_object_type_t cfs_memory_handing_flash_init_state(const cfs_object_t *object)
+cfs_object_type_t 
+    cfs_memory_handing_flash_init_state(const cfs_object_list_t *object_list)
 {
     if (true == cfs_port_system_flash_read_contrast(
-                    object->address, 
-                    CFS_FLASH_STATE_FIXED_CYCLE, 
-                    sizeof(CFS_FLASH_STATE_FIXED_CYCLE))
+            object_list->object_handle->address, 
+            CFS_FLASH_STATE_FIXED_CYCLE, 
+            sizeof(CFS_FLASH_STATE_FIXED_CYCLE))
         || true == cfs_port_system_flash_read_contrast(
-                    object->address + sizeof(CFS_FLASH_STATE_FIXED_CYCLE),
-                    CFS_FLASH_STATE_FIXED_CYCLE, 
-                    sizeof(CFS_FLASH_STATE_FIXED_CYCLE)))
+            object_list->object_handle->address + sizeof(CFS_FLASH_STATE_FIXED_CYCLE),
+            CFS_FLASH_STATE_FIXED_CYCLE, 
+            sizeof(CFS_FLASH_STATE_FIXED_CYCLE)))
     {
         // 如果前4个字节或者后面4个字节为 0x0f0f0f0f， 这里认定为定长数据
         return CFS_OBJECT_TYPE_FIXED_DATA_STORAGE;
@@ -272,38 +273,42 @@ cfs_object_type_t cfs_memory_handing_flash_init_state(const cfs_object_t *object
 
 #ifdef CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
     if (true == cfs_port_system_flash_read_contrast(
-                    object->address, 
-                    CFS_FLASH_STATE_VARIABLE_CYCLE, 
-                    sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE))
+            object_list->object_handle->address, 
+            CFS_FLASH_STATE_VARIABLE_CYCLE, 
+            sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE))
         || true == cfs_port_system_flash_read_contrast(
-                    object->address + sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE),
-                    CFS_FLASH_STATE_VARIABLE_CYCLE, 
-                    sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE)))
+            object_list->object_handle->address + sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE),
+            CFS_FLASH_STATE_VARIABLE_CYCLE, 
+            sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE)))
     {
         // 如果前4个字节或者后面4个字节为 0x0A0A0A0A,认为变长数据
-        return CFS_OBJECT_TYPE_VARIABLE_DATA_LENGTH;
+        return CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE;
     }
 #endif // CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
 
     if (true == cfs_port_system_flash_read_contrast(
-                    object->address, 
-                    CFS_FLASH_STATE_INIT, 
-                    sizeof(CFS_FLASH_STATE_INIT))
+            object_list->object_handle->address, 
+            CFS_FLASH_STATE_INIT, 
+            sizeof(CFS_FLASH_STATE_INIT))
         || true == cfs_port_system_flash_read_contrast(
-                    object->address + sizeof(CFS_FLASH_STATE_INIT),
-                    CFS_FLASH_STATE_INIT, 
-                    sizeof(CFS_FLASH_STATE_INIT)))
+            object_list->object_handle->address + sizeof(CFS_FLASH_STATE_INIT),
+            CFS_FLASH_STATE_INIT, 
+            sizeof(CFS_FLASH_STATE_INIT)))
     {
         // 如果前4个字节或者后面4个字节为 0x0A0A0A0A,认为变长数据
-        return CFS_OBJECT_TYPE_VARIABLE_DATA_LENGTH;
+        return CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE;
     }
 
     // 这里还是没有返回，直接初始化所有的页面
-    __erasing_flash_page(object->address, object->sector_count);
+    __erasing_flash_page(
+        object_list->object_handle->address, 
+        object_list->object_handle->sector_count);
     __write_flash_data(
-        object->address, CFS_FLASH_STATE_INIT, sizeof(CFS_FLASH_STATE_INIT));
+        object_list->object_handle->address, 
+        CFS_FLASH_STATE_INIT, 
+        sizeof(CFS_FLASH_STATE_INIT));
     __write_flash_data(
-        object->address+sizeof(CFS_FLASH_STATE_INIT), 
+        object_list->object_handle->address+sizeof(CFS_FLASH_STATE_INIT), 
         CFS_FLASH_STATE_INIT, 
         sizeof(CFS_FLASH_STATE_INIT));
 
@@ -551,19 +556,19 @@ uint32_t cfs_system_oc_object_id_get(const cfs_object_list_t *temp_cfs_handle)
 } 
 
 /*设置数据数据对象的可用ID*/
-bool cfs_system_oc_object_valid_id_number_set( \
+bool cfs_system_oc_object_valid_id_set( \
     cfs_object_list_t * temp_cfs_handle, uint16_t temp_id)
 {
-    temp_cfs_handle->valid_id_number = temp_id;
+    temp_cfs_handle->valid_id = temp_id;
     return true;
 }
 
 
 /* 得到数据数据对象的可用ID */
-uint16_t cfs_system_oc_object_valid_id_number_get( \
+uint16_t cfs_system_oc_object_valid_id_get( \
     const cfs_object_list_t *temp_cfs_handle)
 {
-    return temp_cfs_handle->valid_id_number;
+    return temp_cfs_handle->valid_id;
 } 
 
 /* 得到数据对象的类型*/

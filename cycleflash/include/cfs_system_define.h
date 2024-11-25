@@ -84,7 +84,7 @@ typedef enum cfs_object_type
     //@def 存储固定长度数据
     CFS_OBJECT_TYPE_FIXED_DATA_STORAGE,
     //@def 循环变长长度数据/ 预留，还未实现
-    CFS_OBJECT_TYPE_VARIABLE_DATA_LENGTH,
+    CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE,
 }cfs_object_type_t;
 
 
@@ -105,8 +105,8 @@ typedef struct cfs_object_list
     struct cfs_object *object_handle; // 存储对象
 
     uint8_t *name;                    // 对象的名字
-    cfs_data_id_t data_id;            // 数据块ID
-    uint32_t valid_id_number;         // 有效ID个数
+    cfs_data_id_t data_id;            // 数据块ID，这里从1开始有效
+    uint32_t valid_id;                // 有效ID个数
     uint16_t data_buffer_size;        // 数据存入大小
 } cfs_object_list_t;
 

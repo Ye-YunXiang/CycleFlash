@@ -157,41 +157,6 @@ static uint32_t cfs_filesystem_tight_data_page_id_init( \
 }
 
 
-//@def 进行ID初始化操作
-static uint32_t cfs_filesystem_object_id_init( cfs_object_handle_ptr temp_cfs_handle)
-{
-    cfs_object_list_t *temp_object = \
-        cfs_system_oc_object_linked_crc_16_verify(temp_cfs_handle);
-    assert(temp_object != NULL);
-
-    uint32_t temp_data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
-
-    if(cfs_system_oc_object_struct_type_get(temp_object) != \
-        CFS_FILESYSTEM_OBJECT_TYPE_FIXED_DATA_STORAGE)
-    {
-        //@def 紧密存储数据
-        temp_data_id = cfs_filesystem_tight_data_page_id_init(temp_object);
-    }
-
-	//@def 设置遍历好的ID值
-    cfs_system_oc_object_id_set(temp_object, temp_data_id);
-
-    //@def 判断有没有ID
-    if(temp_data_id != CFS_CONFIG_NOT_LINKED_DATA_ID)
-    {
-        temp_data_id = cfs_system_oc_valid_data_number(temp_object);
-    }
-    else
-    {
-        temp_data_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
-    }
-    //@def 设置目前可用的ID数量
-    cfs_system_oc_object_valid_id_number_set(temp_object, temp_data_id);
-
-    return true;
-}
-
-
 //@def 存储固定数据——写入数据,写入成功返回写入的原始数据长度
 static uint32_t cfs_filesystem_fixed_data_write( \
     cfs_object_list_t *temp_object, \
@@ -244,7 +209,7 @@ static uint32_t cfs_filesystem_cycle_data_write( \
 {
     cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
     uint32_t temp_id = cfs_system_oc_object_id_get(temp_object);
-    uint16_t temp_valid_id = cfs_system_oc_object_valid_id_number_get(temp_object);
+    uint16_t temp_valid_id = cfs_system_oc_object_valid_id_get(temp_object);
 
     // 填充数据
     cfs_data_block temp_data_block;
@@ -261,7 +226,7 @@ static uint32_t cfs_filesystem_cycle_data_write( \
         if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
         {
             cfs_system_oc_object_id_set(temp_object, write_id);
-            cfs_system_oc_object_valid_id_number_set( \
+            cfs_system_oc_object_valid_id_set( \
                 temp_object, cfs_system_oc_valid_data_number(temp_object));
         }
     }
@@ -414,7 +379,7 @@ uint32_t cfs_nv_read(cfs_object_handle_ptr temp_object_handle, \
         temp_cfs_object->sector_size * temp_cfs_object->sector_count / \
         (temp_cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
     uint32_t temp_id = cfs_system_oc_object_id_get(temp_object);
-    uint16_t temp_valid_id = cfs_system_oc_object_valid_id_number_get(temp_object);
+    uint16_t temp_valid_id = cfs_system_oc_object_valid_id_get(temp_object);
     
     switch (cfs_system_oc_object_struct_type_get(temp_object))
     {
@@ -462,7 +427,7 @@ bool cfs_nv_clear(cfs_object_handle_ptr temp_object_handle)
     if(cfs_system_oc_flash_data_clear(temp_object) == true)
     {
         temp_object->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
-        temp_object->valid_id_number = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
+        temp_object->valid_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     }
     else
     {
@@ -497,5 +462,5 @@ uint32_t cfs_nv_get_current_valid_id(cfs_object_handle_ptr temp_object_handle)
         return CFS_CONFIG_NOT_LINKED_DATA_ID;
     }
 
-    return cfs_system_oc_object_valid_id_number_get(temp_object);
+    return cfs_system_oc_object_valid_id_get(temp_object);
 }

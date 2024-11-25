@@ -64,16 +64,15 @@ static struct
 //*******************************************************************************************
 //-- 内部管理接口
 //*******************************************************************************************
+// 工具接口 -----------------------------------------------------------------------------
 // 计算需要填充的字节数
 static uint8_t _compute_memory_fill_length(uint16_t data_size)
 {
     // 判断一下不能为0
     assert(data_size != 0);
-
     uint8_t data_fill_len = 
         (data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN) 
         % CFS_WRITE_MIN_PARTICLE;
-
     if (data_fill_len == 0)
     {
         return 0;
@@ -84,6 +83,7 @@ static uint8_t _compute_memory_fill_length(uint16_t data_size)
     }
 }
 
+// 二层处理接口 -----------------------------------------------------------------------------
 // 数据块缓存区初始化
 static void _general_block_buffer_init(uint16_t data_buffer_size)
 {
@@ -101,9 +101,9 @@ static void _general_block_buffer_init(uint16_t data_buffer_size)
     APPLY_MEMORY_FAIL_DISPOSE(_this.data_block_buffer.buffer_ptr);
 }
 
-//@def 紧密存储遍历内存ID初始化
+//@def 固定长度存储遍历内存ID初始化
 // TODO：正在构思，里面的内容仅限借鉴
-static uint32_t cfs_filesystem_tight_data_page_id_init( \
+static uint32_t _fixed_data_storage_id_init( \
     cfs_object_list_t *temp_linked_object)
 {
     uint32_t temp_data_MAX_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
@@ -262,7 +262,7 @@ cfs_object_t * cfs_middle_add_object_init(
     cfs_list->name = cfs_object->name;
     cfs_list->object_handle = cfs_object;
     cfs_list->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
-    cfs_list->valid_id_number = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
+    cfs_list->valid_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     cfs_list->data_buffer_size = CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN
         + cfs_object->data_size + cfs_object->data_fill;
 
@@ -285,11 +285,12 @@ bool cfs_middle_object_id_init(const cfs_object_t *object)
      * 这里判断第一页存储区的前8个字节的状态：
      * 8个字节一半，只要有4byte符合存储区状态，就算通过。
      * value: 0x01010101       初始化过存储区。
-     * value: 0x0A0A0A0A       变长数据存储区。TODO: 还未实现
+     * value: 0x0A0A0A0A       变长数据存储区。
      * value: 0x0F0F0F0F       开始使用内存。
      */
     // 先读取，判断内存状态
-    cfs_object_type_t flash_typ = cfs_filesystem_tight_data_page_id_init(object);
+    cfs_object_type_t flash_typ = 
+        cfs_filesystem_tight_data_page_id_init(list_object_ptr);
 
     // 根据不同的返回执行对应的操作
     switch (flash_typ)
@@ -298,34 +299,21 @@ bool cfs_middle_object_id_init(const cfs_object_t *object)
             /* code */
             break;
 
-        case CFS_OBJECT_TYPE_VARIABLE_DATA_LENGTH:
-            /* code */
+        case CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE:
+            /* TODO: 还未实现   code */
             break;
         
         case CFS_OBJECT_TYPE_INIT:
-            /* code */
+            /* There's nothing to do at the moment */
             break;
 
         default:
             break;
     }
 
-
-
 	//@def 设置遍历好的ID值
-    cfs_system_oc_object_id_set(object, data_id);
-
-    //@def 判断有没有ID
-    if(data_id != CFS_CONFIG_NOT_LINKED_DATA_ID)
-    {
-        data_id = cfs_system_oc_valid_data_number(object);
-    }
-    else
-    {
-        data_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
-    }
-    //@def 设置目前可用的ID数量
-    cfs_system_oc_object_valid_id_number_set(object, data_id);
+    list_object_ptr->data_id = data_id;
+    list_object_ptr->valid_id = vakud_id;
 
     return true;
 }
@@ -408,7 +396,7 @@ uint32_t cfs_middle_data_write(
 bool cfs_system_oc_flash_data_clear(cfs_object_list_t *object_list)
 {
     object_list->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
-    object_list->valid_id_number = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
+    object_list->valid_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     memset(object_list->buffer, 0,object_list->object_handle->data_size);
 
     return true;
@@ -434,7 +422,7 @@ uint32_t cfs_middle_get_current_valid_id(const cfs_object_list_t *object_list)
         return CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     }
 
-    //return cfs_system_oc_object_valid_id_number_get(object_list);
-    return object_list->valid_id_number;
+    //return cfs_system_oc_object_valid_id_get(object_list);
+    return object_list->valid_id;
 }
 

@@ -52,7 +52,8 @@ typedef enum
  * 如果读取出来的数据不为 0xoF/0x0A/0x01 这三个数据类型，不符合cfs_object_type_t
  * 直接初始化缓存区后，设置头头的元数据为 0x01010101
  */
-cfs_object_type_t cfs_memory_handing_flash_init_state(const cfs_object_t *object);
+cfs_object_type_t 
+    cfs_memory_handing_flash_init_state(const cfs_object_list_t *object_list);
 
 
 
@@ -118,11 +119,11 @@ bool cfs_system_oc_object_id_set( \
 uint32_t cfs_system_oc_object_id_get(const cfs_object_list_t *temp_cfs_handle);
 
 /*设置数据数据对象的可用ID*/
-bool cfs_system_oc_object_valid_id_number_set( \
+bool cfs_system_oc_object_valid_id_set( \
     cfs_object_list_t * temp_cfs_handle, uint16_t temp_id);
 
 // 得到数据数据对象的可用ID
-uint16_t cfs_system_oc_object_valid_id_number_get( \
+uint16_t cfs_system_oc_object_valid_id_get( \
     const cfs_object_list_t *temp_cfs_handle);
 
 // 得到数据对象的类型
