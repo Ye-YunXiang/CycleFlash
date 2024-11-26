@@ -116,12 +116,12 @@ typedef struct cfs_block_buffer
 {
     uint8_t *buffer_ptr;         // 数据块缓存指针
     uint16_t buffer_size; // 数据块缓存大小
-    bool use_flag;               // 本缓存目前有没有被占用
 } cfs_block_buffer_t;
 
 // 这里要重新定义存入数据的格式
 // 这里打算让后面分配好的地址直接分配过来这个结构体。
 // 存入数据结构：`ID(4byte) | 长度(2byte) | 数据 | CRC16(2byte)`
+// 校验码只校验有效数据，等于存入数据长度
 typedef struct cfs_data_block
 {
     cfs_data_id_t *data_id;       // 数据块

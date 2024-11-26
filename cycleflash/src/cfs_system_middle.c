@@ -28,6 +28,7 @@
 #include <assert.h>
 
 #include "cfs_system_middle.h"
+#include "cfs_system_memory.h"
 #include "cfs_system_oc.h"
 
 // 分配失败打算直接死掉在断言里面
@@ -56,7 +57,6 @@ static struct
     .data_block_buffer = {
         .buffer_ptr = NULL,
         .buffer_size = 0,
-        .use_flag = false
     }
 };
 
@@ -65,6 +65,23 @@ static struct
 //-- 内部管理接口
 //*******************************************************************************************
 // 工具接口 -----------------------------------------------------------------------------
+// 数据块缓存区初始化
+static void _general_block_buffer_init(uint16_t data_buffer_size)
+{
+    // 判断一下不能为0
+    assert(data_buffer_size != 0);
+
+    if (_this.data_block_buffer.buffer_size > data_buffer_size)
+    {
+        return;
+    }
+
+    // malloc*****
+    CFS_FREE(_this.data_block_buffer.buffer_ptr);
+    _this.data_block_buffer.buffer_ptr = (uint8_t *)CFS_MALLOC(data_buffer_size);
+    APPLY_MEMORY_FAIL_DISPOSE(_this.data_block_buffer.buffer_ptr);
+}
+
 // 计算需要填充的字节数
 static uint8_t _compute_memory_fill_length(uint16_t data_size)
 {
@@ -84,21 +101,26 @@ static uint8_t _compute_memory_fill_length(uint16_t data_size)
 }
 
 // 二层处理接口 -----------------------------------------------------------------------------
-// 数据块缓存区初始化
-static void _general_block_buffer_init(uint16_t data_buffer_size)
+// 获取内存中的ID
+static cfs_data_id_t _read_fixed_flash_id(
+    const cfs_object_list_t *object_list, const cfs_data_id_t read_id)
 {
-    // 判断一下不能为0
-    assert(data_buffer_size != 0);
-
-    if (_this.data_block_buffer.buffer_size > data_buffer_size)
+    memcpy(_this.data_block_buffer.buffer_ptr, 0, _this.data_block_buffer.buffer_size);
+    if (CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED 
+        == cfs_memory_read_flash_data(
+            object_list, _this.data_block_buffer.buffer_ptr, read_id))
     {
-        return;
+        cfs_data_id_t actual_block_id = 0;
+        memcpy(
+            _this.data_block_buffer.buffer_ptr, 
+            (uint8_t *)(&actual_block_id), 
+            sizeof(cfs_data_id_t));
+        return actual_block_id;
     }
-
-    // malloc*****
-    CFS_FREE(_this.data_block_buffer.buffer_ptr);
-    _this.data_block_buffer.buffer_ptr = (uint8_t *)CFS_MALLOC(data_buffer_size);
-    APPLY_MEMORY_FAIL_DISPOSE(_this.data_block_buffer.buffer_ptr);
+    else
+    {
+        return 0;
+    }
 }
 
 //@def 固定长度存储遍历内存ID初始化，这里使用二分查找法
@@ -115,8 +137,11 @@ static cfs_data_id_t _fixed_data_storage_id_search(const cfs_object_list_t *obje
     data_right_id[0] = 
         ((object_list->object_handle->sector_count * CFS_FLASH_SECTOR_SIZE)
         - CFS_FLASH_STATE_ALL_LEN) / object_list->data_buffer_size;
+    
+    data_left_id[1] = _read_fixed_flash_id(object_list, data_left_id[0]);
+    data_right_id[1] = _read_fixed_flash_id(object_list, data_right_id[0]);
 
-
+        
         
 
     cfs_system *temp_cfs_handle = cfs_system_oc_system_object_get(temp_linked_object);
@@ -302,7 +327,7 @@ bool cfs_middle_object_id_init(const cfs_object_t *object)
      */
     // 先读取，判断内存状态
     cfs_object_type_t flash_typ = 
-        cfs_filesystem_tight_data_page_id_init(list_object_ptr);
+        cfs_memory_handing_flash_init_state(list_object_ptr);
 
     // 根据不同的返回执行对应的操作
     switch (flash_typ)

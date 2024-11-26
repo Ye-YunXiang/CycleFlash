@@ -43,6 +43,8 @@ typedef enum
     CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE      = 2,
     //@def cfs写入或读取数据有效
     CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED    = 3,
+    //@def cfs读取数据的内存区为无效块
+    CFS_OC_READ_DATA_RESULT_INVALID_BLOCK       = 4,
 }cfs_oc_action_data_result;
 
 
@@ -55,7 +57,12 @@ typedef enum
 cfs_object_type_t 
     cfs_memory_handing_flash_init_state(const cfs_object_list_t *object_list);
 
-
+//@def 读取内存中指定的内存大小，经过数据校验正确后返回给中间层解析。
+/**
+ * 直接校验对象缓存长度的数据，对比读取出来的数据长度。
+ */
+cfs_oc_action_data_result cfs_memory_read_flash_data(
+    const cfs_object_list_t *object_list, uint8_t *buffer, const cfs_data_id_t read_id);
 
 
 
