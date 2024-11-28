@@ -100,7 +100,7 @@ static uint8_t _compute_memory_fill_length(uint16_t data_size)
     }
 }
 
-// 二层处理接口 -----------------------------------------------------------------------------
+// 三层处理接口 -----------------------------------------------------------------------------
 // 获取内存中的ID，专用函数，用于初始化遍历ID时。
 // 参数 read_id[0]:要读取的ID； read_id[1]：读取到的ID。
 static cfs_oc_action_data_result _read_fixed_flash_id(
@@ -124,6 +124,8 @@ static cfs_oc_action_data_result _read_fixed_flash_id(
     return result;
 }
 
+
+// 二层处理接口 -----------------------------------------------------------------------------
 //@def 固定长度存储遍历内存ID初始化
 static cfs_data_id_t _fixed_data_storage_id_search(const cfs_object_list_t *object_list)
 {
@@ -133,10 +135,8 @@ static cfs_data_id_t _fixed_data_storage_id_search(const cfs_object_list_t *obje
         ((object_list->object_handle->sector_count * CFS_FLASH_SECTOR_SIZE)
         / object_list->data_buffer_size) - 1;
     // 创建数组，数组结构 { 遍历时的检索ID，遍历到的最大ID }
-    cfs_data_id_t data_max_id[2] = 
-        {NULL, NULL};
-    cfs_data_id_t data_traversal_id[2] = 
-        {NULL, CFS_CONFIG_NOT_LINKED_DATA_ID};
+    cfs_data_id_t data_max_id[2] = {NULL, CFS_CONFIG_NOT_LINKED_DATA_ID};
+    cfs_data_id_t data_traversal_id[2] = {NULL, CFS_CONFIG_NOT_LINKED_DATA_ID};
 
     // 一临时的处理变量
     cfs_data_id_t data_compute_id = 0;
@@ -174,10 +174,13 @@ static cfs_data_id_t _fixed_data_storage_id_search(const cfs_object_list_t *obje
             else
             {
                 data_traversal_id[0] += 1;
+                data_traversal_id[1] = CFS_CONFIG_NOT_LINKED_DATA_ID;
             }
         }
 
-        if (data_max_id[1]<data_traversal_id[1]
+        if ((data_max_id[1]<data_traversal_id[1]
+                || (data_max_id[1]==CFS_CONFIG_NOT_LINKED_DATA_ID 
+                    && data_traversal_id[1]!=CFS_CONFIG_NOT_LINKED_DATA_ID))
             && data_traversal_id[1]!=CFS_CONFIG_NOT_LINKED_DATA_ID)
         {
             data_max_id[0] = data_traversal_id[0];
@@ -218,9 +221,6 @@ static cfs_data_id_t _fixed_data_storage_id_search(const cfs_object_list_t *obje
 
     return  data_max_id[1];
 }
-
-
-
 
 
 //*******************************************************************************************
@@ -295,6 +295,9 @@ bool cfs_middle_object_id_init(const cfs_object_t *object)
     if (object->data_size != CFS_FLASH_STATE_VARIABLE_CYCLE)
     {
         // 这里为定长数据的遍历
+        data_id = _fixed_data_storage_id_search(list_object_ptr);
+        // TODO:检索可用ID
+        
     }
     else
     {
