@@ -101,161 +101,122 @@ static uint8_t _compute_memory_fill_length(uint16_t data_size)
 }
 
 // 二层处理接口 -----------------------------------------------------------------------------
-// 获取内存中的ID
-static cfs_data_id_t _read_fixed_flash_id(
-    const cfs_object_list_t *object_list, const cfs_data_id_t read_id)
+// 获取内存中的ID，专用函数，用于初始化遍历ID时。
+// 参数 read_id[0]:要读取的ID； read_id[1]：读取到的ID。
+static cfs_oc_action_data_result _read_fixed_flash_id(
+    const cfs_object_list_t *object_list, cfs_data_id_t read_id[2])
 {
     memcpy(_this.data_block_buffer.buffer_ptr, 0, _this.data_block_buffer.buffer_size);
-    if (CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED 
-        == cfs_memory_read_flash_data(
-            object_list, _this.data_block_buffer.buffer_ptr, read_id))
+
+    cfs_oc_action_data_result result = cfs_memory_read_flash_data(
+            object_list, _this.data_block_buffer.buffer_ptr, read_id[0]);
+
+    if (CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED == result)
     {
-        cfs_data_id_t actual_block_id = 0;
-        memcpy(
-            _this.data_block_buffer.buffer_ptr, 
-            (uint8_t *)(&actual_block_id), 
-            sizeof(cfs_data_id_t));
-        return actual_block_id;
+        memcpy(_this.data_block_buffer.buffer_ptr, 
+            (uint8_t *)(&read_id[1]), sizeof(cfs_data_id_t));
     }
     else
     {
-        return 0;
+        read_id[1] = CFS_CONFIG_NOT_LINKED_DATA_ID;
     }
+
+    return result;
 }
 
-//@def 固定长度存储遍历内存ID初始化，这里使用二分查找法
-//@def 使用本区块总共能用的ID数进行二分查找，对半来找最大的ID。
-// TODO：正在构思，里面的内容仅限借鉴
+//@def 固定长度存储遍历内存ID初始化
 static cfs_data_id_t _fixed_data_storage_id_search(const cfs_object_list_t *object_list)
 {
-    cfs_data_id_t data_max_id = 0;
-
-    // 创建数组，数组结构 { 遍历时的检索ID，遍历到的最大ID }
-    cfs_data_id_t data_left_id[2] = {1, NULL};
-    cfs_data_id_t data_right_id[2] = {NULL, NULL};
-    // 计算本存储区能存储的ID总数
-    data_right_id[0] = 
+    // 计算本存储区能存储的ID总数，这里指的是能存几个
+    // ID是从0开始的，所以得小于它。
+    const cfs_data_id_t FLASH_MAX_ID_COUNT = 
         ((object_list->object_handle->sector_count * CFS_FLASH_SECTOR_SIZE)
-        - CFS_FLASH_STATE_ALL_LEN) / object_list->data_buffer_size;
-    
-    data_left_id[1] = _read_fixed_flash_id(object_list, data_left_id[0]);
-    data_right_id[1] = _read_fixed_flash_id(object_list, data_right_id[0]);
+        / object_list->data_buffer_size) - 1;
+    // 创建数组，数组结构 { 遍历时的检索ID，遍历到的最大ID }
+    cfs_data_id_t data_max_id[2] = 
+        {NULL, NULL};
+    cfs_data_id_t data_traversal_id[2] = 
+        {NULL, CFS_CONFIG_NOT_LINKED_DATA_ID};
 
-        
-        
-
-    cfs_system *temp_cfs_handle = cfs_system_oc_system_object_get(temp_linked_object);
-
-    //@def 初始化缓冲数据块
-    cfs_data_block data_block;
-    memset(&data_block, NULL, sizeof(cfs_data_block));   
-    cfs_system_oc_object_block_buffer_set(temp_linked_object, &data_block);
+    // 一临时的处理变量
+    cfs_data_id_t data_compute_id = 0;
+    cfs_oc_action_data_result read_id_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
     
-    //@def 计算数据块大小
-    const uint32_t data_block_size = \
-        temp_cfs_handle->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
-    
-    //@def 存储数据的起始地址，和记录最大ID
-    volatile uint32_t data_start_id = 0;
-    volatile uint32_t data_max_addr = NULL;
-    volatile uint16_t data_max_i = 0;
-    //@def 遍历每一页第一位的值，考虑到如果第一位数据存储错误的情况
-    for(uint16_t i = 0; i < temp_cfs_handle->sector_count; i++)
+    //@def 遍历每一页第一位的值，考虑到如果第一位数据存储错误的情况，往后累加3位
+    // 
+    for (uint32_t i=0; i<object_list->object_handle->sector_count; i++)
     {
-        uint8_t temp_count = 0;
-        data_max_addr = \
-            (temp_cfs_handle->addr_handle + (i+1) * temp_cfs_handle->sector_size);
-        cfs_oc_action_data_result read_result = \
-            CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
-
-        while(read_result != CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
+        data_compute_id = ((i*CFS_FLASH_SECTOR_SIZE) / object_list->data_buffer_size);
+        if (data_compute_id > data_traversal_id[0] || i == 0)
         {
-            //@def 因为ID从0开始，所以这里计算出来的天然多1个。
-            //@def 然后如果是第0页得出的结果直接为0.
-            data_start_id = \
-                (i * temp_cfs_handle->sector_size) / data_block_size + temp_count;
+            data_traversal_id[0] = data_compute_id;
+        }
+        else
+        {
+            continue; // ID重复跳过本循环
+        }
 
-            memset(data_block.data_pointer, NULL, temp_cfs_handle->data_size);
-            data_block.data_id = data_start_id;
-            read_result = cfs_system_oc_read_flash_data(temp_linked_object, &data_block);
-            
-            //@def 读错就在往后读一数据块，读空直接退出
-            if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED || \
-                (read_result != CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED && \
-                temp_count == 2))
+        // 遍历区，如果错误，在往下遍历一位
+        for (uint_8_t j=0, j<3; j++)
+        {
+            if (data_traversal_id[0] >= FLASH_MAX_ID_COUNT)
             {
-                data_start_id = data_block.data_id;
-                break;
-            }
-            else if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL)
-            {
+                // 这里表示ID号超过了弹出结束
                 break;
             }
 
-            //@def 下方ID+1计算出地址后加上两个数据块的大小后，
-            //@def 在减 1 得出在往上加上一个ID长度有没有超过这一页。
-            if(data_max_addr > (cfs_system_oc_via_id_calculate_addr( \
-                temp_linked_object, data_start_id) + data_block_size * 2 - 1))
+            read_id_result = _read_fixed_flash_id(object_list, data_traversal_id);
+            if (read_id_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
             {
-                temp_count++;
+                // 解码成功
+                break;
             }
             else
             {
-                break;
+                data_traversal_id[0] += 1;
             }
         }
 
-        if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
+        if (data_max_id[1]<data_traversal_id[1]
+            && data_traversal_id[1]!=CFS_CONFIG_NOT_LINKED_DATA_ID)
         {
-            if(data_block.data_id > temp_data_MAX_id || \
-                temp_data_MAX_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
-            {
-                data_max_i = i;
-                temp_data_MAX_id = data_block.data_id;
-            }
+            data_max_id[0] = data_traversal_id[0];
+            data_max_id[1] = data_traversal_id[1];
         }
+
+        data_traversal_id[1] = CFS_CONFIG_NOT_LINKED_DATA_ID;
     }
 
     //@def 如果读出来的结果是有ID的，遍历ID最大的这一页，寻找ID的最大值
-    if(temp_data_MAX_id != CFS_CONFIG_NOT_LINKED_DATA_ID)
+    if (data_max_id[1] != CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
-        data_start_id = temp_data_MAX_id;
-        data_max_addr = temp_cfs_handle->addr_handle + \
-            (data_max_i + 1) * temp_cfs_handle->sector_size;
-        cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED;
-        while(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
-        {
-            memset(data_block.data_pointer, NULL, temp_cfs_handle->data_size);
-            data_block.data_id = data_start_id;
-            read_result = cfs_system_oc_read_flash_data(
-                temp_linked_object, &data_block);
-            
-            //@def 读错就在往前读一数据块，读空直接退出
-            if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED &&
-                data_block.data_id > temp_data_MAX_id)
-            {
-                temp_data_MAX_id = data_block.data_id;
-            }
-            else if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL)
-            {
-                break;
-            }
+        const cfs_data_id_t LASR_TRAVERSE_MAX_ID = 
+            (CFS_FLASH_SECTOR_SIZE * 2 
+            / object_list->data_buffer_size) + data_max_id[0];
+        data_traversal_id[0] = data_max_id[0];
 
-            //@def 下方ID+1计算出地址后加上两个数据块的大小后，
-            //@def 在减 1 得出在往上加上一个ID长度有没有超过这一页。
-            if(data_max_addr > (cfs_system_oc_via_id_calculate_addr(
-                temp_linked_object, data_start_id) + data_block_size * 2 - 1))
+        while (data_traversal_id[0] < FLASH_MAX_ID_COUNT
+            && data_traversal_id[0] < LASR_TRAVERSE_MAX_ID)
+        {
+            read_id_result = _read_fixed_flash_id(object_list, data_traversal_id);
+            if (read_id_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED
+                && data_traversal_id[1] != CFS_CONFIG_NOT_LINKED_DATA_ID)
             {
-                data_start_id++;
+                if (data_traversal_id[1] > data_max_id[1])
+                {
+                    data_max_id[1] = data_traversal_id[1];
+                }
+                else
+                {
+                    return;
+                }
             }
-            else
-            {
-                break;
-            }
+            data_traversal_id[0] += 0;
+            data_traversal_id[1] = CFS_CONFIG_NOT_LINKED_DATA_ID;
         }
     }
 
-    return  temp_data_MAX_id;
+    return  data_max_id[1];
 }
 
 
@@ -303,6 +264,10 @@ cfs_object_t * cfs_middle_add_object_init(
     cfs_list->data_buffer_size = CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN
         + cfs_object->data_size + cfs_object->data_fill;
 
+    // 判断数据大小不能大于存储区
+    assert(cfs_list->data_buffer_size 
+        < (cfs_object->sector_count*CFS_FLASH_SECTOR_SIZE));
+
     // 重新分配数据块的缓存区
     _general_block_buffer_init(cfs_list->data_buffer_size);
 
@@ -318,34 +283,23 @@ bool cfs_middle_object_id_init(const cfs_object_t *object)
     cfs_data_id_t data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
     uint16_t vakud_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
 
-    /** 
-     * 这里判断第一页存储区的前8个字节的状态：
-     * 8个字节一半，只要有4byte符合存储区状态，就算通过。
-     * value: 0x01010101       初始化过存储区。
-     * value: 0x0A0A0A0A       变长数据存储区。
-     * value: 0x0F0F0F0F       开始使用内存。
-     */
-    // 先读取，判断内存状态
-    cfs_object_type_t flash_typ = 
-        cfs_memory_handing_flash_init_state(list_object_ptr);
+    // /** 
+    //  * 这里判断遍历ID状态。
+    //  * init: 读取内存第一个数据，如果ID为0，数据为初始化标志，就为刚初始化状态。
+    //  * fixed: 当系统不是刚初始化状态下，对象数据长度是正常的。
+    //  * variable：当系统不是初始化状态下，对象的长度为变长标记。
+    //  */
+    // cfs_object_type_t flash_typ = 
+    //     cfs_memory_handing_flash_init_state(list_object_ptr);
 
-    // 根据不同的返回执行对应的操作
-    switch (flash_typ)
+    if (object->data_size != CFS_FLASH_STATE_VARIABLE_CYCLE)
     {
-        case CFS_OBJECT_TYPE_FIXED_DATA_STORAGE:
-            /* code */
-            break;
-
-        case CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE:
-            /* TODO: 还未实现   code */
-            break;
-        
-        case CFS_OBJECT_TYPE_INIT:
-            /* There's nothing to do at the moment */
-            break;
-
-        default:
-            break;
+        // 这里为定长数据的遍历
+    }
+    else
+    {
+        // 这里为变长数据的定义
+        /* TODO: 还未实现   code */
     }
 
 	//@def 设置遍历好的ID值

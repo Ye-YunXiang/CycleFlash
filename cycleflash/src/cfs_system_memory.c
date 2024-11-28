@@ -250,71 +250,71 @@ uint32_t cfs_system_oc_via_id_calculate_addr( \
 // **************************************************************************
 //@def 写入、读取数据、删除 —— 接口
 
-// HACK: 新
-//@def 读取内存中第一页的前8字节，为了判断页面接下来的处理步骤。
-/**
- * 如果读取出来的数据不为 0xoF/0x0A/0x01 这三个数据类型，不符合cfs_object_type_t
- * 直接初始化缓存区后，设置头头的元数据为 0x01010101.
- */
-cfs_object_type_t 
-    cfs_memory_handing_flash_init_state(const cfs_object_list_t *object_list)
-{
-    if (true == cfs_port_system_flash_read_contrast(
-            object_list->object_handle->address, 
-            CFS_FLASH_STATE_FIXED_CYCLE, 
-            sizeof(CFS_FLASH_STATE_FIXED_CYCLE))
-        || true == cfs_port_system_flash_read_contrast(
-            object_list->object_handle->address + sizeof(CFS_FLASH_STATE_FIXED_CYCLE),
-            CFS_FLASH_STATE_FIXED_CYCLE, 
-            sizeof(CFS_FLASH_STATE_FIXED_CYCLE)))
-    {
-        // 如果前4个字节或者后面4个字节为 0x0f0f0f0f， 这里认定为定长数据
-        return CFS_OBJECT_TYPE_FIXED_DATA_STORAGE;
-    }
+// // HACK: 新
+// //@def 读取内存中第一页的前8字节，为了判断页面接下来的处理步骤。
+// /**
+//  * 如果读取出来的数据不为 0xoF/0x0A/0x01 这三个数据类型，不符合cfs_object_type_t
+//  * 直接初始化缓存区后，设置头头的元数据为 0x01010101.
+//  */
+// cfs_object_type_t 
+//     cfs_memory_handing_flash_init_state(const cfs_object_list_t *object_list)
+// {
+//     if (true == cfs_port_system_flash_read_contrast(
+//             object_list->object_handle->address, 
+//             CFS_FLASH_STATE_FIXED_CYCLE, 
+//             sizeof(CFS_FLASH_STATE_FIXED_CYCLE))
+//         || true == cfs_port_system_flash_read_contrast(
+//             object_list->object_handle->address + sizeof(CFS_FLASH_STATE_FIXED_CYCLE),
+//             CFS_FLASH_STATE_FIXED_CYCLE, 
+//             sizeof(CFS_FLASH_STATE_FIXED_CYCLE)))
+//     {
+//         // 如果前4个字节或者后面4个字节为 0x0f0f0f0f， 这里认定为定长数据
+//         return CFS_OBJECT_TYPE_FIXED_DATA_STORAGE;
+//     }
 
-#ifdef CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
-    if (true == cfs_port_system_flash_read_contrast(
-            object_list->object_handle->address, 
-            CFS_FLASH_STATE_VARIABLE_CYCLE, 
-            sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE))
-        || true == cfs_port_system_flash_read_contrast(
-            object_list->object_handle->address + sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE),
-            CFS_FLASH_STATE_VARIABLE_CYCLE, 
-            sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE)))
-    {
-        // 如果前4个字节或者后面4个字节为 0x0A0A0A0A,认为变长数据
-        return CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE;
-    }
-#endif // CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
+// #ifdef CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
+//     if (true == cfs_port_system_flash_read_contrast(
+//             object_list->object_handle->address, 
+//             CFS_FLASH_STATE_VARIABLE_CYCLE, 
+//             sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE))
+//         || true == cfs_port_system_flash_read_contrast(
+//             object_list->object_handle->address + sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE),
+//             CFS_FLASH_STATE_VARIABLE_CYCLE, 
+//             sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE)))
+//     {
+//         // 如果前4个字节或者后面4个字节为 0x0A0A0A0A,认为变长数据
+//         return CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE;
+//     }
+// #endif // CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
 
-    if (true == cfs_port_system_flash_read_contrast(
-            object_list->object_handle->address, 
-            CFS_FLASH_STATE_INIT, 
-            sizeof(CFS_FLASH_STATE_INIT))
-        || true == cfs_port_system_flash_read_contrast(
-            object_list->object_handle->address + sizeof(CFS_FLASH_STATE_INIT),
-            CFS_FLASH_STATE_INIT, 
-            sizeof(CFS_FLASH_STATE_INIT)))
-    {
-        // 如果前4个字节或者后面4个字节为 0x0A0A0A0A,认为变长数据
-        return CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE;
-    }
+//     if (true == cfs_port_system_flash_read_contrast(
+//             object_list->object_handle->address, 
+//             CFS_FLASH_STATE_INIT, 
+//             sizeof(CFS_FLASH_STATE_INIT))
+//         || true == cfs_port_system_flash_read_contrast(
+//             object_list->object_handle->address + sizeof(CFS_FLASH_STATE_INIT),
+//             CFS_FLASH_STATE_INIT, 
+//             sizeof(CFS_FLASH_STATE_INIT)))
+//     {
+//         // 如果前4个字节或者后面4个字节为 0x0A0A0A0A,认为变长数据
+//         return CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE;
+//     }
 
-    // 这里还是没有返回，直接初始化所有的页面
-    __erasing_flash_page(
-        object_list->object_handle->address, 
-        object_list->object_handle->sector_count);
-    __write_flash_data(
-        object_list->object_handle->address, 
-        CFS_FLASH_STATE_INIT, 
-        sizeof(CFS_FLASH_STATE_INIT));
-    __write_flash_data(
-        object_list->object_handle->address+sizeof(CFS_FLASH_STATE_INIT), 
-        CFS_FLASH_STATE_INIT, 
-        sizeof(CFS_FLASH_STATE_INIT));
+//     // 这里还是没有返回，直接初始化所有的页面
+//     __erasing_flash_page(
+//         object_list->object_handle->address, 
+//         object_list->object_handle->sector_count);
+//     __write_flash_data(
+//         object_list->object_handle->address, 
+//         CFS_FLASH_STATE_INIT, 
+//         sizeof(CFS_FLASH_STATE_INIT));
+//     __write_flash_data(
+//         object_list->object_handle->address+sizeof(CFS_FLASH_STATE_INIT), 
+//         CFS_FLASH_STATE_INIT, 
+//         sizeof(CFS_FLASH_STATE_INIT));
 
-    return CFS_OBJECT_TYPE_INIT;
-}
+//     return CFS_OBJECT_TYPE_INIT;
+// }
 
 
 // HACK: 新

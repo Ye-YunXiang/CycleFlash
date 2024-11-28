@@ -49,13 +49,13 @@ typedef enum
 
 
 
-//@def 读取内存中第一页的前8字节，为了判断页面接下来的处理步骤。
-/**
- * 如果读取出来的数据不为 0xoF/0x0A/0x01 这三个数据类型，不符合cfs_object_type_t
- * 直接初始化缓存区后，设置头头的元数据为 0x01010101
- */
-cfs_object_type_t 
-    cfs_memory_handing_flash_init_state(const cfs_object_list_t *object_list);
+// //@def 读取内存中第一页的前8字节，为了判断页面接下来的处理步骤。
+// /**
+//  * 如果读取出来的数据不为 0xoF/0x0A/0x01 这三个数据类型，不符合cfs_object_type_t
+//  * 直接初始化缓存区后，设置头头的元数据为 0x01010101
+//  */
+// cfs_object_type_t 
+//     cfs_memory_handing_flash_init_state(const cfs_object_list_t *object_list);
 
 //@def 读取内存中指定的内存大小，经过数据校验正确后返回给中间层解析。
 /**

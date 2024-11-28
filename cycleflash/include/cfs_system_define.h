@@ -38,11 +38,14 @@
 
 #include "cfs_user_config.h"
 
-// 存储区状态，用于初始化flash后在第一页的头
-#define CFS_FLASH_STATE_INIT            (0x01010101)    // 初始化flash
-#define CFS_FLASH_STATE_VARIABLE_CYCLE  (0x0A0A0A0A)    // 变长数据使用/预留
-#define CFS_FLASH_STATE_FIXED_CYCLE     (0x0F0F0F0F)    // 定长数据使用
-#define CFS_FLASH_STATE_ALL_LEN         (8u)            // 存储区元数据长度
+// // 读取内存的头头，如果有这个数据，就是初始化过还未使用状态
+// // 这里存储8字节，设置本状态是为了避免无用的重复检索和初始化Flash
+// // 当然下方数据用字符填装使用的时候必须去除最后的'\0'
+// #define CFS_FLASH_STATE_INIT                (0x01010101)    // 初始化flash
+// 存储区状态, 用于判断是否为变长数据状。
+// 这里判断“cfs_object_type”的“data_size”大小，符合下面要求就是变长数据格式。
+#define CFS_FLASH_STATE_VARIABLE_CYCLE      (UINT16_MAX)    // 变长数据使用/预留
+
 
 
 /*存储初始化文件系统返回的对象句柄*/
@@ -56,6 +59,7 @@ typedef struct cfs_object *cfs_object_handle_ptr;
 
 
 /*无ID状态, 这里为uint32_t*/
+// 经过思考，ID的正式使用从0开始。
 #if CFS_FLASH_ERASURE==(0xFF) && CFS_ID_DATA_TYPE==(32u)
     #define CFS_CONFIG_NOT_LINKED_DATA_ID   (UINT_MAX)
 #elif CFS_FLASH_ERASURE==(0xFF) && CFS_ID_DATA_TYPE==(64u)
