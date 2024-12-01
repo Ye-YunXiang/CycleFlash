@@ -277,17 +277,15 @@ uint32_t cfs_memory_fixe_valid_id_number(const cfs_object_list_t *object_list)
         return CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     }
 
-    // 计算这个区域共能存储多少个ID
-	uint32_t all_data = (object_list->object_handle->sector_size 
-        * object_list->object_handle->sector_count) / object_list->data_buffer_size;
-    // 计算循环存储了几次
-	//uint16_t data_cycle = (object_list->data_id + 1) / all_data;
+    const cfs_data_id_t FLASH_MAX_ID_COUNT = 
+        (object_list->object_handle->sector_count * CFS_FLASH_SECTOR_SIZE)
+        / object_list->data_buffer_size;
+
     // 计算循环存储了几次后，剩余几个ID
-	uint16_t data_cycle_int = (object_list->data_id + 1) % all_data;
+	uint16_t data_cycle_int = (object_list->data_id + 1) % FLASH_MAX_ID_COUNT;
 	
     // XXX: 这里需要注意，只要正好存满或者还未开始循环，都直接进入返回
-	//if(data_cycle < 1 || (data_cycle == 1 && data_cycle_int == 0))
-    if (((object_list->data_id+1)/all_data)<1 || data_cycle_int==0)
+    if (((object_list->data_id+1)/FLASH_MAX_ID_COUNT)<1 || data_cycle_int==0)
 	{
 		return (object_list->data_id + 1);
 	}
@@ -295,14 +293,14 @@ uint32_t cfs_memory_fixe_valid_id_number(const cfs_object_list_t *object_list)
     // 判断页数多余一页
     if(object_list->object_handle->sector_count > 1)
     {
-        // result_id = all_data - (temp_cfs_object->sector_size / data_size) - 1;
-        uint32_t temp_id_end_addr = _calculate_fixed_id_flash_address(
+        uint32_t data_id_end_addr = _calculate_fixed_id_flash_address(
             object_list, object_list->data_id) + object_list->data_buffer_size;
-        //@def 还没满
+
         result_id =
-            (all_data - ((((temp_id_end_addr / object_list->object_handle->sector_size) + 1)
-            * object_list->object_handle->sector_size - object_list->object_handle->addr_handle)
-            / object_list->data_buffer_size) - 1) + (object_list->data_id + 1) % all_data;
+            (FLASH_MAX_ID_COUNT - ((((data_id_end_addr / CFS_FLASH_SECTOR_SIZE) + 1)
+            * CFS_FLASH_SECTOR_SIZE - object_list->object_handle->address)
+            / object_list->data_buffer_size) - 1) 
+            + (object_list->data_id + 1) % FLASH_MAX_ID_COUNT;
     }
     else
     {
