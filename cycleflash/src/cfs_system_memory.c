@@ -247,62 +247,6 @@ uint32_t cfs_system_oc_via_id_calculate_addr( \
 }
 
 
-// HACK: 新
-//@def 根据ID计算有效数据个数
-/**
- * 
- */
-uint32_t cfs_memory_fixe_valid_id_number(const cfs_object_list_t *object_list)
-{
-    uint32_t result_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
-
-    cfs_system *temp_cfs_object = temp_linked_object->object_handle;
-    if(object_list->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
-    {
-        return CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
-    }
-
-	uint32_t data_size = \
-        temp_cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
-	uint32_t all_data = \
-        (temp_cfs_object->sector_size * temp_cfs_object->sector_count) / data_size;
-	uint16_t data_cycle = (temp_linked_object->data_id + 1) / all_data;
-	uint16_t data_cycle_int = (temp_linked_object->data_id + 1) % all_data;
-	
-	if(data_cycle < 1 || (data_cycle == 1 && data_cycle_int == 0))
-	{
-		result_id = temp_linked_object->data_id + 1;
-	}
-	else
-	{
-        if(temp_cfs_object->sector_count > 1)
-        {
-            // result_id = all_data - (temp_cfs_object->sector_size / data_size) - 1;
-            uint32_t temp_id_end_addr = cfs_system_oc_via_id_calculate_addr( \
-                temp_linked_object, temp_linked_object->data_id) + data_size;
-            if((temp_linked_object->data_id + 1) % all_data == 0)
-            {
-                //@def 刚好满
-                result_id = all_data;
-            }
-            else
-            {
-                //@def 还没满
-                result_id = \
-                    (all_data - ((((temp_id_end_addr / temp_cfs_object->sector_size) + 1)\
-                    * temp_cfs_object->sector_size - temp_cfs_object->addr_handle) / \
-                    data_size) - 1) + (temp_linked_object->data_id + 1) % all_data;
-            }
-        }
-        else
-        {
-            result_id = data_cycle_int == 0 ? all_data : data_cycle_int;
-        }
-	}
-
-    return result_id;
-}
-
 
 // HACK: 新
 //@def 通过可用ID计算要存入的地址位置。
@@ -314,6 +258,59 @@ static uint32_t _calculate_fixed_id_flash_address(
 {
     // TODO: 还未处理相关逻辑
     // 参考本文件的“uint32_t cfs_system_oc_via_id_calculate_addr”。
+}
+
+
+
+// HACK: 新
+//@def 根据ID计算有效数据个数
+/**
+ * 
+ */
+uint32_t cfs_memory_fixe_valid_id_number(const cfs_object_list_t *object_list)
+{
+    uint32_t result_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
+
+    // cfs_system *temp_cfs_object = temp_linked_object->object_handle;
+    if (object_list->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
+    {
+        return CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
+    }
+
+    // 计算这个区域共能存储多少个ID
+	uint32_t all_data = (object_list->object_handle->sector_size 
+        * object_list->object_handle->sector_count) / object_list->data_buffer_size;
+    // 计算循环存储了几次
+	//uint16_t data_cycle = (object_list->data_id + 1) / all_data;
+    // 计算循环存储了几次后，剩余几个ID
+	uint16_t data_cycle_int = (object_list->data_id + 1) % all_data;
+	
+    // XXX: 这里需要注意，只要正好存满或者还未开始循环，都直接进入返回
+	//if(data_cycle < 1 || (data_cycle == 1 && data_cycle_int == 0))
+    if (((object_list->data_id+1)/all_data)<1 || data_cycle_int==0)
+	{
+		return (object_list->data_id + 1);
+	}
+
+    // 判断页数多余一页
+    if(object_list->object_handle->sector_count > 1)
+    {
+        // result_id = all_data - (temp_cfs_object->sector_size / data_size) - 1;
+        uint32_t temp_id_end_addr = _calculate_fixed_id_flash_address(
+            object_list, object_list->data_id) + object_list->data_buffer_size;
+        //@def 还没满
+        result_id =
+            (all_data - ((((temp_id_end_addr / object_list->object_handle->sector_size) + 1)
+            * object_list->object_handle->sector_size - object_list->object_handle->addr_handle)
+            / object_list->data_buffer_size) - 1) + (object_list->data_id + 1) % all_data;
+    }
+    else
+    {
+        // 如果存储区只有一页
+        result_id = data_cycle_int;
+    }
+
+    return result_id;
 }
 
 
