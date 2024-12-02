@@ -111,7 +111,7 @@ typedef struct cfs_object_list
 
     uint8_t *name;                    // 对象的名字
     cfs_data_id_t data_id;            // 数据块ID，这里从1开始有效
-    uint32_t valid_id;                // 有效ID个数
+    cfs_data_id_t valid_id;                // 有效ID个数
     uint16_t data_buffer_size;        // 数据存入大小
 } cfs_object_list_t;
 

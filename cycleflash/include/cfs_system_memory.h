@@ -48,6 +48,10 @@ typedef enum
 }cfs_oc_action_data_result;
 
 
+//@def 根据ID计算有效数据个数
+cfs_data_id_t cfs_memory_fixe_valid_id_number(
+    const cfs_object_list_t *object_list, cfs_data_id_t id_input);
+
 
 // //@def 读取内存中第一页的前8字节，为了判断页面接下来的处理步骤。
 // /**

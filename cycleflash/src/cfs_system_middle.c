@@ -61,10 +61,10 @@ static struct
 };
 
 
-//*******************************************************************************************
+//************************************************************************************
 //-- 内部管理接口
-//*******************************************************************************************
-// 工具接口 -----------------------------------------------------------------------------
+//************************************************************************************
+// 工具接口 ---------------------------------------------------------------------------
 // 数据块缓存区初始化
 static void _general_block_buffer_init(uint16_t data_buffer_size)
 {
@@ -100,7 +100,7 @@ static uint8_t _compute_memory_fill_length(uint16_t data_size)
     }
 }
 
-// 三层处理接口 -----------------------------------------------------------------------------
+// 三层处理接口 ----------------------------------------------------------------------
 // 获取内存中的ID，专用函数，用于初始化遍历ID时。
 // 参数 read_id[0]:要读取的ID； read_id[1]：读取到的ID。
 static cfs_oc_action_data_result _read_fixed_flash_id(
@@ -125,9 +125,10 @@ static cfs_oc_action_data_result _read_fixed_flash_id(
 }
 
 
-// 二层处理接口 -----------------------------------------------------------------------------
+// 二层处理接口 -------------------------------------------------------------------
 //@def 固定长度存储遍历内存ID初始化
-static cfs_data_id_t _fixed_data_storage_id_search(const cfs_object_list_t *object_list)
+static cfs_data_id_t 
+    _fixed_data_storage_id_search(const cfs_object_list_t *object_list)
 {
     // 计算本存储区能存储的ID总数，这里指的是能存几个
     // ID是从0开始的，所以得小于它。
@@ -211,7 +212,7 @@ static cfs_data_id_t _fixed_data_storage_id_search(const cfs_object_list_t *obje
                 }
                 else
                 {
-                    return;
+                    break;
                 }
             }
             data_traversal_id[0] += 0;
@@ -223,9 +224,9 @@ static cfs_data_id_t _fixed_data_storage_id_search(const cfs_object_list_t *obje
 }
 
 
-//*******************************************************************************************
+//*******************************************************************************
 //-- 对上层接口  
-//*******************************************************************************************
+//*******************************************************************************
 
 //@def 初始化数据对象
 cfs_object_t * cfs_middle_add_object_init(
@@ -281,23 +282,14 @@ bool cfs_middle_object_id_init(const cfs_object_t *object)
     assert(list_object_ptr!=NULL && object!=NULL);
 
     cfs_data_id_t data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
-    uint16_t vakud_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
-
-    // /** 
-    //  * 这里判断遍历ID状态。
-    //  * init: 读取内存第一个数据，如果ID为0，数据为初始化标志，就为刚初始化状态。
-    //  * fixed: 当系统不是刚初始化状态下，对象数据长度是正常的。
-    //  * variable：当系统不是初始化状态下，对象的长度为变长标记。
-    //  */
-    // cfs_object_type_t flash_typ = 
-    //     cfs_memory_handing_flash_init_state(list_object_ptr);
+    cfs_data_id_t vakud_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
 
     if (object->data_size != CFS_FLASH_STATE_VARIABLE_CYCLE)
     {
         // 这里为定长数据的遍历
         data_id = _fixed_data_storage_id_search(list_object_ptr);
-        // TODO:检索可用ID
-        
+        // 检索可用ID
+        vakud_id = cfs_memory_fixe_valid_id_number(list_object_ptr, data_id);
     }
     else
     {

@@ -34,7 +34,7 @@
 #include "cfs_system_utils.h"
 
 
-// *****************************************************************************************************
+// ************************************************************************
 //@def 写入和读取数据 —— 内部处理
 
 static bool __read_flash_data_block(
@@ -115,7 +115,8 @@ static bool __write_flash_data_block( \
     __write_flash_data(addr, block->data_pointer, block->data_len);
 
     addr += temp_cfs->data_size;
-    __write_flash_data(addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
+    __write_flash_data(
+        addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
 
     cfs_port_system_flash_lock_disable();
 
@@ -154,98 +155,8 @@ static bool __contrast_flash_data_block( \
     return result;
 }
 
-// *****************************************************************************************************
+// *************************************************************************
 //@def 其他接口 —— 接口
-
-
-//@def 根据ID计算有效数据个数
-uint32_t cfs_system_oc_valid_data_number( \
-    const cfs_object_list_t *temp_linked_object)
-{
-    uint32_t result_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
-
-    cfs_system *temp_cfs_object = temp_linked_object->object_handle;
-    if(temp_linked_object->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
-    {
-        return CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
-    }
-
-	uint32_t data_size = \
-        temp_cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
-	uint32_t all_data = \
-        (temp_cfs_object->sector_size * temp_cfs_object->sector_count) / data_size;
-	uint16_t data_cycle = (temp_linked_object->data_id + 1) / all_data;
-	uint16_t data_cycle_int = (temp_linked_object->data_id + 1) % all_data;
-	
-	if(data_cycle < 1 || (data_cycle == 1 && data_cycle_int == 0))
-	{
-		result_id = temp_linked_object->data_id + 1;
-	}
-	else
-	{
-        if(temp_cfs_object->sector_count > 1)
-        {
-            // result_id = all_data - (temp_cfs_object->sector_size / data_size) - 1;
-            uint32_t temp_id_end_addr = cfs_system_oc_via_id_calculate_addr( \
-                temp_linked_object, temp_linked_object->data_id) + data_size;
-            if((temp_linked_object->data_id + 1) % all_data == 0)
-            {
-                //@def 刚好满
-                result_id = all_data;
-            }
-            else
-            {
-                //@def 还没满
-                result_id = \
-                    (all_data - ((((temp_id_end_addr / temp_cfs_object->sector_size) + 1)\
-                    * temp_cfs_object->sector_size - temp_cfs_object->addr_handle) / \
-                    data_size) - 1) + (temp_linked_object->data_id + 1) % all_data;
-            }
-        }
-        else
-        {
-            result_id = data_cycle_int == 0 ? all_data : data_cycle_int;
-        }
-	}
-
-    return result_id;
-}
-
-
-//@def 根据ID得到ID对应的内存地址
-uint32_t cfs_system_oc_via_id_calculate_addr( \
-    const cfs_object_list_t *temp_object, uint32_t temp_id)
-{
-    assert(temp_id != CFS_CONFIG_NOT_LINKED_DATA_ID);
-    cfs_system *temp_cfs_object = temp_object->object_handle;
-
-	uint32_t data_size = \
-        temp_cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
-	uint32_t all_data = \
-        (temp_cfs_object->sector_size * temp_cfs_object->sector_count) / data_size;
-	uint16_t data_cycle = (temp_id + 1) / all_data;
-	uint16_t data_cycle_int = (temp_id + 1) % all_data;
-	
-	uint32_t result_addr = NULL;
-	
-	if(data_cycle < 1 || (data_cycle == 1 && data_cycle_int == 0))
-	{
-		result_addr = temp_id * data_size;
-	}
-	else if(data_cycle >= 1 && data_cycle_int != 0)
-	{
-		result_addr = (temp_id - data_cycle * all_data) * data_size;
-	}
-	else if(data_cycle > 1 && data_cycle_int == 0)
-	{
-		result_addr = (temp_id - (data_cycle - 1) * all_data) * data_size;
-	}
-
-    result_addr = result_addr + temp_cfs_object->addr_handle;
-
-    return result_addr;
-}
-
 
 
 // HACK: 新
@@ -254,12 +165,39 @@ uint32_t cfs_system_oc_via_id_calculate_addr( \
  * 
  */
 static uint32_t _calculate_fixed_id_flash_address(
-    const cfs_object_list_t *object_list, uint32_t id_input)
+    const cfs_object_list_t *object_list, cfs_data_id_t id_input)
 {
-    // TODO: 还未处理相关逻辑
-    // 参考本文件的“uint32_t cfs_system_oc_via_id_calculate_addr”。
-}
+    if (object_list->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
+    {
+        return 0;
+    }
 
+    uint32_t result_addr = NULL;
+
+    const cfs_data_id_t FLASH_MAX_ID_COUNT = 
+        (object_list->object_handle->sector_count * CFS_FLASH_SECTOR_SIZE)
+        / object_list->data_buffer_size;
+
+	cfs_data_id_t data_cycle = (id_input + 1) / FLASH_MAX_ID_COUNT;
+	cfs_data_id_t data_cycle_int = (id_input + 1) % FLASH_MAX_ID_COUNT;
+	
+	if(data_cycle < 1 || (data_cycle == 1 && data_cycle_int == 0))
+	{
+		result_addr = id_input * object_list->data_buffer_size;
+	}
+	else if(data_cycle >= 1 && data_cycle_int != 0)
+	{
+		result_addr = (id_input - data_cycle*FLASH_MAX_ID_COUNT) 
+            * object_list->data_buffer_size;
+	}
+	else if(data_cycle > 1 && data_cycle_int == 0)
+	{
+		result_addr = (id_input - (data_cycle-1)*FLASH_MAX_ID_COUNT) 
+            * object_list->data_buffer_size;
+	}
+
+    return result_addr + object_list->object_handle->address;
+}
 
 
 // HACK: 新
@@ -267,12 +205,13 @@ static uint32_t _calculate_fixed_id_flash_address(
 /**
  * 
  */
-uint32_t cfs_memory_fixe_valid_id_number(const cfs_object_list_t *object_list)
+cfs_data_id_t cfs_memory_fixe_valid_id_number(
+    const cfs_object_list_t *object_list, cfs_data_id_t id_input)
 {
     uint32_t result_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
 
     // cfs_system *temp_cfs_object = temp_linked_object->object_handle;
-    if (object_list->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
+    if (id_input == CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
         return CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     }
@@ -282,25 +221,26 @@ uint32_t cfs_memory_fixe_valid_id_number(const cfs_object_list_t *object_list)
         / object_list->data_buffer_size;
 
     // 计算循环存储了几次后，剩余几个ID
-	uint16_t data_cycle_int = (object_list->data_id + 1) % FLASH_MAX_ID_COUNT;
+	cfs_data_id_t data_cycle_int = (id_input + 1) % FLASH_MAX_ID_COUNT;
 	
     // XXX: 这里需要注意，只要正好存满或者还未开始循环，都直接进入返回
-    if (((object_list->data_id+1)/FLASH_MAX_ID_COUNT)<1 || data_cycle_int==0)
+    if (((id_input+1)/FLASH_MAX_ID_COUNT)<1 || data_cycle_int==0)
 	{
-		return (object_list->data_id + 1);
+		return (id_input + 1);
 	}
 
     // 判断页数多余一页
     if(object_list->object_handle->sector_count > 1)
     {
-        uint32_t data_id_end_addr = _calculate_fixed_id_flash_address(
-            object_list, object_list->data_id) + object_list->data_buffer_size;
+        uint32_t data_id_end_addr = 
+            _calculate_fixed_id_flash_address(object_list, id_input) 
+            + object_list->data_buffer_size;
 
         result_id =
             (FLASH_MAX_ID_COUNT - ((((data_id_end_addr / CFS_FLASH_SECTOR_SIZE) + 1)
             * CFS_FLASH_SECTOR_SIZE - object_list->object_handle->address)
             / object_list->data_buffer_size) - 1) 
-            + (object_list->data_id + 1) % FLASH_MAX_ID_COUNT;
+            + (id_input + 1) % FLASH_MAX_ID_COUNT;
     }
     else
     {
@@ -314,72 +254,6 @@ uint32_t cfs_memory_fixe_valid_id_number(const cfs_object_list_t *object_list)
 
 // **************************************************************************
 //@def 写入、读取数据、删除 —— 接口
-
-// // HACK: 新
-// //@def 读取内存中第一页的前8字节，为了判断页面接下来的处理步骤。
-// /**
-//  * 如果读取出来的数据不为 0xoF/0x0A/0x01 这三个数据类型，不符合cfs_object_type_t
-//  * 直接初始化缓存区后，设置头头的元数据为 0x01010101.
-//  */
-// cfs_object_type_t 
-//     cfs_memory_handing_flash_init_state(const cfs_object_list_t *object_list)
-// {
-//     if (true == cfs_port_system_flash_read_contrast(
-//             object_list->object_handle->address, 
-//             CFS_FLASH_STATE_FIXED_CYCLE, 
-//             sizeof(CFS_FLASH_STATE_FIXED_CYCLE))
-//         || true == cfs_port_system_flash_read_contrast(
-//             object_list->object_handle->address + sizeof(CFS_FLASH_STATE_FIXED_CYCLE),
-//             CFS_FLASH_STATE_FIXED_CYCLE, 
-//             sizeof(CFS_FLASH_STATE_FIXED_CYCLE)))
-//     {
-//         // 如果前4个字节或者后面4个字节为 0x0f0f0f0f， 这里认定为定长数据
-//         return CFS_OBJECT_TYPE_FIXED_DATA_STORAGE;
-//     }
-
-// #ifdef CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
-//     if (true == cfs_port_system_flash_read_contrast(
-//             object_list->object_handle->address, 
-//             CFS_FLASH_STATE_VARIABLE_CYCLE, 
-//             sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE))
-//         || true == cfs_port_system_flash_read_contrast(
-//             object_list->object_handle->address + sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE),
-//             CFS_FLASH_STATE_VARIABLE_CYCLE, 
-//             sizeof(CFS_FLASH_STATE_VARIABLE_CYCLE)))
-//     {
-//         // 如果前4个字节或者后面4个字节为 0x0A0A0A0A,认为变长数据
-//         return CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE;
-//     }
-// #endif // CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
-
-//     if (true == cfs_port_system_flash_read_contrast(
-//             object_list->object_handle->address, 
-//             CFS_FLASH_STATE_INIT, 
-//             sizeof(CFS_FLASH_STATE_INIT))
-//         || true == cfs_port_system_flash_read_contrast(
-//             object_list->object_handle->address + sizeof(CFS_FLASH_STATE_INIT),
-//             CFS_FLASH_STATE_INIT, 
-//             sizeof(CFS_FLASH_STATE_INIT)))
-//     {
-//         // 如果前4个字节或者后面4个字节为 0x0A0A0A0A,认为变长数据
-//         return CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE;
-//     }
-
-//     // 这里还是没有返回，直接初始化所有的页面
-//     __erasing_flash_page(
-//         object_list->object_handle->address, 
-//         object_list->object_handle->sector_count);
-//     __write_flash_data(
-//         object_list->object_handle->address, 
-//         CFS_FLASH_STATE_INIT, 
-//         sizeof(CFS_FLASH_STATE_INIT));
-//     __write_flash_data(
-//         object_list->object_handle->address+sizeof(CFS_FLASH_STATE_INIT), 
-//         CFS_FLASH_STATE_INIT, 
-//         sizeof(CFS_FLASH_STATE_INIT));
-
-//     return CFS_OBJECT_TYPE_INIT;
-// }
 
 
 // HACK: 新
