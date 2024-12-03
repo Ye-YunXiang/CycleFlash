@@ -38,10 +38,6 @@
 
 #include "cfs_user_config.h"
 
-// // 读取内存的头头，如果有这个数据，就是初始化过还未使用状态
-// // 这里存储8字节，设置本状态是为了避免无用的重复检索和初始化Flash
-// // 当然下方数据用字符填装使用的时候必须去除最后的'\0'
-// #define CFS_FLASH_STATE_INIT                (0x01010101)    // 初始化flash
 // 存储区状态, 用于判断是否为变长数据状。
 // 这里判断“cfs_object_type”的“data_size”大小，符合下面要求就是变长数据格式。
 #define CFS_FLASH_STATE_VARIABLE_CYCLE      (UINT16_MAX)    // 变长数据使用/预留
@@ -60,23 +56,20 @@ typedef struct cfs_object *cfs_object_handle_ptr;
 
 /*无ID状态, 这里为uint32_t*/
 // 经过思考，ID的正式使用从0开始。
-#if CFS_FLASH_ERASURE==(0xFF) && CFS_ID_DATA_TYPE==(32u)
+#if CFS_ID_DATA_TYPE==(32u)
     #define CFS_CONFIG_NOT_LINKED_DATA_ID   (UINT_MAX)
-#elif CFS_FLASH_ERASURE==(0xFF) && CFS_ID_DATA_TYPE==(64u)
+    // SIZEOF(data_id) + SIZEOF(data_len) + SIZEOF(data_crc_16)
+    #define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN (8u)
+    // 读取数据块的偏移长度
+    // SSIZEOF(data_id) + SIZEOF(data_len)
+    #define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN (6u)
+#elif CFS_ID_DATA_TYPE==(64u)
     #define CFS_CONFIG_NOT_LINKED_DATA_ID   (ULLONG_MAX)
-#elif CFS_FLASH_ERASURE == (0x00)
-    #define CFS_CONFIG_NOT_LINKED_DATA_ID   (0x00000000)
+    #define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN (12u)
+    #define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN (10u)
 #endif  // CFS_FLASH_ERASURE
 /*无有效ID*/
 #define CFS_CONFIG_NOT_LINKED_VALID_DATA_ID (0u)
-
-
-/*不算数据长度，通过数据块算包头包尾的长度*/
-// SIZEOF(data_id) + SIZEOF(data_len) + SIZEOF(data_crc_16)
-#define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN (8u)
-// 读取数据块的偏移长度
-// SSIZEOF(data_id) + SIZEOF(data_len)
-#define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN (6u)
 
 
 // 定义存储区的数据类型
@@ -87,6 +80,11 @@ typedef enum cfs_object_type
     //@def 初始化结束标志，没有存入数据
     CFS_OBJECT_TYPE_INIT,
     //@def 存储固定长度数据
+    /**
+     * 定长数据存储的数据类型为 ID+数据长度+数据+crc。
+     * 注意：校验的CRC只校验有效数据，也就是只校验从'ID'一直到指定数据长度的数据。
+     * 也就是如果存入的数据长度没有到分配的长度，就只会校验指定长度的数据。
+    */
     CFS_OBJECT_TYPE_FIXED_DATA_STORAGE,
     //@def 循环变长长度数据/ 预留，还未实现
     CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE,
@@ -111,7 +109,7 @@ typedef struct cfs_object_list
 
     uint8_t *name;                    // 对象的名字
     cfs_data_id_t data_id;            // 数据块ID，这里从1开始有效
-    cfs_data_id_t valid_id;                // 有效ID个数
+    cfs_data_id_t valid_id;           // 有效ID个数
     uint16_t data_buffer_size;        // 数据存入大小
 } cfs_object_list_t;
 
@@ -119,7 +117,7 @@ typedef struct cfs_object_list
 typedef struct cfs_block_buffer
 {
     uint8_t *buffer_ptr;         // 数据块缓存指针
-    uint16_t buffer_size; // 数据块缓存大小
+    uint16_t buffer_size;       // 数据块缓存大小
 } cfs_block_buffer_t;
 
 // 这里要重新定义存入数据的格式

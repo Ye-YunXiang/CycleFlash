@@ -12,7 +12,9 @@
         "cfs_user_config.h": "c",
         "cfs_system_abstract.h": "c",
         "cfs_system_middle.h": "c",
-        "cfs_system_memoryh": "cpp"
+        "cfs_system_memoryh": "cpp",
+        "cfs_system_memory.h": "c",
+        "climits": "c"
     },
     "files.encoding": "utf8"
 }

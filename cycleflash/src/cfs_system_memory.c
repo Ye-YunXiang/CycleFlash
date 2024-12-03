@@ -155,6 +155,16 @@ static bool __contrast_flash_data_block( \
     return result;
 }
 
+
+
+// HACK: 新
+static bool _read_flash_fixed_data(
+    const uint32_t address, uint8_t *buffer, uint16_t read_len)
+{
+    return cfs_port_system_flash_read(address, buffer, read_len);
+}
+
+
 // *************************************************************************
 //@def 其他接口 —— 接口
 
@@ -265,6 +275,33 @@ cfs_oc_action_data_result cfs_memory_read_flash_data(
     const cfs_object_list_t *object_list, uint8_t *buffer, const cfs_data_id_t read_id)
 {
     cfs_oc_action_data_result result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
+    if (buffer==NULL || object_list==NULL)
+    {
+        return CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
+    }
+
+    bool read_flash_return = false;
+    uint16_t get_crc_16 = 0;
+    uint16_t check_crc_16 = 0;
+    const uint32_t FLASH_ADDRESS = 
+        _calculate_fixed_id_flash_address(object_list, read_id);
+
+    for (uint8_t i=0; i<2; i++)
+    {
+        read_flash_return = _read_flash_fixed_data(
+            FLASH_ADDRESS, 
+            buffer, 
+            object_list->data_buffer_size-object_list->object_handle->data_fill
+        );
+
+        get_crc_16 = 
+        check_crc_16 = cfs_system_utils_check(buffer, true);
+
+        if (read_flash_return == false)
+        {
+            return CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
+        }
+    }
 
     // TODO：需要做数据校验、错误重复读取一次
 
@@ -290,7 +327,7 @@ cfs_oc_action_data_result cfs_system_oc_read_flash_data( \
     while(i--)
     {
         __read_flash_data_block(addr, buffer, temp_cfs);
-        uint16_t check_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer, true);
+        uint16_t check_crc_16 = cfs_system_utils_check(buffer, true);
 
         if(buffer->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
         {
