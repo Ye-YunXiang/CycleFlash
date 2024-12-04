@@ -281,6 +281,7 @@ cfs_oc_action_data_result cfs_memory_read_flash_data(
     }
 
     bool read_flash_return = false;
+    uint16_t data_len = 0;
     uint16_t get_crc_16 = 0;
     uint16_t check_crc_16 = 0;
     const uint32_t FLASH_ADDRESS = 
@@ -294,59 +295,26 @@ cfs_oc_action_data_result cfs_memory_read_flash_data(
             object_list->data_buffer_size-object_list->object_handle->data_fill
         );
 
-        get_crc_16 = 
-        check_crc_16 = cfs_system_utils_check(buffer, true);
+        // XXX:注意，这里16位的校验码直接使用数字2，并没有动态计算
+        memcpy((uint8_t *)&data_len, &buffer[sizeof(cfs_data_id_t)], 2);
+        data_len += CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN; 
+        memcpy((uint8_t *)&get_crc_16, &buffer[data_len], 2);
+        check_crc_16 = cfs_system_utils_check(buffer, data_len);
 
-        if (read_flash_return == false)
+        if (read_flash_return == false || get_crc_16 != check_crc_16)
         {
-            return CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
+            result = CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
         }
-    }
-
-    // TODO：需要做数据校验、错误重复读取一次
-
-    return result;
-}
-
-
-
-
-
-//@def 读取内存中的数据,会验证crc8
-cfs_oc_action_data_result cfs_system_oc_read_flash_data( \
-    const cfs_object_list_t *temp_object, cfs_data_block * buffer)
-{
-    assert(buffer->data_pointer != NULL || buffer->data_len >= 1);
-
-    const uint32_t addr = cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
-    cfs_system *temp_cfs = cfs_system_oc_system_object_get(temp_object);
-
-    cfs_oc_action_data_result result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
-
-    volatile uint8_t i = 2;
-    while(i--)
-    {
-        __read_flash_data_block(addr, buffer, temp_cfs);
-        uint16_t check_crc_16 = cfs_system_utils_check(buffer, true);
-
-        if(buffer->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
-        {
-            result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
-        }
-        else if(check_crc_16 == buffer->data_crc_16)
+        else
         {
             result = CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED;
             break;
         }
-        else
-        {
-            buffer->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
-            result = CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
-        }
     }
 
     return result;
 }
+
 
 //@def 往内存中写入新的数据，增加式
 cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
