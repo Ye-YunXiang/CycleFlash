@@ -297,11 +297,13 @@ cfs_oc_action_data_result cfs_memory_read_flash_data(
 
         // XXX:注意，这里16位的校验码直接使用数字2，并没有动态计算
         memcpy((uint8_t *)&data_len, &buffer[sizeof(cfs_data_id_t)], 2);
-        data_len += CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN; 
         memcpy((uint8_t *)&get_crc_16, &buffer[data_len], 2);
-        check_crc_16 = cfs_system_utils_check(buffer, data_len);
 
-        if (read_flash_return == false || get_crc_16 != check_crc_16)
+        check_crc_16 = cfs_system_utils_check(
+            buffer, data_len + CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN);
+
+        if ((read_flash_return == false || get_crc_16 != check_crc_16)
+            && (data_len <= object_list->object_handle->data_size))
         {
             result = CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
         }

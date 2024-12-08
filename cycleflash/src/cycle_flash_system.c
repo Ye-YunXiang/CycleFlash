@@ -360,6 +360,7 @@ uint32_t cfs_nv_write(cfs_object_handle_ptr temp_object_handle, \
 }
 
 //@def 根据ID读取内存中的数据
+// TODO: 这里需要修改读取的逻辑，不要指定ID读取，改变只有读取函数，ID为回溯个数。
 uint32_t cfs_nv_read(cfs_object_handle_ptr temp_object_handle, \
 	uint32_t read_id, uint8_t *data, uint32_t len)
 {
