@@ -363,14 +363,40 @@ bool cfs_middle_check_address(const uint32_t address, const uint32_t sector_coun
 }
 
 //@def 读取数据,读取成功返回读取的原始数据长度
-// TODO:暂停，从入口开始
-uint32_t cfs_middle_data_read(
+// 如果有错误数据，比如内存数据长度大于传入缓存长度，或者ID不匹配，就返回错误。
+int cfs_middle_data_read(
     cfs_object_list_t *object_list, cfs_data_id_t read_id, uint8_t *data, uint16_t len)
 {
-    cfs_oc_action_data_result result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
-    memset(_this.data_block_buffer.buffer_ptr, 0, object_list->data_buffer_size);
+    if (read_id>object_list->data_id 
+        || read_id < (object_list->data_id-object_list->valid_id))
+    {
+        return CFS_RETURN_ERROR;
+    }
 
-    result = cfs_memory_read_flash_data(object_list, _this.data_block_buffer.buffer_ptr, read_id);
+    memset(_this.data_block_buffer.buffer_ptr, 0, object_list->data_buffer_size);
+    cfs_oc_action_data_result result = cfs_memory_read_flash_data(
+        object_list, _this.data_block_buffer.buffer_ptr, read_id);
+
+    uint16_t data_len = 0;
+    memcpy(
+        (uint8_t *)&data_len, 
+        &_this.data_block_buffer.buffer_ptr[sizeof(cfs_data_id_t)], 
+        sizeof(data_len));
+
+    if (data_len > len)
+    {
+        return CFS_RETURN_ERROR;
+    }
+
+    if (CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED == result)
+    {
+        memcpy(data, _this.data_block_buffer.buffer_ptr, data_len);
+        return data_len;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 

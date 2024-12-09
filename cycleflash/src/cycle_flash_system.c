@@ -359,58 +359,21 @@ uint32_t cfs_nv_write(cfs_object_handle_ptr temp_object_handle, \
     return result_len;
 }
 
+// HACK: 新
 //@def 根据ID读取内存中的数据
-// TODO: 这里需要修改读取的逻辑，不要指定ID读取，改变只有读取函数，ID为回溯个数。
-uint32_t cfs_nv_read(cfs_object_handle_ptr temp_object_handle, \
-	uint32_t read_id, uint8_t *data, uint32_t len)
+int cfs_nv_read(
+    cfs_object_handle_ptr object, 
+    uint8_t *data, 
+    uint16_t len, 
+    cfs_data_id_t read_in_past)
 {
-    uint32_t result_len = NULL;
-    cfs_object_list_t *temp_object = \
-        cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
-    cfs_system *temp_cfs_object = cfs_system_oc_system_object_get(temp_object);
-    if(temp_object == NULL || read_id == CFS_CONFIG_NOT_LINKED_DATA_ID || \
-        len > temp_cfs_object->data_size)
+    if (object==NULL || data==NULL || len==0)
     {
-        return false;
+        return CFS_RETURN_ERROR;
     }
+    
+    
 
-    
-    const uint32_t  temp_max_id = \
-        temp_cfs_object->sector_size * temp_cfs_object->sector_count / \
-        (temp_cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
-    uint32_t temp_id = cfs_system_oc_object_id_get(temp_object);
-    uint16_t temp_valid_id = cfs_system_oc_object_valid_id_get(temp_object);
-    
-    switch (cfs_system_oc_object_struct_type_get(temp_object))
-    {
-        case CFS_FILESYSTEM_OBJECT_TYPE_NULL:
-            //@def 不应该出现这种情况
-            assert(false);
-            return result_len;
-        
-        case CFS_FILESYSTEM_OBJECT_TYPE_FIXED_DATA_STORAGE:
-            if(read_id >= temp_max_id)
-            {
-                //@def 读取数据，ID不能超过最大ID数
-                assert(read_id < temp_max_id);
-                return result_len;
-            }
-            break;
-        
-        case CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH:
-            if((temp_id-temp_valid_id) >= read_id && read_id > temp_id)
-            {
-                return result_len;
-            }
-            break;
-        
-        default:
-            break;
-    }
-
-    result_len = \
-        cfs_filesystem_flsh_data_read(temp_object, read_id, data, len);
-    
     return result_len;
 }
 

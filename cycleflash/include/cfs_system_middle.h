@@ -49,7 +49,7 @@ cfs_object_list_t *cfs_middle_find_object(const cfs_object_t *object);
 bool cfs_middle_check_address(const uint32_t address, const uint32_t sector_count);
 
 //@def 读取数据,读取成功返回读取的原始数据长度
-uint32_t cfs_middle_data_read(
+int cfs_middle_data_read(
     cfs_object_list_t *object_list, cfs_data_id_t read_id, uint8_t *data, uint16_t len);
 
 //@def 写入数据,写入成功返回写入的原始数据长度

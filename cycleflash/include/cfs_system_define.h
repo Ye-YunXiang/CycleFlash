@@ -38,11 +38,12 @@
 
 #include "cfs_user_config.h"
 
+// 函数返回错误
+#define CFS_RETURN_ERROR    (-1)
+
 // 存储区状态, 用于判断是否为变长数据状。
 // 这里判断“cfs_object_type”的“data_size”大小，符合下面要求就是变长数据格式。
 #define CFS_FLASH_STATE_VARIABLE_CYCLE      (UINT16_MAX)    // 变长数据使用/预留
-
-
 
 /*存储初始化文件系统返回的对象句柄*/
 typedef struct cfs_object *cfs_object_handle_ptr;

@@ -32,7 +32,6 @@
 #include <stdlib.h>
 #include "cfs_system_define.h"
 
-
 /** 初始化文件管理系统对象
  *
  * \param cfs_nv_system 初始化结构体指针
@@ -61,20 +60,24 @@ bool cfs_nv_object_delete(cfs_object_handle_ptr temp_object_handle);
  * \param uint32_t 写入数据长度
  * \return 写入成功返回写入的数据个数，如果写入失败返回 0。
  */
-uint32_t cfs_nv_write(cfs_object_handle_ptr temp_object_handle, \
+uint32_t cfs_nv_write(cfs_object_handle_ptr object, \
 	uint32_t temp_id, uint8_t *data, uint16_t len);
 
 
+// HACK: 新
 /** 根据ID读取内存中的数据
  *
  * \param cfs_object_handle_ptr 存储空间的句柄
- * \param uint32_t 要读取的ID
  * \param uint8_t 装载数据的指针
- * \param uint32_t 读取数据长度
- * \return 读取数据成功后返回读取数据的个数，如果读取失败返回 0。
+ * \param uint16_t 读取数据长度
+ * \param cfs_data_id_t 读取过去的第几个数据
+ * \return 读取数据成功后返回读取数据的个数，如果读取失败返回 0， 错误返回-1。
  */
-uint32_t cfs_nv_read(cfs_object_handle_ptr temp_object_handle, \
-	uint32_t temp_id, uint8_t *data, uint32_t len);
+int cfs_nv_read(
+    cfs_object_handle_ptr object,
+	uint8_t *data, 
+    uint16_t len, 
+    cfs_data_id_t read_in_past);
 
 
 /** 清除指定对象的存储空间
