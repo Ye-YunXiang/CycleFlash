@@ -228,6 +228,65 @@ static cfs_data_id_t
 //-- 对上层接口  
 //*******************************************************************************
 
+// 上层工具层 ------------------------------------------------------------------
+
+//@def 检查重复地址， 通过返回 true， 不通过返回 false
+bool cfs_middle_check_address(const uint32_t address, const uint32_t sector_count)
+{
+    if (_this.object_list_head == NULL)
+    {
+        return false;
+    }
+
+    cfs_object_list_t *list_pointer = _this.object_list_head->next;
+    uint32_t current_head = address;
+    uint32_t current_tail = address + (sector_count*CFS_FLASH_SECTOR_SIZE) - 1;
+    
+    // 遍历内存并检查和之前的数据对象是否有交叉
+    while (list_pointer != NULL) 
+    {
+        uint32_t next_head = list_pointer->object_handle->address;
+        uint32_t next_tail = list_pointer->object_handle->address +
+            (CFS_FLASH_SECTOR_SIZE*list_pointer->object_handle->sector_count) - 1;
+
+        if (((current_head<=next_tail) && (current_tail>=next_head)) 
+            || ((next_head<=current_tail) && (next_tail>=current_head)) 
+            || ((current_head<=next_head) && (current_tail>=next_tail)) 
+            || ((next_head<=current_head) && (next_tail>=current_tail)))
+        {
+            /*分配的内存地址交叉了*/
+            return false;
+        }
+
+        list_pointer = list_pointer->next;
+    }
+
+    return true;
+}
+
+
+cfs_data_id_t cfs_middle_get_object_id(cfs_object_list_t *object_list)
+{
+    if (_this.object_list_head == NULL)
+    {
+        return CFS_CONFIG_NOT_LINKED_DATA_ID;
+    }
+
+    return object_list->data_id;
+}
+
+cfs_data_id_t cfs_middle_get_object_valid_id(cfs_object_list_t *object_list)
+{
+    if (_this.object_list_head == NULL)
+    {
+        return CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
+    }
+
+    return object_list->valid_id;
+}
+
+// 上层接口层 ------------------------------------------------------------------
+
 //@def 初始化数据对象
 cfs_object_t * cfs_middle_add_object_init(
     const uint8_t *name, 
@@ -328,68 +387,39 @@ cfs_object_list_t *cfs_middle_find_object(const cfs_object_t *object)
     return find_object;
 }
 
-//@def 检查重复地址， 通过返回 true， 不通过返回 false
-bool cfs_middle_check_address(const uint32_t address, const uint32_t sector_count)
-{
-    if (_this.object_list_head == NULL)
-    {
-        return false;
-    }
-
-    cfs_object_list_t *list_pointer = _this.object_list_head->next;
-    uint32_t current_head = address;
-    uint32_t current_tail = address + (sector_count*CFS_FLASH_SECTOR_SIZE) - 1;
-    
-    // 遍历内存并检查和之前的数据对象是否有交叉
-    while (list_pointer != NULL) 
-    {
-        uint32_t next_head = list_pointer->object_handle->address;
-        uint32_t next_tail = list_pointer->object_handle->address +
-            (CFS_FLASH_SECTOR_SIZE*list_pointer->object_handle->sector_count) - 1;
-
-        if (((current_head<=next_tail) && (current_tail>=next_head)) 
-            || ((next_head<=current_tail) && (next_tail>=current_head)) 
-            || ((current_head<=next_head) && (current_tail>=next_tail)) 
-            || ((next_head<=current_head) && (next_tail>=current_tail)))
-        {
-            /*分配的内存地址交叉了*/
-            return false;
-        }
-
-        list_pointer = list_pointer->next;
-    }
-
-    return true;
-}
-
 //@def 读取数据,读取成功返回读取的原始数据长度
 // 如果有错误数据，比如内存数据长度大于传入缓存长度，或者ID不匹配，就返回错误。
-int cfs_middle_data_read(
-    cfs_object_list_t *object_list, cfs_data_id_t read_id, uint8_t *data, uint16_t len)
+int cfs_middle_data_read(cfs_object_list_t *object_list, 
+                        cfs_data_id_t read_in_past, 
+                        uint8_t *data, 
+                        uint16_t len)
 {
-    if (read_id>object_list->data_id 
-        || read_id < (object_list->data_id-object_list->valid_id))
+    // XXX: 外层要把参数处理干净在传入进来。
+    if (object_list->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID
+        || read_in_past > object_list->valid_id)
     {
         return CFS_RETURN_ERROR;
     }
 
     memset(_this.data_block_buffer.buffer_ptr, 0, object_list->data_buffer_size);
     cfs_oc_action_data_result result = cfs_memory_read_flash_data(
-        object_list, _this.data_block_buffer.buffer_ptr, read_id);
-
-    uint16_t data_len = 0;
-    memcpy(
-        (uint8_t *)&data_len, 
-        &_this.data_block_buffer.buffer_ptr[sizeof(cfs_data_id_t)], 
-        sizeof(data_len));
-
-    if (data_len > len)
-    {
-        return CFS_RETURN_ERROR;
-    }
+        object_list, 
+        _this.data_block_buffer.buffer_ptr, 
+        object_list->data_id - read_in_past);
 
     if (CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED == result)
     {
+        uint16_t data_len = 0;
+        memcpy(
+            (uint8_t *)&data_len, 
+            &_this.data_block_buffer.buffer_ptr[sizeof(cfs_data_id_t)], 
+            sizeof(data_len));
+
+        if (data_len > len)
+        {
+            return CFS_RETURN_ERROR;
+        }
+
         memcpy(data, _this.data_block_buffer.buffer_ptr, data_len);
         return data_len;
     }

@@ -36,6 +36,14 @@ cfs_object_t * cfs_middle_add_object_init(
     const uint16_t sector_count, 
     const uint16_t data_size);
 
+//@def 检查重复地址是否通过
+bool cfs_middle_check_address(const uint32_t address, const uint32_t sector_count);
+
+cfs_data_id_t cfs_middle_get_object_id(cfs_object_list_t *object_list);
+
+cfs_data_id_t cfs_middle_get_object_valid_id(cfs_object_list_t *object_list);
+
+
 //@def 初始化遍历ID
 bool cfs_middle_object_id_init(const cfs_object_t *object);
 
@@ -45,12 +53,12 @@ bool cfs_middle_object_id_init(const cfs_object_t *object);
 //@def 查找对象对象
 cfs_object_list_t *cfs_middle_find_object(const cfs_object_t *object);
 
-//@def 检查重复地址是否通过
-bool cfs_middle_check_address(const uint32_t address, const uint32_t sector_count);
-
 //@def 读取数据,读取成功返回读取的原始数据长度
 int cfs_middle_data_read(
-    cfs_object_list_t *object_list, cfs_data_id_t read_id, uint8_t *data, uint16_t len);
+    cfs_object_list_t *object_list, 
+    cfs_data_id_t read_in_past,
+    uint8_t *data, 
+    uint16_t len);
 
 //@def 写入数据,写入成功返回写入的原始数据长度
 uint32_t cfs_middle_data_write(
