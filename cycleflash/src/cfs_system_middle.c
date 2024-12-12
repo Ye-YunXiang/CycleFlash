@@ -108,7 +108,7 @@ static cfs_oc_action_data_result _read_fixed_flash_id(
 {
     memcpy(_this.data_block_buffer.buffer_ptr, 0, _this.data_block_buffer.buffer_size);
 
-    cfs_oc_action_data_result result = cfs_memory_read_flash_data(
+    cfs_oc_action_data_result result = cfs_memory_read_flash_fixed_data(
             object_list, _this.data_block_buffer.buffer_ptr, read_id[0]);
 
     if (CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED == result)
@@ -389,10 +389,10 @@ cfs_object_list_t *cfs_middle_find_object(const cfs_object_t *object)
 
 //@def 读取数据,读取成功返回读取的原始数据长度
 // 如果有错误数据，比如内存数据长度大于传入缓存长度，或者ID不匹配，就返回错误。
-int cfs_middle_data_read(cfs_object_list_t *object_list, 
-                        cfs_data_id_t read_in_past, 
-                        uint8_t *data, 
-                        uint16_t len)
+int cfs_middle_data_read(cfs_object_list_t *object_list,
+                         cfs_data_id_t read_in_past,
+                         uint8_t *data,
+                         uint16_t len)
 {
     // XXX: 外层要把参数处理干净在传入进来。
     if (object_list->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID
@@ -401,8 +401,12 @@ int cfs_middle_data_read(cfs_object_list_t *object_list,
         return CFS_RETURN_ERROR;
     }
 
+    /**
+     * 后续可以在这里判断是否为可变长长度，然后在下方切换读取的条目
+    */
+
     memset(_this.data_block_buffer.buffer_ptr, 0, object_list->data_buffer_size);
-    cfs_oc_action_data_result result = cfs_memory_read_flash_data(
+    cfs_oc_action_data_result result = cfs_memory_read_flash_fixed_data(
         object_list, 
         _this.data_block_buffer.buffer_ptr, 
         object_list->data_id - read_in_past);

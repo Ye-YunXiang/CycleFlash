@@ -188,61 +188,33 @@ cfs_object_handle_ptr cfs_nv_object_init(
     return object_handle;
 }
 
-bool cfs_nv_object_delete(cfs_object_handle_ptr temp_object_handle)
-{
-    cfs_object_list_t *temp_object = \
-        cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
-    if(temp_object == NULL)
-    {
-        return false;
-    }
-
-    return cfs_system_oc_object_delete(temp_object);
-}
+/**
+ * 这里说以下小构思：
+ * 1. 第一层负责校验参数是否正确，选择内核的哪个处理函数
+ * 2. 第二层负责处理数据，得到读取/写入数据的结果，并且填充进缓存返回结果。
+ * 3. 第三层负责对接底层读写函数接口，以及数据校验是否正确。
+ */
 
 //@def 根据id往内存中写入数据
-uint32_t cfs_nv_write(cfs_object_handle_ptr temp_object_handle, \
-	uint32_t temp_id, uint8_t *data, uint16_t len)
+int cfs_nv_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len)
 {
-    uint32_t result_len = NULL;
-    cfs_object_list_t *temp_object = \
-        cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
-    cfs_system *temp_cfs_object = cfs_system_oc_system_object_get(temp_object);
-    if(temp_object == NULL || temp_id == CFS_CONFIG_NOT_LINKED_DATA_ID || \
-        len > temp_cfs_object->data_size)
+    cfs_object_list_t *object_list = cfs_middle_find_object(object);
+    if (object==NULL || data==NULL || len==0 || object_list==NULL)
     {
-        return result_len;
+        return CFS_RETURN_ERROR;
     }
 
-    switch (cfs_system_oc_object_struct_type_get(temp_object))
-    {
-        case CFS_FILESYSTEM_OBJECT_TYPE_NULL:
-            //@def 不应该出现这种情况
-            assert(false);
-            return result_len;
-        
-        case CFS_FILESYSTEM_OBJECT_TYPE_FIXED_DATA_STORAGE:
-            result_len = \
-                cfs_filesystem_fixed_data_write(temp_object, temp_id, data, len);
-            break;
-        
-        case CFS_FILESYSTEM_OBJECT_TYPE_CYCLE_DATA_LENGTH:
-            result_len = \
-                cfs_filesystem_cycle_data_write(temp_object, temp_id, data, len);
-            break;
-        
-        default:
-            break;
-    }
+    int result_len = 
+        cfs_middle_data_read(_this.object_list, read_in_past, data, len);
     
     return result_len;
 }
 
 // HACK: 新
 //@def 根据ID读取内存中的数据
-int cfs_nv_read(cfs_object_handle_ptr object, 
-                uint8_t *data, 
-                uint16_t len, 
+int cfs_nv_read(cfs_object_handle_ptr object,
+                uint8_t *data,
+                uint16_t len,
                 cfs_data_id_t read_in_past)
 {
     cfs_object_list_t *object_list = cfs_middle_find_object(object);
@@ -282,28 +254,30 @@ bool cfs_nv_clear(cfs_object_handle_ptr temp_object_handle)
     return true;
 }
 
+// HACK: 新
 //@def 返回目前存储对象的ID
-uint32_t cfs_nv_get_current_id(cfs_object_handle_ptr temp_object_handle)
+cfs_data_id_t cfs_nv_get_current_id(cfs_object_handle_ptr object)
 {
-    cfs_object_list_t *temp_object = \
-        cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
-    if(temp_object == NULL)
+    cfs_object_list_t *object_list = \
+        cfs_middle_find_object(object);
+    if(object_list == NULL)
     {
         return CFS_CONFIG_NOT_LINKED_DATA_ID;
     }
 
-    return cfs_system_oc_object_id_get(temp_object);
+    return cfs_middle_get_object_id(object_list);
 }
 
+// HACK: 新
 //@def 返回目前存储对象的可用ID
-uint32_t cfs_nv_get_current_valid_id(cfs_object_handle_ptr temp_object_handle)
+cfs_data_id_t cfs_nv_get_current_valid_id(cfs_object_handle_ptr object)
 {
-    cfs_object_list_t *temp_object = \
-        cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
-    if(temp_object == NULL)
+    cfs_object_list_t *object_list = \
+        cfs_middle_find_object(object);
+    if(object_list == NULL)
     {
         return CFS_CONFIG_NOT_LINKED_DATA_ID;
     }
 
-    return cfs_system_oc_object_valid_id_get(temp_object);
+    return cfs_middle_get_object_valid_id(object_list);
 }

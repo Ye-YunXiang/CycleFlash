@@ -57,7 +57,7 @@ cfs_data_id_t cfs_memory_fixe_valid_id_number(
 /**
  * 直接校验对象缓存长度的数据，对比读取出来的数据长度。
  */
-cfs_oc_action_data_result cfs_memory_read_flash_data(
+cfs_oc_action_data_result cfs_memory_read_flash_fixed_data(
     const cfs_object_list_t *object_list, uint8_t *buffer, const cfs_data_id_t read_id);
 
 

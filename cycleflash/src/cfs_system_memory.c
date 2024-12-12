@@ -271,7 +271,7 @@ cfs_data_id_t cfs_memory_fixe_valid_id_number(
 /**
  * 直接校验对象缓存长度的数据，对比读取出来的数据长度。
  */
-cfs_oc_action_data_result cfs_memory_read_flash_data(
+cfs_oc_action_data_result cfs_memory_read_flash_fixed_data(
     const cfs_object_list_t *object_list, uint8_t *buffer, const cfs_data_id_t read_id)
 {
     cfs_oc_action_data_result result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
@@ -279,6 +279,7 @@ cfs_oc_action_data_result cfs_memory_read_flash_data(
     {
         return CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
     }
+
 
     bool read_flash_return = false;
     uint16_t data_len = 0;
@@ -292,7 +293,7 @@ cfs_oc_action_data_result cfs_memory_read_flash_data(
         read_flash_return = _read_flash_fixed_data(
             FLASH_ADDRESS, 
             buffer, 
-            object_list->data_buffer_size-object_list->object_handle->data_fill
+            object_list->data_buffer_size - object_list->object_handle->data_fill
         );
 
         // XXX:注意，这里16位的校验码直接使用数字2，并没有动态计算
