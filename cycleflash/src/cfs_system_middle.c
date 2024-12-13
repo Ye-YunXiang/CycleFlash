@@ -46,18 +46,18 @@ static struct
 #endif // CFS_FLASH_SECTOR_BUFFER_DEF
 
     cfs_object_list_t *object_list_head;
-    cfs_block_buffer_t data_block_buffer;
+    // cfs_block_buffer_t data_block_buffer;
 }_this = {
 
 #ifdef CFS_FLASH_SECTOR_BUFFER_DEF
     .flash_one_sector_buffer = {0},
 #endif // CFS_FLASH_SECTOR_BUFFER_DEF
 
-    .object_list_head = NULL,
-    .data_block_buffer = {
-        .buffer_ptr = NULL,
-        .buffer_size = 0,
-    }
+    .object_list_head = NULL
+    // .data_block_buffer = {
+    //     .buffer_ptr = NULL,
+    //     .buffer_size = 0,
+    // }
 };
 
 
@@ -66,21 +66,21 @@ static struct
 //************************************************************************************
 // 工具接口 ---------------------------------------------------------------------------
 // 数据块缓存区初始化
-static void _general_block_buffer_init(uint16_t data_buffer_size)
-{
-    // 判断一下不能为0
-    assert(data_buffer_size != 0);
+// static void _general_block_buffer_init(uint16_t data_buffer_size)
+// {
+//     // 判断一下不能为0
+//     assert(data_buffer_size != 0);
 
-    if (_this.data_block_buffer.buffer_size > data_buffer_size)
-    {
-        return;
-    }
+//     if (_this.data_block_buffer.buffer_size > data_buffer_size)
+//     {
+//         return;
+//     }
 
-    // malloc*****
-    CFS_FREE(_this.data_block_buffer.buffer_ptr);
-    _this.data_block_buffer.buffer_ptr = (uint8_t *)CFS_MALLOC(data_buffer_size);
-    APPLY_MEMORY_FAIL_DISPOSE(_this.data_block_buffer.buffer_ptr);
-}
+//     // malloc*****
+//     CFS_FREE(_this.data_block_buffer.buffer_ptr);
+//     _this.data_block_buffer.buffer_ptr = (uint8_t *)CFS_MALLOC(data_buffer_size);
+//     APPLY_MEMORY_FAIL_DISPOSE(_this.data_block_buffer.buffer_ptr);
+// }
 
 // 计算需要填充的字节数
 static uint8_t _compute_memory_fill_length(uint16_t data_size)
@@ -106,22 +106,23 @@ static uint8_t _compute_memory_fill_length(uint16_t data_size)
 static cfs_oc_action_data_result _read_fixed_flash_id(
     const cfs_object_list_t *object_list, cfs_data_id_t read_id[2])
 {
-    memcpy(_this.data_block_buffer.buffer_ptr, 0, _this.data_block_buffer.buffer_size);
+    // XXX: 这个暂时是用于读取定长设计的
+    uint32_t address = 
+        cfs_memory_calculate_fixed_id_flash_address(object_list, read_id[0]);
 
-    cfs_oc_action_data_result result = cfs_memory_read_flash_fixed_data(
-            object_list, _this.data_block_buffer.buffer_ptr, read_id[0]);
+    uint16_t result = 
+        cfs_memory_read_verify_flash_data_id(object_list, address, read_id[1]);
 
-    if (CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED == result)
+    if (result != CFS_RETURN_ERROR)
     {
-        memcpy(_this.data_block_buffer.buffer_ptr, 
-            (uint8_t *)(&read_id[1]), sizeof(cfs_data_id_t));
+        return CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED;
     }
     else
     {
         read_id[1] = CFS_CONFIG_NOT_LINKED_DATA_ID;
-    }
 
-    return result;
+        return CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
+    }
 }
 
 
@@ -329,7 +330,7 @@ cfs_object_t * cfs_middle_add_object_init(
         < (cfs_object->sector_count*CFS_FLASH_SECTOR_SIZE));
 
     // 重新分配数据块的缓存区
-    _general_block_buffer_init(cfs_list->data_buffer_size);
+    //_general_block_buffer_init(cfs_list->data_buffer_size);
 
     return cfs_object;
 }
@@ -401,46 +402,54 @@ int cfs_middle_data_read(cfs_object_list_t *object_list,
         return CFS_RETURN_ERROR;
     }
 
-    /**
-     * 后续可以在这里判断是否为可变长长度，然后在下方切换读取的条目
-    */
+    uint32_t address = 
+        cfs_memory_calculate_fixed_id_flash_address(
+            object_list, object_list->data_id - read_in_past);
 
-    memset(_this.data_block_buffer.buffer_ptr, 0, object_list->data_buffer_size);
-    cfs_oc_action_data_result result = cfs_memory_read_flash_fixed_data(
-        object_list, 
-        _this.data_block_buffer.buffer_ptr, 
-        object_list->data_id - read_in_past);
+    int result = 
+        cfs_memory_read_flash_fixed_data(object_list, address, len, data);
 
-    if (CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED == result)
+    if (result == CFS_RETURN_ERROR)
     {
-        uint16_t data_len = 0;
-        memcpy(
-            (uint8_t *)&data_len, 
-            &_this.data_block_buffer.buffer_ptr[sizeof(cfs_data_id_t)], 
-            sizeof(data_len));
-
-        if (data_len > len)
-        {
-            return CFS_RETURN_ERROR;
-        }
-
-        memcpy(data, _this.data_block_buffer.buffer_ptr, data_len);
-        return data_len;
+        // 清空给的数据区
+        memset(data, 0, len);
     }
-    else
-    {
-        return 0;
-    }
+
+    return result;
 }
 
 
-//@def 写入数据,写入成功返回写入的原始数据长度
-uint32_t cfs_middle_data_write(
-    cfs_object_list_t *object_list, uint32_t write_id, uint8_t *data, uint16_t len)
+//@def 写入数据
+int cfs_middle_data_fixed_write(cfs_object_list_t *object_list,
+                                uint8_t *data,
+                                uint16_t len)
 {
-// TODO
-    
-    return false;
+    // XXX: 外层要把参数处理干净在传入进来。
+    if (len > object_list->object_handle->data_size)
+    {
+        return CFS_RETURN_ERROR;
+    }
+
+    cfs_data_id_t write = 0;
+    if (object_list->data_id < CFS_CONFIG_DATA_ID_UPPER_LIMIT)
+    {
+        write++;
+    }
+
+    uint32_t address = 
+        cfs_memory_calculate_fixed_id_flash_address(
+            object_list, object_list->data_id);
+
+    int result = 
+        cfs_memory_read_flash_fixed_data(object_list, address, len, data);
+
+    if (result == CFS_RETURN_ERROR)
+    {
+        // 清空给的数据区
+        memset(data, 0, len);
+    }
+
+    return result;
 }
 
 //@def 清除本对象数据

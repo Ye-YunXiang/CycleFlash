@@ -47,18 +47,39 @@ typedef enum
     CFS_OC_READ_DATA_RESULT_INVALID_BLOCK       = 4,
 }cfs_oc_action_data_result;
 
+//@def 通过可用ID计算要存入的地址位置。
+/**
+ * 
+ */
+uint32_t cfs_memory_calculate_fixed_id_flash_address(
+    const cfs_object_list_t *object_list, cfs_data_id_t id_input);
 
 //@def 根据ID计算有效数据个数
 cfs_data_id_t cfs_memory_fixe_valid_id_number(
     const cfs_object_list_t *object_list, cfs_data_id_t id_input);
     
 
+// HACK: 新
+//@def 在遍历ID阶段，遍历指定位置的数据，得到位置id
+/**
+ * 直接校验对象缓存长度的数据，对比读取出来的数据长度。
+ * 返回： 如果数据有效，返回数据长度，否则返回0
+ */
+// TODO: 这里后面需要兼容自定义读取函数，后面在做
+uint16_t cfs_memory_read_verify_flash_data_id(const cfs_object_list_t *object_list,
+                                              const uint32_t address,
+                                              cfs_data_id_t get_id);
+
 //@def 读取内存中指定的内存大小，经过数据校验正确后返回给中间层解析。
 /**
  * 直接校验对象缓存长度的数据，对比读取出来的数据长度。
+ * 
+ * 返回读取的长度
  */
-cfs_oc_action_data_result cfs_memory_read_flash_fixed_data(
-    const cfs_object_list_t *object_list, uint8_t *buffer, const cfs_data_id_t read_id);
+int cfs_memory_read_flash_fixed_data(const cfs_object_list_t *object_list,
+                                     const uint32_t address,
+                                     const data_max_len,
+                                     uint8_t *data_buffer)
 
 
 

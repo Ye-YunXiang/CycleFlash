@@ -204,8 +204,7 @@ int cfs_nv_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len)
         return CFS_RETURN_ERROR;
     }
 
-    int result_len = 
-        cfs_middle_data_read(_this.object_list, read_in_past, data, len);
+    int result_len = cfs_middle_data_read(object_list, data, len);
     
     return result_len;
 }

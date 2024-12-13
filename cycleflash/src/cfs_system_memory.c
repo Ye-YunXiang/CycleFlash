@@ -157,12 +157,12 @@ static bool __contrast_flash_data_block( \
 
 
 
-// HACK: 新
-static bool _read_flash_fixed_data(
-    const uint32_t address, uint8_t *buffer, uint16_t read_len)
-{
-    return cfs_port_system_flash_read(address, buffer, read_len);
-}
+// // HACK: 新
+// static bool _read_flash_fixed_data(
+//     const uint32_t address, uint8_t *buffer, uint16_t read_len)
+// {
+//     return cfs_port_system_flash_read(address, buffer, read_len);
+// }
 
 
 // *************************************************************************
@@ -174,13 +174,14 @@ static bool _read_flash_fixed_data(
 /**
  * 
  */
-static uint32_t _calculate_fixed_id_flash_address(
+uint32_t cfs_memory_calculate_fixed_id_flash_address(
     const cfs_object_list_t *object_list, cfs_data_id_t id_input)
 {
-    if (object_list->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
-    {
-        return 0;
-    }
+    // 不能让无ID的情况到这里，刚开始就要被滤掉
+    // if (object_list->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
+    // {
+    //     return 0;
+    // }
 
     uint32_t result_addr = NULL;
 
@@ -243,7 +244,7 @@ cfs_data_id_t cfs_memory_fixe_valid_id_number(
     if(object_list->object_handle->sector_count > 1)
     {
         uint32_t data_id_end_addr = 
-            _calculate_fixed_id_flash_address(object_list, id_input) 
+            cfs_memory_calculate_fixed_id_flash_address(object_list, id_input) 
             + object_list->data_buffer_size;
 
         result_id =
@@ -265,58 +266,115 @@ cfs_data_id_t cfs_memory_fixe_valid_id_number(
 // **************************************************************************
 //@def 写入、读取数据、删除 —— 接口
 
+// HACK: 新
+//@def 在遍历ID阶段，遍历指定位置的数据，得到位置id
+/**
+ * 直接校验对象缓存长度的数据，对比读取出来的数据长度。
+ * 返回： 如果数据有效，返回数据长度，否则返回0
+ */
+// TODO: 这里后面需要兼容自定义读取函数，后面在做
+int cfs_memory_read_verify_flash_data_id(const cfs_object_list_t *object_list,
+                                              const uint32_t address,
+                                              cfs_data_id_t get_id)
+{
+    uint32_t read_address = address;
+    cfs_data_block_t read_block = {0};
+    uint16_t get_checkout_value = 0;
+
+    // XXX：这边是内部为大部分32位MCU定制的读取遍历方法。
+    for (uint8_t i=0; i<2; i++)
+    {
+        read_address = address;
+        memset(&read_block, 0, sizeof(cfs_data_block_t));
+        memcpy((uint8_t *)&read_block,
+               (uint8_t *)address,
+               CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
+        get_checkout_value = cfs_system_utils_check(
+            (uint8_t *)&read_block, CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN, NULL);
+        
+        if (read_block.data_len > object_list->object_handle->data_size
+            || read_block.data_len == 0)
+        {
+            continue;
+        }
+
+        get_checkout_value += cfs_system_utils_check(
+            (uint8_t *)(address + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN),
+            read_block.data_len, 
+            NULL);
+        
+        if (get_checkout_value == read_block.data_check)
+        {
+            get_id = read_block.data_id;
+            return read_block.data_len;
+        }
+    }
+    
+    return CFS_RETURN_ERROR;
+}
+
 
 // HACK: 新
 //@def 读取内存中指定的内存大小，经过数据校验正确后返回给中间层解析。
 /**
  * 直接校验对象缓存长度的数据，对比读取出来的数据长度。
+ *
  */
-cfs_oc_action_data_result cfs_memory_read_flash_fixed_data(
-    const cfs_object_list_t *object_list, uint8_t *buffer, const cfs_data_id_t read_id)
+int cfs_memory_read_flash_fixed_data(const cfs_object_list_t *object_list,
+                                     const uint32_t address,
+                                     const data_max_len,
+                                     uint8_t *data_buffer)
 {
-    cfs_oc_action_data_result result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
-    if (buffer==NULL || object_list==NULL)
-    {
-        return CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
-    }
+    cfs_data_block_t read_block = {0};
+    // 在传入参数的时候，就要把参数滤干净
+    uint32_t read_address = address;
+    uint16_t get_checkout_value = 0;
 
-
-    bool read_flash_return = false;
-    uint16_t data_len = 0;
-    uint16_t get_crc_16 = 0;
-    uint16_t check_crc_16 = 0;
-    const uint32_t FLASH_ADDRESS = 
-        _calculate_fixed_id_flash_address(object_list, read_id);
-
+    // XXX：这边是内部为大部分32位MCU定制的读取遍历方法。
     for (uint8_t i=0; i<2; i++)
     {
-        read_flash_return = _read_flash_fixed_data(
-            FLASH_ADDRESS, 
-            buffer, 
-            object_list->data_buffer_size - object_list->object_handle->data_fill
-        );
+        memset(data_buffer, 0, data_max_len);
+        memset(&read_block, 0, sizeof(cfs_data_block_t));
 
-        // XXX:注意，这里16位的校验码直接使用数字2，并没有动态计算
-        memcpy((uint8_t *)&data_len, &buffer[sizeof(cfs_data_id_t)], sizeof(data_len));
-        memcpy((uint8_t *)&get_crc_16, &buffer[data_len], 2);
-
-        check_crc_16 = cfs_system_utils_check(
-            buffer, data_len + CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN);
-
-        if ((read_flash_return == false || get_crc_16 != check_crc_16)
-            && (data_len <= object_list->object_handle->data_size))
+        memcpy((uint8_t *)&read_block,
+               (uint8_t *)read_address,
+               CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
+        get_checkout_value = cfs_system_utils_check(
+            (uint8_t *)&read_block, CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN, NULL);
+        
+        if (read_block.data_len > data_max_len || read_block.data_len == 0)
         {
-            result = CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
+            continue;
         }
-        else
+
+        get_checkout_value += cfs_system_utils_check(
+            (uint8_t *)(read_address + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN),
+            read_block.data_len, 
+            data_buffer);
+        
+        if (get_checkout_value == read_block.data_check)
         {
-            result = CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED;
-            break;
+            return read_block.data_len;
         }
     }
-
-    return result;
+    
+    return CFS_RETURN_ERROR;
 }
+
+
+// HACK: 新
+//@def 添加式写入数据，确认写入正确后返回。
+/**
+ * 
+ */
+int cfs_memory_add_write_flash_fixed_data(const cfs_object_list_t *object_list,
+                                          const uint32_t address,
+                                          const data_max_len,
+                                          uint8_t *data_buffer)
+{
+
+}
+
 
 
 //@def 往内存中写入新的数据，增加式

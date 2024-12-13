@@ -30,28 +30,45 @@
 
 #ifdef CFS_CHECK == 0   // CHECK_SUM
 
-static uint16_t _utils_check_sum(const uint8_t *data, uint32_t data_length)
+static uint16_t _utils_check_sum(
+    const uint8_t *data, uint32_t data_length, uint8_t *get_data)
 {
     uint16_t checksum = 0;
+    uint8_t temp_char = 0;
+
     for (uint32_t i = 0; i < data_length; i++) {
-        checksum += data[i];
+        temp_char = data[i];
+        // 顺便获得数据
+        if (get_data != NULL)
+        {
+            get_data[i] = data[i];
+        }
+
+        checksum += temp_char;
     }
     return ~checksum + 1;  // 取反加1，生成补码
 }
 
 #elif CFS_CHECK == 1   // CRC16_XMODEM
 
-/* 这里使用了crc16 xmodem协议，和标准不同的是，输出的值按位取反了。
+/* 这里使用了crc16 xmodem协议。
  * 参数： uint8_t * 起始指针
  *       uint32_t  数据
 */
-static uint16_t _utils_crc16_xmodem_check(const uint8_t *data, uint32_t data_length)
+static uint16_t _utils_crc16_xmodem_check(
+    const uint8_t *data, uint32_t data_length, uint8_t *get_data)
 {
     uint16_t crc_int = 0;
     uint8_t temp_char = 0;
     while (data_length--)
     {
         temp_char = *(data++);
+        // 顺便获得数据
+        if (get_data != NULL)
+        {
+            *get_data = temp_char;
+            get_data++;
+        }
         crc_int ^= (temp_char << 8);
         for (int i = 0; i < 8; i++)
         {
@@ -61,8 +78,8 @@ static uint16_t _utils_crc16_xmodem_check(const uint8_t *data, uint32_t data_len
                 crc_int = crc_int << 1;
         }
     }
-    // 结果按位取反了
-    return ~(crc_int^0);
+
+    return (crc_int^0);
 }
 
 #elif CFS_CHECK == 2   // CRC16_XMODEM 查表法(占用256Byte的RAM)
@@ -87,22 +104,29 @@ const static uint16_t crc16_xmodem_tab[256] =
     0xEF1F,0xFF3E,0xCF5D,0xDF7C,0xAF9B,0xBFBA,0x8FD9,0x9FF8,0x6E17,0x7E36,0x4E55,0x5E74,0x2E93,0x3EB2,0xED1,0x1EF0,
 };
 
-/* 这里使用了crc16 xmodem协议，和标准不同的是，输出的值按位取反了。
+/* 这里使用了crc16 xmodem协议
  * 参数： uint8_t * 起始指针
  *       uint32_t  数据
 */
-static uint16_t _utils_crc16_xmodem_table_check(const uint8_t *data, uint32_t data_length)
+static uint16_t _utils_crc16_xmodem_table_check(
+    const uint8_t *data, uint32_t data_length, uint8_t *get_data)
 {
     uint16_t crc = 0x0000;
+    uint8_t temp_char = 0;
 
     for (uint16_t i = 0; i < data_length; i++) 
     {
-        uint8_t table_index = (crc >> 8) ^ data[i];
+        temp_char = data[i];
+        // 顺便获得数据
+        if (get_data != NULL)
+        {
+            get_data[i] = temp_char;
+        }
+        uint8_t table_index = (crc >> 8) ^ temp_char;
         crc = (crc << 8) ^ crc16_xmodem_tab[table_index];
     }
-    // 结果按位取反
-    // 这里的结果和标准的不同，标准的不需要取反
-    return ~(crc);
+
+    return (crc);
 }
 
 #elif CFS_CHECK == 3   // 用户自定义，自己去实现
@@ -112,21 +136,22 @@ static uint16_t _utils_crc16_xmodem_table_check(const uint8_t *data, uint32_t da
 //********************************************************************* */
 // 对外的校验接口函数 ****************************************************
 /********************************************************************** */
-uint16_t cfs_system_utils_check(const uint8_t *data, uint32_t data_length)
+uint16_t cfs_system_utils_check(
+    const uint8_t *data, uint32_t data_length, uint8_t *get_data)
 {
     uint16_t check_value = 0;
     
 #ifdef CFS_CHECK == 0   // CHECK_SUM
 
-    check_value = _utils_check_sum(data, data_length);
+    check_value = _utils_check_sum(data, data_length, get_data);
 
 #elif CFS_CHECK == 1   // CRC16_XMODEM
 
-    check_value = _utils_crc16_xmodem_check(data, data_length);
+    check_value = _utils_crc16_xmodem_check(data, data_length, get_data);
 
 #elif CFS_CHECK == 2   // CRC16_XMODEM 查表法(占用256Byte的RAM)
 
-    check_value = _utils_crc16_xmodem_table_check(data, data_length);
+    check_value = _utils_crc16_xmodem_table_check(data, data_length, get_data);
 
 #elif CFS_CHECK == 3   // 用户自定义，自己去实现
 

@@ -60,9 +60,10 @@ int cfs_middle_data_read(
     uint8_t *data, 
     uint16_t len);
 
-//@def 写入数据,写入成功返回写入的原始数据长度
-uint32_t cfs_middle_data_write(
-    cfs_object_list_t *object_list, cfs_data_id_t write_id, uint8_t *data, uint16_t len);
+//@def 写入数据
+int cfs_middle_data_fixed_write(cfs_object_list_t *object_list,
+                                     uint8_t *data,
+                                     uint16_t len);
 
 //@def 清除本对象数据
 bool cfs_system_oc_flash_data_clear(cfs_object_list_t *object_list);

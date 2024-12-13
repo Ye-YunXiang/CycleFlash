@@ -39,7 +39,7 @@
 #include "cfs_user_config.h"
 
 // 函数返回错误
-#define CFS_RETURN_ERROR    (-1)
+#define CFS_RETURN_ERROR        (-1)
 
 // 存储区状态, 用于判断是否为变长数据状。
 // 这里判断“cfs_object_type”的“data_size”大小，符合下面要求就是变长数据格式。
@@ -59,6 +59,7 @@ typedef struct cfs_object *cfs_object_handle_ptr;
 // 经过思考，ID的正式使用从0开始。
 #if CFS_ID_DATA_TYPE==(32u)
     #define CFS_CONFIG_NOT_LINKED_DATA_ID   (UINT_MAX)
+    #define CFS_CONFIG_DATA_ID_UPPER_LIMIT  (UINT_MAX - 5u)
     // SIZEOF(data_id) + SIZEOF(data_len) + SIZEOF(data_crc_16)
     #define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN (8u)
     // 读取数据块的偏移长度
@@ -66,6 +67,7 @@ typedef struct cfs_object *cfs_object_handle_ptr;
     #define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN (6u)
 #elif CFS_ID_DATA_TYPE==(64u)
     #define CFS_CONFIG_NOT_LINKED_DATA_ID   (ULLONG_MAX)
+    #define CFS_CONFIG_DATA_ID_UPPER_LIMIT  (ULLONG_MAX - 5u)
     #define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN (12u)
     #define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN (10u)
 #endif  // CFS_FLASH_ERASURE
@@ -114,24 +116,26 @@ typedef struct cfs_object_list
     uint16_t data_buffer_size;        // 数据存入大小
 } cfs_object_list_t;
 
-// 通用数据块存入缓存区，用于存入数据块，数据块大小用对象中最长的大小。
-typedef struct cfs_block_buffer
-{
-    uint8_t *buffer_ptr;         // 数据块缓存指针
-    uint16_t buffer_size;       // 数据块缓存大小
-} cfs_block_buffer_t;
+// // 通用数据块存入缓存区，用于存入数据块，数据块大小用对象中最长的大小。
+// typedef struct cfs_block_buffer
+// {
+//     uint8_t *buffer_ptr;         // 数据块缓存指针
+//     uint16_t buffer_size;       // 数据块缓存大小
+// } cfs_block_buffer_t;
 
 // 这里要重新定义存入数据的格式
 // 这里打算让后面分配好的地址直接分配过来这个结构体。
-// 存入数据结构：`ID(4byte) | 长度(2byte) | 数据 | CRC16(2byte)`
+// 存入数据结构：`ID(4byte) | 长度(2byte) | CRC16(2byte) | 数据`
 // 校验码只校验有效数据，等于存入数据长度
+#pragma pack(1)
 typedef struct cfs_data_block
 {
-    cfs_data_id_t *data_id;       // 数据块
-    uint16_t *data_size;          // 存入数据的指针
-    uint8_t *data;                // 存入数据的长度ID
-    uint16_t *data_check;         // 数据的校验码
+    cfs_data_id_t data_id;       // 数据块
+    uint16_t data_len;           // 数据长度
+    uint16_t data_check;         // 数据的校验码
+    // uint8_t *data_ptr;           // 存入数据指针
 } cfs_data_block_t;
+#pragma pack()
 
 // 错误定义判断---------------------------------------------
 // TODO: 需要对用户定义部分做判断
