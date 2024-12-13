@@ -97,7 +97,7 @@ bool cfs_port_system_flash_read_contrast( \
 }
 
 //@def 如果是空值返回true
-bool cfs_port_system_flash_read_checking_null_values( \
+bool cfs_port_system_flash_checking_is_null_values(
     volatile uint32_t addr, uint16_t len)
 {
     uint16_t i;

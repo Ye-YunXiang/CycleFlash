@@ -101,7 +101,7 @@ bool cfs_port_system_flash_read_contrast( \
  * \param uint16_t  数据块长度 
  * \return 为空返回true，否则false
  */
-bool cfs_port_system_flash_read_checking_null_values( \
+bool cfs_port_system_flash_checking_is_null_values( \
     volatile uint32_t addr, uint16_t len);
 
 

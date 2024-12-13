@@ -54,8 +54,8 @@ static bool __read_flash_data_block(
     return true;
 }
 
-
-static bool __erasing_flash_page( volatile uint32_t addr, uint16_t page)
+// HACK: 新
+static bool _erasing_flash_page( volatile uint32_t addr, uint16_t page)
 {
     cfs_port_system_flash_lock_enable();
 
@@ -66,7 +66,7 @@ static bool __erasing_flash_page( volatile uint32_t addr, uint16_t page)
     return true;
 }
 
-static bool __write_flash_data(
+static bool _write_flash_data(
     volatile uint32_t addr, uint8_t * buffer, uint16_t len)
 {
     cfs_port_system_flash_lock_enable();
@@ -100,23 +100,36 @@ static bool __write_flash_data(
     return true;
 }
 
-static bool __write_flash_data_block( \
-    volatile uint32_t addr, cfs_data_block * block, cfs_system *temp_cfs)
-{
-    //@def 根据字符大小定制的写入逻辑
-    assert(sizeof(block->data_id) == 4 && \
-        sizeof(block->data_len) == 2 && sizeof(block->data_crc_16) == 2);
-    
+
+// HACK: 新
+static bool _write_flash_data_block(
+    volatile uint32_t addr, cfs_data_block_t *write_block)
+{   
+    const uint16_t DATA_FILL = cfs_memory_compute_memory_fill_length(write_block->data_len);
+
     cfs_port_system_flash_lock_enable();
 
-    __write_flash_data(addr, (uint8_t *)(&block->data_id), sizeof(block->data_id));
+    _write_flash_data(addr,
+                      (uint8_t *)write_block,
+                      CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
+    addr += CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
 
-    addr += sizeof(block->data_id);
-    __write_flash_data(addr, block->data_pointer, block->data_len);
-
-    addr += temp_cfs->data_size;
-    __write_flash_data(
-        addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
+    if (DATA_FILL == 0)
+    {
+        _write_flash_data(addr, write_block->data_ptr, write_block->data_len);
+    }
+    else
+    {
+        const uint16_t SUBSECTION_DATA_LEM = 
+            write_block->data_len - (CFS_WRITE_MIN_PARTICLE-DATA_FILL);
+        _write_flash_data(addr, write_block->data_ptr, SUBSECTION_DATA_LEM);
+        uint8_t fill_data[CFS_WRITE_MIN_PARTICLE] = {0};
+        memcpy(fill_data,
+               &write_block->data_ptr[SUBSECTION_DATA_LEM],
+               write_block->data_len - SUBSECTION_DATA_LEM);
+        addr += SUBSECTION_DATA_LEM;
+        _write_flash_data(addr, write_block->data_ptr, SUBSECTION_DATA_LEM);
+    }
 
     cfs_port_system_flash_lock_disable();
 
@@ -167,6 +180,25 @@ static bool __contrast_flash_data_block( \
 
 // *************************************************************************
 //@def 其他接口 —— 接口
+
+// HACK: 新
+// 计算需要填充的字节数
+uint8_t cfs_memory_compute_memory_fill_length(uint16_t data_size)
+{
+    // 判断一下不能为0
+    assert(data_size != 0);
+    uint8_t data_fill_len = 
+        (data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN) 
+        % CFS_WRITE_MIN_PARTICLE;
+    if (data_fill_len == 0)
+    {
+        return 0;
+    }
+    else
+    {
+        return (CFS_WRITE_MIN_PARTICLE - data_fill_len);
+    }
+}
 
 
 // HACK: 新
@@ -365,14 +397,48 @@ int cfs_memory_read_flash_fixed_data(const cfs_object_list_t *object_list,
 // HACK: 新
 //@def 添加式写入数据，确认写入正确后返回。
 /**
- * 
+ * 如果写入失败，会检测以下写入区域是否无数据，如果无数据就在尝试写入一次。
+ * 以上全部失败，把本区域全部置为初始值的相反值，在返回错误。
  */
 int cfs_memory_add_write_flash_fixed_data(const cfs_object_list_t *object_list,
                                           const uint32_t address,
-                                          const data_max_len,
+                                          const uint16_t data_len,
                                           uint8_t *data_buffer)
 {
+    cfs_data_block_t write_block;
+    memset(&write_block, 0, sizeof(cfs_data_block_t));
 
+    write_block.data_ptr = data_buffer;
+    write_block.data_len = data_len;
+    write_block.data_check = cfs_system_utils_check(
+        (uint8_t *)&write_block, CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN, NULL);
+    write_block.data_check += cfs_system_utils_check(data_buffer, data_len, NULL);
+    
+    //const uint16_t DATA_FILL = cfs_memory_compute_memory_fill_length(data_len);
+
+    // 判断是否要擦除页-----------------------
+    const uint32_t MAX_ADDR = 
+        (address / CFS_FLASH_SECTOR_SIZE) 
+        * CFS_FLASH_SECTOR_SIZE + CFS_FLASH_SECTOR_SIZE;
+    if(address == object_list->object_handle->address) 
+    {
+        _erasing_page_flash_data(address, 1);
+    }
+    else if((address + object_list->data_buffer_size) >= MAX_ADDR 
+        && MAX_ADDR < (object_list->object_handle->address 
+            + CFS_FLASH_SECTOR_SIZE * object_list->object_handle->sector_count))
+    {
+        _erasing_page_flash_data(MAX_ADDR, 1);
+    }
+
+    // 开始写入数据---------------------------
+
+
+    if (false == cfs_port_system_flash_checking_is_null_values(
+        address, data_len + DATA_FILL + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN))
+    {
+        return 
+    }
 }
 
 

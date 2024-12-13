@@ -133,7 +133,7 @@ typedef struct cfs_data_block
     cfs_data_id_t data_id;       // 数据块
     uint16_t data_len;           // 数据长度
     uint16_t data_check;         // 数据的校验码
-    // uint8_t *data_ptr;           // 存入数据指针
+    uint8_t *data_ptr;           // 存入数据指针
 } cfs_data_block_t;
 #pragma pack()
 

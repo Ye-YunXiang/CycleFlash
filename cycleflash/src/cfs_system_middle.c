@@ -82,23 +82,6 @@ static struct
 //     APPLY_MEMORY_FAIL_DISPOSE(_this.data_block_buffer.buffer_ptr);
 // }
 
-// 计算需要填充的字节数
-static uint8_t _compute_memory_fill_length(uint16_t data_size)
-{
-    // 判断一下不能为0
-    assert(data_size != 0);
-    uint8_t data_fill_len = 
-        (data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN) 
-        % CFS_WRITE_MIN_PARTICLE;
-    if (data_fill_len == 0)
-    {
-        return 0;
-    }
-    else
-    {
-        return (CFS_WRITE_MIN_PARTICLE - data_fill_len);
-    }
-}
 
 // 三层处理接口 ----------------------------------------------------------------------
 // 获取内存中的ID，专用函数，用于初始化遍历ID时。
@@ -307,7 +290,7 @@ cfs_object_t * cfs_middle_add_object_init(
     *(uint32_t *)&cfs_object->address = address;
     *(uint32_t *)&cfs_object->sector_count = sector_count;
     *(uint16_t *)&cfs_object->data_size = data_size;
-    *(uint8_t *)&cfs_object->data_fill = _compute_memory_fill_length(data_size);
+    *(uint8_t *)&cfs_object->data_fill = cfs_memory_compute_memory_fill_length(data_size);
 
     // cfs_object_list_t malloc*****
     cfs_object_list_t *cfs_list = 

@@ -47,6 +47,10 @@ typedef enum
     CFS_OC_READ_DATA_RESULT_INVALID_BLOCK       = 4,
 }cfs_oc_action_data_result;
 
+// HACK: 新
+// 计算需要填充的字节数
+uint8_t cfs_memory_compute_memory_fill_length(uint16_t data_size);
+
 //@def 通过可用ID计算要存入的地址位置。
 /**
  * 
