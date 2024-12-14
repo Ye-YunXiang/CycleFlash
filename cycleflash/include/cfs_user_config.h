@@ -54,10 +54,10 @@
  * XXX: 然后这里有用到请一定一定打开。
  * XXX: 没用到的请一定一定注释, 不然出现未知错误。
 */
-#define CFS_WRITE_PORT_ONE_BYTE     (1u)    // 1 byte
-#define CFS_WRITE_PORT_HALF_WORD    (2u)    // 2 byte
-#define CFS_WRITE_PORT_ONE_WORD     (4u)    // 4 byte
-// #define CFS_WRITE_PORT_DOUBLE_WORD  (8u)    // 8 byte
+#define CFS_WRITE_PORT_ONE_BYTE             // 1 byte
+#define CFS_WRITE_PORT_HALF_WORD            // 2 byte
+#define CFS_WRITE_PORT_ONE_WORD             // 4 byte
+// #define CFS_WRITE_PORT_DOUBLE_WORD       // 8 byte
 
 
 // 定义初始化内存的方式

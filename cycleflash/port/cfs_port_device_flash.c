@@ -29,7 +29,7 @@
 #include "flash.h"
 
 
-bool cfs_port_system_flash_write_byte( \
+bool cfs_port_system_flash_write_byte(
     volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
 {
     uint16_t i;
@@ -43,7 +43,7 @@ bool cfs_port_system_flash_write_byte( \
     return true;
 }
 
-bool cfs_port_system_flash_write_half_word( \
+bool cfs_port_system_flash_write_half_word(
     volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
 {
     uint16_t i;
@@ -59,7 +59,7 @@ bool cfs_port_system_flash_write_half_word( \
     return true;
 }
 
-bool cfs_port_system_flash_write_word( \
+bool cfs_port_system_flash_write_word(
     volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
 {
     uint16_t i;
@@ -75,7 +75,14 @@ bool cfs_port_system_flash_write_word( \
     return true;
 }
 
-bool cfs_port_system_flash_read( \
+bool cfs_port_system_flash_write_double_word(
+    volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
+{
+
+    return true;
+}
+
+bool cfs_port_system_flash_read(
     volatile uint32_t addr, uint8_t * buffer, uint16_t len)
 {
     memcpy(buffer, (uint8_t *)addr, len);
@@ -83,7 +90,7 @@ bool cfs_port_system_flash_read( \
 }
 
 //@def 如果相同返回true
-bool cfs_port_system_flash_read_contrast( \
+bool cfs_port_system_flash_read_contrast(
     volatile uint32_t addr, uint8_t * buffer, uint16_t len)
 {
     if(memcmp(buffer, (uint8_t *)addr, len) == 0)

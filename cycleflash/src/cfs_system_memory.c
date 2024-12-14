@@ -69,66 +69,109 @@ static bool _erasing_flash_page( volatile uint32_t addr, uint16_t page)
 static bool _write_flash_data(
     volatile uint32_t addr, uint8_t * buffer, uint16_t len)
 {
+    uint16_t write_byte_len = 0;
+    uint16_t write_byte_all_len = 0;
+
     cfs_port_system_flash_lock_enable();
 
-    while(len != 0)
+    // while(len != 0)
+    // {
+    //     if(addr % 4 == 0 && len >= 4)
+    //     {
+    //         cfs_port_system_flash_write_word(addr, buffer, len / 4);
+    //         buffer += (len / 4) * 4;
+    //         addr += (len / 4) * 4;
+    //         len -= (len / 4) * 4;
+    //     }
+    //     else if(addr % 2 == 0 && len >= 2)
+    //     {
+    //         cfs_port_system_flash_write_half_word(addr, buffer, len / 2);
+    //         buffer += (len / 2) * 2;
+    //         addr += (len / 2) * 2;
+    //         len -= (len / 2) * 2;
+    //     }
+    //     else
+    //     {
+    //         cfs_port_system_flash_write_byte(addr, buffer, 1);
+    //         buffer++;
+    //         addr++;
+    //         len--;
+    //     }
+    // }
+
+    if ()
+
+    if (len >= 8)
     {
-        if(addr % 4 == 0 && len >= 4)
-        {
-            cfs_port_system_flash_write_word(addr, buffer, len / 4);
-            buffer += (len / 4) * 4;
-            addr += (len / 4) * 4;
-            len -= (len / 4) * 4;
-        }
-        else if(addr % 2 == 0 && len >= 2)
-        {
-            cfs_port_system_flash_write_half_word(addr, buffer, len / 2);
-            buffer += (len / 2) * 2;
-            addr += (len / 2) * 2;
-            len -= (len / 2) * 2;
-        }
-        else
-        {
-            cfs_port_system_flash_write_byte(addr, buffer, 1);
-            buffer++;
-            addr++;
-            len--;
-        }
+        write_byte_len = len / 8;
+        cfs_port_system_flash_write_double_word(addr, buffer, write_byte_len);
+        len -= write_byte_len * 8;
+        addr += write_byte_len * 8;
+        buffer += write_byte_len * 8;
+    }
+
+    if (len >= 4)
+    {
+        write_byte_len = len / 4;
+        cfs_port_system_flash_write_word(addr, buffer, write_byte_len);
+        len -= write_byte_len * 4;
+        addr += write_byte_len * 4;
+        buffer += write_byte_len * 4;
+    }
+
+    if (len >= 2)
+    {
+        write_byte_len = len / 2;
+        cfs_port_system_flash_write_half_word(addr, buffer, write_byte_len);
+        len -= write_byte_len * 2;
+        addr += write_byte_len * 2;
+        buffer += write_byte_len * 2;
+    }
+
+    if (len != 0)
+    {
+        cfs_port_system_flash_write_byte(addr, buffer, len);
     }
 
     cfs_port_system_flash_lock_disable();
+
     return true;
 }
 
 
 // HACK: 新
 static bool _write_flash_data_block(
-    volatile uint32_t addr, cfs_data_block_t *write_block)
+    volatile uint32_t addr, cosnt cfs_data_block_t *write_block)
 {   
     const uint16_t DATA_FILL = cfs_memory_compute_memory_fill_length(write_block->data_len);
+    bool result = false;
 
     cfs_port_system_flash_lock_enable();
 
-    _write_flash_data(addr,
+    result = _write_flash_data(addr,
                       (uint8_t *)write_block,
                       CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
     addr += CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
 
     if (DATA_FILL == 0)
     {
-        _write_flash_data(addr, write_block->data_ptr, write_block->data_len);
+        // 不需要填充
+        result = _write_flash_data(addr, write_block->data_ptr, write_block->data_len);
     }
     else
     {
-        const uint16_t SUBSECTION_DATA_LEM = 
-            write_block->data_len - (CFS_WRITE_MIN_PARTICLE-DATA_FILL);
-        _write_flash_data(addr, write_block->data_ptr, SUBSECTION_DATA_LEM);
+        // 计算填充字节并存入
         uint8_t fill_data[CFS_WRITE_MIN_PARTICLE] = {0};
+        const uint16_t SUBSECTION_DATA_LEM =
+            write_block->data_len - (CFS_WRITE_MIN_PARTICLE - DATA_FILL);
+        result = _write_flash_data(addr, write_block->data_ptr, SUBSECTION_DATA_LEM);
+
         memcpy(fill_data,
                &write_block->data_ptr[SUBSECTION_DATA_LEM],
                write_block->data_len - SUBSECTION_DATA_LEM);
-        addr += SUBSECTION_DATA_LEM;
-        _write_flash_data(addr, write_block->data_ptr, SUBSECTION_DATA_LEM);
+        result = _write_flash_data(addr += SUBSECTION_DATA_LEM,
+                          write_block->data_ptr,
+                          SUBSECTION_DATA_LEM);
     }
 
     cfs_port_system_flash_lock_disable();
@@ -136,36 +179,47 @@ static bool _write_flash_data_block(
     return true;
 }
 
-static bool __contrast_flash_data_block( \
-    volatile uint32_t addr, const cfs_data_block * block, cfs_system *temp_cfs)
+// HACK: 新
+static bool _contrast_flash_data_block(
+    const uint32_t addr, const cfs_data_block_t *contrast_block)
 {
     bool result = false;
 
-    while(true)
+    // XXX：这边是内部为大部分32位MCU可用的方法。
+    for (uint8_t i=0; i<2; i++)
     {
-        result = cfs_port_system_flash_read_contrast( \
-            addr, (uint8_t *)(&block->data_id), sizeof(block->data_id));
-        if(result == false)
+        if (0 != memcmp((uint8_t *)addr,
+                        (uint8_t *)contrast_block,
+                        CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN))
         {
-            break;
+            continue;
         }
 
-        addr += sizeof(block->data_id);
-        cfs_port_system_flash_read_contrast( \
-            addr, block->data_pointer, block->data_len);
-        if(result == false)
+        if (0 != memcmp((uint8_t *)(addr + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN),
+                        contrast_block->data_ptr,
+                        contrast_block->data_len))
         {
-            break;
+            return true;
         }
-
-        addr += temp_cfs->data_size;
-        cfs_port_system_flash_read_contrast( \
-            addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
-
-        break;
     }
 
-    return result;
+    return false;
+}
+
+// HACK: 新
+static bool _checking_flash_block_is_null_values(const uint32_t addr, uint16_t len)
+{
+    for(uint16_t i=0; i<len; i++)
+    {
+        // XXX：这边是内部为大部分32位MCU可用的方法。
+        if(CFS_FLASH_ERASURE != ((uint8_t *)addr)[i])
+        {
+            // 不为空
+            return false;
+        }
+    }
+
+    return true;
 }
 
 
@@ -187,9 +241,7 @@ uint8_t cfs_memory_compute_memory_fill_length(uint16_t data_size)
 {
     // 判断一下不能为0
     assert(data_size != 0);
-    uint8_t data_fill_len = 
-        (data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN) 
-        % CFS_WRITE_MIN_PARTICLE;
+    uint8_t data_fill_len = data_size % CFS_WRITE_MIN_PARTICLE;
     if (data_fill_len == 0)
     {
         return 0;
@@ -306,17 +358,15 @@ cfs_data_id_t cfs_memory_fixe_valid_id_number(
  */
 // TODO: 这里后面需要兼容自定义读取函数，后面在做
 int cfs_memory_read_verify_flash_data_id(const cfs_object_list_t *object_list,
-                                              const uint32_t address,
-                                              cfs_data_id_t get_id)
+                                         const uint32_t address,
+                                         cfs_data_id_t get_id)
 {
-    uint32_t read_address = address;
     cfs_data_block_t read_block = {0};
     uint16_t get_checkout_value = 0;
 
     // XXX：这边是内部为大部分32位MCU定制的读取遍历方法。
     for (uint8_t i=0; i<2; i++)
     {
-        read_address = address;
         memset(&read_block, 0, sizeof(cfs_data_block_t));
         memcpy((uint8_t *)&read_block,
                (uint8_t *)address,
@@ -325,7 +375,8 @@ int cfs_memory_read_verify_flash_data_id(const cfs_object_list_t *object_list,
             (uint8_t *)&read_block, CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN, NULL);
         
         if (read_block.data_len > object_list->object_handle->data_size
-            || read_block.data_len == 0)
+            || read_block.data_len == 0
+            || read_block.data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
         {
             continue;
         }
@@ -359,7 +410,6 @@ int cfs_memory_read_flash_fixed_data(const cfs_object_list_t *object_list,
 {
     cfs_data_block_t read_block = {0};
     // 在传入参数的时候，就要把参数滤干净
-    uint32_t read_address = address;
     uint16_t get_checkout_value = 0;
 
     // XXX：这边是内部为大部分32位MCU定制的读取遍历方法。
@@ -369,18 +419,20 @@ int cfs_memory_read_flash_fixed_data(const cfs_object_list_t *object_list,
         memset(&read_block, 0, sizeof(cfs_data_block_t));
 
         memcpy((uint8_t *)&read_block,
-               (uint8_t *)read_address,
+               (uint8_t *)address,
                CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
         get_checkout_value = cfs_system_utils_check(
             (uint8_t *)&read_block, CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN, NULL);
         
-        if (read_block.data_len > data_max_len || read_block.data_len == 0)
+        if (read_block.data_len > data_max_len 
+            || read_block.data_len == 0
+            || read_block.data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
         {
             continue;
         }
 
         get_checkout_value += cfs_system_utils_check(
-            (uint8_t *)(read_address + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN),
+            (uint8_t *)(address + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN),
             read_block.data_len, 
             data_buffer);
         
@@ -405,16 +457,14 @@ int cfs_memory_add_write_flash_fixed_data(const cfs_object_list_t *object_list,
                                           const uint16_t data_len,
                                           uint8_t *data_buffer)
 {
-    cfs_data_block_t write_block;
-    memset(&write_block, 0, sizeof(cfs_data_block_t));
-
+    int write_result = CFS_RETURN_ERROR;
+    cfs_data_block_t write_block = {0};
     write_block.data_ptr = data_buffer;
     write_block.data_len = data_len;
     write_block.data_check = cfs_system_utils_check(
         (uint8_t *)&write_block, CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN, NULL);
     write_block.data_check += cfs_system_utils_check(data_buffer, data_len, NULL);
     
-    //const uint16_t DATA_FILL = cfs_memory_compute_memory_fill_length(data_len);
 
     // 判断是否要擦除页-----------------------
     const uint32_t MAX_ADDR = 
@@ -432,13 +482,34 @@ int cfs_memory_add_write_flash_fixed_data(const cfs_object_list_t *object_list,
     }
 
     // 开始写入数据---------------------------
-
-
-    if (false == cfs_port_system_flash_checking_is_null_values(
-        address, data_len + DATA_FILL + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN))
+    for (uint8_t i=0; i<2; i++)
     {
-        return 
+        if (false == _checking_flash_block_is_null_values(
+            address, data_len + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN))
+        {
+            continue;
+        }
+
+        _write_flash_data_block(address, &write_block);
+
+        if(true == _contrast_flash_data_block(address, &write_block))
+        {
+            write_result = data_len;
+        }
     }
+
+    // 错误处理，方便后期上电遍历----------------------
+    if (write_result == CFS_RETURN_ERROR)
+    {
+        memset(&write_block,
+               ~CFS_FLASH_ERASURE,
+               CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
+        _write_flash_data(address,
+                          &write_block,
+                          CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
+    }
+
+    return write_result;
 }
 
 
@@ -474,7 +545,7 @@ cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
     }
     __write_flash_data_block(data_addr, buffer, temp_cfs);
 
-    if(__contrast_flash_data_block(data_addr, buffer, temp_cfs) == false)
+    if(_contrast_flash_data_block(data_addr, buffer, temp_cfs) == false)
     {
         read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
     }
