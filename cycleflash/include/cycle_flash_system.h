@@ -27,9 +27,6 @@
 #ifndef __CYCLE_FLASH_SYSTEM_H__
 #define __CYCLE_FLASH_SYSTEM_H__
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdlib.h>
 #include "cfs_system_define.h"
 
 /** 初始化文件管理系统对象
@@ -37,12 +34,11 @@
  * \param cfs_nv_system 初始化结构体指针
  * \return cfs_object_handle_ptr 初始化后的句柄，如果初始化失败返回 false。
  */
-cfs_object_handle_ptr cfs_nv_object_init(
-    const uint8_t *name, 
-    const uint32_t address,
-    const uint32_t sector_count,
-    const uint16_t data_size);
-
+cfs_object_handle_ptr cfs_nv_object_init(uint8_t *name,
+                                         uint32_t address,
+                                         uint32_t sector_count,
+                                         uint16_t data_size,
+                                         cfs_object_type_t data_tpye);
 
 /** 根据id往内存中写入数据
  *
@@ -55,7 +51,6 @@ cfs_object_handle_ptr cfs_nv_object_init(
 int cfs_nv_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len);
 
 
-// HACK: 新
 /** 根据ID读取内存中的数据
  *
  * \param cfs_object_handle_ptr 存储空间的句柄
@@ -69,16 +64,14 @@ int cfs_nv_read(cfs_object_handle_ptr object,
                 uint16_t len,
                 cfs_data_id_t read_in_past);
 
-// HACK: 新
 /** 清除指定对象的存储空间
  *
  * \param cfs_object_handle_ptr 存储空间的句柄
  * \return 擦除成功返回true，反则为flash
  */
-bool cfs_nv_clear(cfs_object_handle_ptr object)
+bool cfs_nv_clear(cfs_object_handle_ptr object);
 
 
-// HACK: 新
 /** 返回目前存储对象的ID
  *
  * \param cfs_object_handle_ptr 存储空间的句柄
@@ -87,7 +80,6 @@ bool cfs_nv_clear(cfs_object_handle_ptr object)
 cfs_data_id_t cfs_nv_get_current_id(cfs_object_handle_ptr object);
 
 
-// HACK: 新
 /** 返回目前存储对象的可用ID
  *
  * \param cfs_object_handle_ptr 存储空间的句柄

@@ -23,38 +23,46 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 // Encoding:UTF-8
-
-#include <string.h>
-#include <assert.h>
-#include <limits.h>
-
 #include "cfs_system_memory.h"
 
 #include "cfs_port_device_flash.h"
 #include "cfs_system_utils.h"
 
+// XXX:这里负责缓存管理。。。。。。。。。。。。。
+static struct
+{
+#if CFS_FLASH_SECTOR_BUFFER_DEF != 0
+    uint8_t flash_one_sector_buffer[CFS_FLASH_SECTOR_SIZE];
+#endif // CFS_FLASH_SECTOR_BUFFER_DEF
+
+#if CFS_FLASH_READ_MODE != 0
+    cfs_read_buffer_t data_read_buffer;
+#endif // CFS_FLASH_READ_MODE
+
+}_this = {
+
+#if CFS_FLASH_SECTOR_BUFFER_DEF != 0
+    .flash_one_sector_buffer = {0},
+#endif // CFS_FLASH_SECTOR_BUFFER_DEF
+
+#if CFS_FLASH_READ_MODE != 0
+    .data_read_buffer = {
+        .buffer_ptr = NULL,
+        .buffer_size = 0,
+    }
+#endif // CFS_FLASH_READ_MODE
+};
 
 // ************************************************************************
 //@def 写入和读取数据 —— 内部处理
 
-// static bool __read_flash_data_block(
-//     volatile uint32_t addr, cfs_data_block * block, cfs_system *temp_cfs)
-// {
-//     cfs_port_system_flash_read(
-//         addr, (uint8_t *)(&block->data_id), sizeof(block->data_id));
+static bool _read_flash_data(
+    const uint32_t address, uint8_t *buffer, uint16_t read_len)
+{
+    return cfs_port_system_flash_read(address, buffer, read_len);
+}
 
-//     addr += sizeof(block->data_id);
-//     cfs_port_system_flash_read(
-//         addr, block->data_pointer, block->data_len);
-        
-//     addr += temp_cfs->data_size;
-//     cfs_port_system_flash_read(
-//         addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
 
-//     return true;
-// }
-
-// HACK: 新
 static bool _erasing_flash_page( volatile uint32_t addr, uint16_t page)
 {
     cfs_port_system_flash_lock_enable();
@@ -139,7 +147,6 @@ static bool _write_flash_data(
 }
 
 
-// HACK: 新
 static bool _write_flash_data_block(
     volatile uint32_t addr, const cfs_data_block_t *write_block)
 {   
@@ -176,18 +183,18 @@ static bool _write_flash_data_block(
 
     cfs_port_system_flash_lock_disable();
 
-    return true;
+    return result;
 }
 
-// HACK: 新
-static bool _contrast_flash_data_block(
-    const uint32_t addr, const cfs_data_block_t *contrast_block)
-{
-    bool result = false;
 
-    // XXX：这边是内部为大部分32位MCU可用的方法。
+static bool _contrast_flash_data_block(
+    const uint32_t addr, const cfs_data_block_t *contrast_block, uint8_t *buffer)
+{
     for (uint8_t i=0; i<2; i++)
     {
+
+#if CFS_FLASH_READ_MODE == 0
+        // XXX：这边是内部为大部分32位MCU可用的方法。
         if (0 != memcmp((uint8_t *)addr,
                         (uint8_t *)contrast_block,
                         CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN))
@@ -201,41 +208,132 @@ static bool _contrast_flash_data_block(
         {
             return true;
         }
+#else
+        _read_flash_data(
+            addr, buffer, CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
+        if (0 != memcmp((uint8_t *)addr,
+                        (uint8_t *)contrast_block,
+                        CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN))
+        {
+            // 防止每次都等待读取完毕
+            continue;
+        }
+
+        _read_flash_data(addr + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN,
+                        buffer,
+                        contrast_block->data_len);
+        if (0 != memcmp(buffer,
+                        contrast_block->data_ptr,
+                        contrast_block->data_len))
+        {
+            return true;
+        }
+#endif // CFS_FLASH_READ_MODE
+
     }
 
     return false;
 }
 
-// HACK: 新
-static bool _checking_flash_block_is_null_values(const uint32_t addr, uint16_t len)
+
+static bool _checking_flash_block_is_null_values(const uint32_t addr,
+                                                 uint16_t len,
+                                                 uint8_t *buffer)
 {
-    for(uint16_t i=0; i<len; i++)
+    bool result = false;
+    for (uint8_t i=0; i<2; i++)
     {
-        // XXX：这边是内部为大部分32位MCU可用的方法。
-        if(CFS_FLASH_ERASURE != ((uint8_t *)addr)[i])
+        result = true;
+
+#if CFS_FLASH_READ_MODE == 0
+        for(uint16_t i=0; i<len; i++)
         {
-            // 不为空
-            return false;
+            // XXX：这边是内部为大部分32位MCU可用的方法。
+            if(CFS_FLASH_ERASURE != ((uint8_t *)addr)[i])
+            {
+                // 不为空
+                result = false;
+                continue;
+            }
         }
+#else
+        _read_flash_data(addr, buffer, CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
+        for(uint16_t i=0; i<CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN; i++)
+        {
+            if(CFS_FLASH_ERASURE != buffer[i])
+            {
+                // 不为空
+                result = false;
+                continue;
+            }
+        }
+
+        _read_flash_data(addr + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN,
+                         buffer,
+                         len - CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
+        for(uint16_t i=0; i < (len-CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN); i++)
+        {
+            if(CFS_FLASH_ERASURE != buffer[i])
+            {
+                // 不为空
+                result = false;
+                continue;
+            }
+        }
+#endif // CFS_FLASH_READ_MODE
+
     }
 
-    return true;
+    return result;
 }
 
 
+static bool _erasing_page_flash_data(uint32_t addr, uint16_t page)
+{
+    bool result = false;
+    cfs_port_system_flash_lock_enable();
 
-// // HACK: 新
-// static bool _read_flash_fixed_data(
-//     const uint32_t address, uint8_t *buffer, uint16_t read_len)
-// {
-//     return cfs_port_system_flash_read(address, buffer, read_len);
-// }
+    result = cfs_port_system_flash_erasing_page(addr, page);
+
+    cfs_port_system_flash_lock_disable();
+
+    return result;
+}
 
 
 // *************************************************************************
 //@def 其他接口 —— 接口
 
-// HACK: 新
+// 数据块缓存区初始化
+void cfs_memory_general_block_buffer_init(uint16_t data_buffer_size)
+{
+    #if CFS_FLASH_READ_MODE != 0
+        // 判断一下不能为0
+        assert(data_buffer_size != 0);
+
+        if (_this.data_read_buffer.buffer_size > data_buffer_size)
+        {
+            return;
+        }
+
+        // malloc*****
+        CFS_FREE(_this.data_read_buffer.buffer_ptr);
+        _this.data_read_buffer.buffer_ptr = (uint8_t *)CFS_MALLOC(data_buffer_size);
+
+
+        if (_this.data_read_buffer.buffer_ptr == NULL)
+        {
+            assert(_this.data_read_buffer.buffer_ptr);
+            while(1);
+        }
+    #else
+        
+        /*A task that has not yet been executed*/
+
+    #endif // CFS_FLASH_READ_MODE
+}
+
+
 // 计算需要填充的字节数
 uint8_t cfs_memory_compute_memory_fill_length(uint16_t data_size)
 {
@@ -253,7 +351,6 @@ uint8_t cfs_memory_compute_memory_fill_length(uint16_t data_size)
 }
 
 
-// HACK: 新
 //@def 通过可用ID计算要存入的地址位置。
 /**
  * 
@@ -261,12 +358,6 @@ uint8_t cfs_memory_compute_memory_fill_length(uint16_t data_size)
 uint32_t cfs_memory_calculate_fixed_id_flash_address(
     const cfs_object_list_t *object_list, cfs_data_id_t id_input)
 {
-    // 不能让无ID的情况到这里，刚开始就要被滤掉
-    // if (object_list->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
-    // {
-    //     return 0;
-    // }
-
     uint32_t result_addr = NULL;
 
     const cfs_data_id_t FLASH_MAX_ID_COUNT = 
@@ -295,7 +386,6 @@ uint32_t cfs_memory_calculate_fixed_id_flash_address(
 }
 
 
-// HACK: 新
 //@def 根据ID计算有效数据个数
 /**
  * 
@@ -305,7 +395,6 @@ cfs_data_id_t cfs_memory_fixe_valid_id_number(
 {
     uint32_t result_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
 
-    // cfs_system *temp_cfs_object = temp_linked_object->object_handle;
     if (id_input == CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
         return CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
@@ -350,16 +439,13 @@ cfs_data_id_t cfs_memory_fixe_valid_id_number(
 // **************************************************************************
 //@def 写入、读取数据、删除 —— 接口
 
-// HACK: 新
 //@def 在遍历ID阶段，遍历指定位置的数据，得到位置id
 /**
  * 直接校验对象缓存长度的数据，对比读取出来的数据长度。
- * 返回： 如果数据有效，返回数据长度，否则返回0
+ * 返回： 如果数据有效，返回ID，否则返回0
  */
-// TODO: 这里后面需要兼容自定义读取函数，后面在做
-int cfs_memory_read_verify_flash_data_id(const cfs_object_list_t *object_list,
-                                         const uint32_t address,
-                                         cfs_data_id_t get_id)
+cfs_data_id_t cfs_memory_read_verify_flash_data_id(
+    const cfs_object_list_t *object_list, const uint32_t address)
 {
     cfs_data_block_t read_block = {0};
     uint16_t get_checkout_value = 0;
@@ -368,9 +454,17 @@ int cfs_memory_read_verify_flash_data_id(const cfs_object_list_t *object_list,
     for (uint8_t i=0; i<2; i++)
     {
         memset(&read_block, 0, sizeof(cfs_data_block_t));
+
+#if CFS_FLASH_READ_MODE == 0
         memcpy((uint8_t *)&read_block,
                (uint8_t *)address,
                CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
+#else
+        _read_flash_data(address,
+                         (uint8_t *)&read_block,
+                         CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
+#endif  // CFS_FLASH_READ_MODE
+
         get_checkout_value = cfs_system_utils_check(
             (uint8_t *)&read_block, CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN, NULL);
         
@@ -381,23 +475,30 @@ int cfs_memory_read_verify_flash_data_id(const cfs_object_list_t *object_list,
             continue;
         }
 
+#if CFS_FLASH_READ_MODE == 0
         get_checkout_value += cfs_system_utils_check(
             (uint8_t *)(address + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN),
             read_block.data_len, 
             NULL);
+#else
+        memset(_this.data_read_buffer.buffer_ptr, 0, read_block.data_len);
+        _read_flash_data(address + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN, 
+                         _this.data_read_buffer.buffer_ptr, 
+                         read_block.data_len);
+        get_checkout_value += cfs_system_utils_check(
+            _this.data_read_buffer.buffer_ptr, read_block.data_len, NULL);
+#endif  // CFS_FLASH_READ_MODE
         
         if (get_checkout_value == read_block.data_check)
         {
-            get_id = read_block.data_id;
-            return read_block.data_len;
+            return read_block.data_id;
         }
     }
     
-    return CFS_RETURN_ERROR;
+    return CFS_CONFIG_NOT_LINKED_DATA_ID;
 }
 
 
-// HACK: 新
 //@def 读取内存中指定的内存大小，经过数据校验正确后返回给中间层解析。
 /**
  * 直接校验对象缓存长度的数据，对比读取出来的数据长度。
@@ -405,7 +506,7 @@ int cfs_memory_read_verify_flash_data_id(const cfs_object_list_t *object_list,
  */
 int cfs_memory_read_flash_fixed_data(const cfs_object_list_t *object_list,
                                      const uint32_t address,
-                                     const data_max_len,
+                                     const uint16_t data_max_len,
                                      uint8_t *data_buffer)
 {
     cfs_data_block_t read_block = {0};
@@ -418,9 +519,16 @@ int cfs_memory_read_flash_fixed_data(const cfs_object_list_t *object_list,
         memset(data_buffer, 0, data_max_len);
         memset(&read_block, 0, sizeof(cfs_data_block_t));
 
+#if CFS_FLASH_READ_MODE == 0
         memcpy((uint8_t *)&read_block,
                (uint8_t *)address,
                CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
+#else
+        _read_flash_data(address,
+                         (uint8_t *)&read_block,
+                         CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
+#endif  // CFS_FLASH_READ_MODE
+
         get_checkout_value = cfs_system_utils_check(
             (uint8_t *)&read_block, CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN, NULL);
         
@@ -431,10 +539,18 @@ int cfs_memory_read_flash_fixed_data(const cfs_object_list_t *object_list,
             continue;
         }
 
+#if CFS_FLASH_READ_MODE == 0
         get_checkout_value += cfs_system_utils_check(
             (uint8_t *)(address + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN),
             read_block.data_len, 
             data_buffer);
+#else
+        _read_flash_data(address + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN, 
+                         data_buffer, 
+                         read_block.data_len);
+        get_checkout_value += 
+            cfs_system_utils_check(data_buffer, read_block.data_len, NULL);
+#endif  // CFS_FLASH_READ_MODE
         
         if (get_checkout_value == read_block.data_check)
         {
@@ -446,7 +562,6 @@ int cfs_memory_read_flash_fixed_data(const cfs_object_list_t *object_list,
 }
 
 
-// HACK: 新
 //@def 添加式写入数据，确认写入正确后返回。
 /**
  * 如果写入失败，会检测以下写入区域是否无数据，如果无数据就在尝试写入一次。
@@ -457,6 +572,14 @@ int cfs_memory_add_write_flash_fixed_data(const cfs_object_list_t *object_list,
                                           const uint16_t data_len,
                                           uint8_t *data_buffer)
 {
+    if ((address + object_list->data_buffer_size) > 
+        (object_list->object_handle->address 
+            + CFS_FLASH_SECTOR_SIZE * object_list->object_handle->sector_count))
+    {
+        // 数据长度的错误情况判断
+        return CFS_RETURN_ERROR;
+    }
+
     int write_result = CFS_RETURN_ERROR;
     cfs_data_block_t write_block = {0};
     write_block.data_ptr = data_buffer;
@@ -464,37 +587,46 @@ int cfs_memory_add_write_flash_fixed_data(const cfs_object_list_t *object_list,
     write_block.data_check = cfs_system_utils_check(
         (uint8_t *)&write_block, CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN, NULL);
     write_block.data_check += cfs_system_utils_check(data_buffer, data_len, NULL);
-    
 
     // 判断是否要擦除页-----------------------
-    const uint32_t MAX_ADDR = 
-        (address / CFS_FLASH_SECTOR_SIZE) 
-        * CFS_FLASH_SECTOR_SIZE + CFS_FLASH_SECTOR_SIZE;
-    if(address == object_list->object_handle->address) 
+    if(address == object_list->object_handle->address
+        || address % CFS_FLASH_SECTOR_SIZE == 0) 
     {
-        _erasing_page_flash_data(address, 1);
+        // 情况一：循环的第一个数据。
+        // 情况二：数据小于一页，但是正好在新的一页的第一个。
+        _erasing_page_flash_data(address, (
+                (address + object_list->data_buffer_size) - address
+            ) / CFS_FLASH_SECTOR_SIZE + 1);
     }
-    else if((address + object_list->data_buffer_size) >= MAX_ADDR 
-        && MAX_ADDR < (object_list->object_handle->address 
-            + CFS_FLASH_SECTOR_SIZE * object_list->object_handle->sector_count))
+    else if(address / CFS_FLASH_SECTOR_SIZE
+        < (address + object_list->data_buffer_size) / CFS_FLASH_SECTOR_SIZE)
     {
-        _erasing_page_flash_data(MAX_ADDR, 1);
+        // 情况三：存入的数据长度跨页了,这里要确定有出现跨页了才能进来
+        const uint32_t CLEAR_START_ADDR = 
+            ((address / CFS_FLASH_SECTOR_SIZE) + 1) * CFS_FLASH_SECTOR_SIZE;
+        _erasing_page_flash_data(CLEAR_START_ADDR, (
+                ((address + object_list->data_buffer_size) - CLEAR_START_ADDR) 
+                / CFS_FLASH_SECTOR_SIZE
+            ) + 1);
     }
 
     // 开始写入数据---------------------------
     for (uint8_t i=0; i<2; i++)
     {
-        if (false == _checking_flash_block_is_null_values(
-            address, data_len + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN))
-        {
-            continue;
-        }
-
         _write_flash_data_block(address, &write_block);
 
-        if(true == _contrast_flash_data_block(address, &write_block))
+        if(true == _contrast_flash_data_block(
+            address, &write_block, _this.data_read_buffer.buffer_ptr))
         {
             write_result = data_len;
+        }
+        else if (false == _checking_flash_block_is_null_values(
+                address, 
+                data_len + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN, 
+                _this.data_read_buffer.buffer_ptr))
+        {
+            write_result = CFS_RETURN_ERROR;
+            break;
         }
     }
 
@@ -505,7 +637,7 @@ int cfs_memory_add_write_flash_fixed_data(const cfs_object_list_t *object_list,
                ~CFS_FLASH_ERASURE,
                CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
         _write_flash_data(address,
-                          &write_block,
+                          (uint8_t *)&write_block,
                           CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
     }
 
@@ -513,7 +645,6 @@ int cfs_memory_add_write_flash_fixed_data(const cfs_object_list_t *object_list,
 }
 
 
-// HACK: 新
 bool cfs_memory_flash_data_clear(const cfs_object_list_t *object_list)
 {
     _erasing_flash_page(object_list->object_handle->address,

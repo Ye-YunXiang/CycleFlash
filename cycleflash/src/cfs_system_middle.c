@@ -24,12 +24,9 @@
  */
 // Encoding:UTF-8
 
-#include <string.h>
-#include <assert.h>
-
 #include "cfs_system_middle.h"
 #include "cfs_system_memory.h"
-#include "cfs_system_oc.h"
+
 
 // 分配失败打算直接死掉在断言里面
 #define APPLY_MEMORY_FAIL_DISPOSE(x)  if(x == NULL){assert(x);while(1);}
@@ -40,47 +37,15 @@
 // XXX:这里负责对象管理。。。。。。。。。。。。。
 static struct
 {
-    
-#ifdef CFS_FLASH_SECTOR_BUFFER_DEF
-    uint8_t flash_one_sector_buffer[CFS_FLASH_SECTOR_SIZE];
-#endif // CFS_FLASH_SECTOR_BUFFER_DEF
-
     cfs_object_list_t *object_list_head;
-    // cfs_block_buffer_t data_block_buffer;
 }_this = {
-
-#ifdef CFS_FLASH_SECTOR_BUFFER_DEF
-    .flash_one_sector_buffer = {0},
-#endif // CFS_FLASH_SECTOR_BUFFER_DEF
-
     .object_list_head = NULL
-    // .data_block_buffer = {
-    //     .buffer_ptr = NULL,
-    //     .buffer_size = 0,
-    // }
 };
 
 
 //************************************************************************************
 //-- 内部管理接口
 //************************************************************************************
-// 工具接口 ---------------------------------------------------------------------------
-// 数据块缓存区初始化
-// static void _general_block_buffer_init(uint16_t data_buffer_size)
-// {
-//     // 判断一下不能为0
-//     assert(data_buffer_size != 0);
-
-//     if (_this.data_block_buffer.buffer_size > data_buffer_size)
-//     {
-//         return;
-//     }
-
-//     // malloc*****
-//     CFS_FREE(_this.data_block_buffer.buffer_ptr);
-//     _this.data_block_buffer.buffer_ptr = (uint8_t *)CFS_MALLOC(data_buffer_size);
-//     APPLY_MEMORY_FAIL_DISPOSE(_this.data_block_buffer.buffer_ptr);
-// }
 
 
 // 三层处理接口 ----------------------------------------------------------------------
@@ -93,10 +58,10 @@ static cfs_oc_action_data_result _read_fixed_flash_id(
     uint32_t address = 
         cfs_memory_calculate_fixed_id_flash_address(object_list, read_id[0]);
 
-    uint16_t result = 
-        cfs_memory_read_verify_flash_data_id(object_list, address, read_id[1]);
+    read_id[1] = 
+        cfs_memory_read_verify_flash_data_id(object_list, address);
 
-    if (result != CFS_RETURN_ERROR)
+    if (read_id[1] != CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
         return CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED;
     }
@@ -142,7 +107,7 @@ static cfs_data_id_t
         }
 
         // 遍历区，如果错误，在往下遍历一位
-        for (uint_8_t j=0, j<3; j++)
+        for (uint8_t j=0; j<3; j++)
         {
             if (data_traversal_id[0] >= FLASH_MAX_ID_COUNT)
             {
@@ -251,11 +216,11 @@ bool cfs_middle_check_address(const uint32_t address, const uint32_t sector_coun
 // 上层接口层 ------------------------------------------------------------------
 
 //@def 初始化数据对象
-cfs_object_t * cfs_middle_add_object_init(
-    const uint8_t *name, 
-    const uint32_t address,
-    const cfs_data_id_t sector_count, 
-    const uint16_t data_size)
+cfs_object_t *cfs_middle_add_object_init(uint8_t *name,
+                                         uint32_t address,
+                                         uint16_t sector_count,
+                                         uint16_t data_size,
+                                         cfs_object_type_t data_tpye)
 {
     // name malloc******
     uint8_t *name_ptr = (uint8_t *)CFS_MALLOC(STRING_ALL_SIZE(name));
@@ -265,11 +230,11 @@ cfs_object_t * cfs_middle_add_object_init(
     // cfs_object_t malloc******
     cfs_object_t *cfs_object = (cfs_object_t *)CFS_MALLOC(sizeof(cfs_object_t)); 
     APPLY_MEMORY_FAIL_DISPOSE(cfs_object);
-    *(uint8_t *)&cfs_object->name = name_ptr;
+    cfs_object->name = name_ptr;
     *(uint32_t *)&cfs_object->address = address;
     *(uint32_t *)&cfs_object->sector_count = sector_count;
     *(uint16_t *)&cfs_object->data_size = data_size;
-    *(uint8_t *)&cfs_object->data_fill = cfs_memory_compute_memory_fill_length(data_size);
+    *(cfs_object_type_t *)&cfs_object->data_type = data_tpye;
 
     // cfs_object_list_t malloc*****
     cfs_object_list_t *cfs_list = 
@@ -280,19 +245,19 @@ cfs_object_t * cfs_middle_add_object_init(
     cfs_list->next = _this.object_list_head;
     _this.object_list_head = cfs_list;
 
-    cfs_list->name = cfs_object->name;
+    cfs_list->name = name_ptr;
     cfs_list->object_handle = cfs_object;
     cfs_list->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
     cfs_list->valid_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     cfs_list->data_buffer_size = CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN
-        + cfs_object->data_size + cfs_object->data_fill;
+        + cfs_object->data_size + cfs_memory_compute_memory_fill_length(data_size);
 
     // 判断数据大小不能大于存储区
     assert(cfs_list->data_buffer_size 
         < (cfs_object->sector_count*CFS_FLASH_SECTOR_SIZE));
 
     // 重新分配数据块的缓存区
-    //_general_block_buffer_init(cfs_list->data_buffer_size);
+    cfs_memory_general_block_buffer_init(cfs_list->data_buffer_size);
 
     return cfs_object;
 }
@@ -306,7 +271,7 @@ bool cfs_middle_object_id_init(const cfs_object_t *object)
     cfs_data_id_t data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
     cfs_data_id_t vakud_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
 
-    if (object->data_size != CFS_FLASH_STATE_VARIABLE_CYCLE)
+    if (object->data_type == CFS_OBJECT_TYPE_FIXED_DATA_STORAGE)
     {
         // 这里为定长数据的遍历
         data_id = _fixed_data_storage_id_search(list_object_ptr);
@@ -340,7 +305,7 @@ cfs_object_list_t *cfs_middle_find_object(const cfs_object_t *object)
     cfs_object_list_t *find_object = _this.object_list_head;
     while (find_object != NULL)
     {
-        if (strcmp(find_object->object_handle->name, object->name) == 0)
+        if (strcmp((char *)find_object->object_handle->name, (char *)object->name) == 0)
         {
             break;
         }
@@ -392,7 +357,6 @@ int cfs_middle_data_fixed_write(cfs_object_list_t *object_list,
         return CFS_RETURN_ERROR;
     }
 
-    //cfs_data_id_t write = 0;
     if (object_list->data_id < CFS_CONFIG_DATA_ID_UPPER_LIMIT)
     {
         object_list->data_id++;
@@ -430,7 +394,7 @@ bool cfs_system_oc_flash_data_clear(cfs_object_list_t *object_list)
 
     return true;
 }
-3
+
 //@def 返回目前存储对象的ID
 uint32_t cfs_middle_get_current_id(const cfs_object_list_t *object_list)
 {

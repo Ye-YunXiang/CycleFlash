@@ -26,9 +26,11 @@
 
 #include <assert.h>
 #include <stddef.h>
-#include "cfs_system_utils.h"
 
-#ifdef CFS_CHECK == 0   // CHECK_SUM
+#include "cfs_system_utils.h"
+#include "cfs_user_config.h"
+
+#if CFS_CHECK == 0   // CHECK_SUM
 
 static uint16_t _utils_check_sum(
     const uint8_t *data, uint32_t data_length, uint8_t *get_data)
@@ -141,7 +143,7 @@ uint16_t cfs_system_utils_check(
 {
     uint16_t check_value = 0;
     
-#ifdef CFS_CHECK == 0   // CHECK_SUM
+#if CFS_CHECK == 0   // CHECK_SUM
 
     check_value = _utils_check_sum(data, data_length, get_data);
 

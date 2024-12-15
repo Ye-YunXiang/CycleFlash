@@ -30,11 +30,11 @@
 #include "cfs_system_define.h"
 
 //@def 初始化数据对象
-cfs_object_t * cfs_middle_add_object_init(
-    const uint8_t *name, 
-    const uint32_t address,
-    const uint16_t sector_count, 
-    const uint16_t data_size);
+cfs_object_t *cfs_middle_add_object_init(uint8_t *name,
+                                         uint32_t address,
+                                         uint16_t sector_count,
+                                         uint16_t data_size,
+                                         cfs_object_type_t data_tpye);
 
 //@def 检查重复地址是否通过
 bool cfs_middle_check_address(const uint32_t address, const uint32_t sector_count);

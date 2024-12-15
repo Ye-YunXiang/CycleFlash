@@ -16,7 +16,8 @@
         "cfs_system_memory.h": "c",
         "climits": "c",
         "stdbool.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "stdlib.h": "c"
     },
     "files.encoding": "utf8"
 }

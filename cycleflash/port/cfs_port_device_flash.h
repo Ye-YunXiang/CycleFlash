@@ -43,6 +43,7 @@
 bool cfs_port_system_flash_write_byte(
     volatile uint32_t addr, volatile uint8_t * data, uint16_t len);
 
+
 /** 往flash中存储数据(半字写)
  * 
  * 要能实现指定长度存入内存(2字节速度存入)
@@ -54,6 +55,7 @@ bool cfs_port_system_flash_write_byte(
  */
 bool cfs_port_system_flash_write_half_word(
     volatile uint32_t addr, volatile uint8_t * data, const uint16_t len);
+
 
 /** 往flash中存储数据(字写)
  * 
@@ -68,8 +70,17 @@ bool cfs_port_system_flash_write_word(
     volatile uint32_t addr, volatile uint8_t * data, const uint16_t len);
 
 
+/** 往flash中存储数据(双字写)
+ * 
+ * 要能实现指定长度存入内存(8字节速度存入)
+ * 
+ * \param uint32_t flash地址
+ * \param uint8_t  数据指针 
+ * \param uint16_t  数据块长度 
+ * \return 成功返回true，否则false
+ */
 bool cfs_port_system_flash_write_double_word(
-    volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
+    volatile uint32_t addr, volatile uint8_t * data, uint16_t len);
 
 
 /** 往flash中读取数据
@@ -81,32 +92,8 @@ bool cfs_port_system_flash_write_double_word(
  * \param uint16_t  数据块长度 
  * \return 成功返回true，否则false
  */
-bool cfs_port_system_flash_read( \
+bool cfs_port_system_flash_read(
     volatile uint32_t addr, uint8_t * buffer, uint16_t len);
-
-
-/** 传入数据指针对比flash中指定地址的数据是否相同。
- * 
- * 对比数据和内存中的数据是否一致
- * 
- * \param uint32_t 要对比的flash地址
- * \param uint8_t  要对比的装载数据的缓存指针 
- * \param uint16_t  数据块的长度 
- * \return 对比成功返回true，否则false
- */
-bool cfs_port_system_flash_read_contrast( \
-    volatile uint32_t addr, uint8_t * buffer, uint16_t len);
-
-/** 传入数据指针判断flash中指定地址的数据是否为空。
- * 
- * 判断某块内存的数据是否为空
- * 
- * \param uint32_t flash地址
- * \param uint16_t  数据块长度 
- * \return 为空返回true，否则false
- */
-bool cfs_port_system_flash_checking_is_null_values( \
-    volatile uint32_t addr, uint16_t len);
 
 
 /** 上操作flash保护锁。
@@ -124,6 +111,7 @@ bool cfs_port_system_flash_lock_enable(void);
  * \return 成功返回true，否则false
  */
 bool cfs_port_system_flash_lock_disable(void);
+
 
 /** 擦除指定页面的数据
  * 

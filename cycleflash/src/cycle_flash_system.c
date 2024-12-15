@@ -24,27 +24,26 @@
  */
 // Encoding:UTF-8
 
-#include <string.h>
-#include <assert.h>
-
 #include "cycle_flash_system.h"
 #include "cfs_system_middle.h"
-#include "cfs_system_oc.h"
-
-#include "cfs_port_device_flash.h" 
-#include "cfs_system_utils.h"
 
 
 //*********************************************************************************
 //-- 对外接口  
 //*********************************************************************************
 
-cfs_object_handle_ptr cfs_nv_object_init(
-    const uint8_t *name, 
-    const uint32_t address,
-    const uint32_t sector_count, 
-    const uint16_t data_size)
+cfs_object_handle_ptr cfs_nv_object_init(uint8_t *name,
+                                         uint32_t address,
+                                         uint32_t sector_count,
+                                         uint16_t data_size,
+                                         cfs_object_type_t data_tpye)
 {
+    if (data_tpye == CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE
+        && CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL == 0)
+    {
+        return NULL;
+    }
+
     //@def 判断参数有效性
     assert(name != NULL);
     //@def 判断名称长度
@@ -60,7 +59,7 @@ cfs_object_handle_ptr cfs_nv_object_init(
 
     //@def 开始初始化，新建一个内存对象
     cfs_object_handle_ptr object_handle = 
-        cfs_middle_add_object_init(name, address, sector_count, data_size);
+        cfs_middle_add_object_init(name, address, sector_count, data_size, data_tpye);
     if(object_handle == false)
     {
         assert(object_handle);
@@ -68,13 +67,13 @@ cfs_object_handle_ptr cfs_nv_object_init(
     }
 
     //@def 初始化对象的各种ID
-    cfs_filesystem_object_id_init(object_handle);
+    cfs_middle_object_id_init(object_handle);
 
     /*初始化工作结束，返回初始化的句柄*/
     return object_handle;
 }
 
-// HACK: 新
+
 //@def 根据id往内存中写入数据
 int cfs_nv_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len)
 {
@@ -89,7 +88,7 @@ int cfs_nv_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len)
     return result_len;
 }
 
-// HACK: 新
+
 //@def 根据ID读取内存中的数据
 int cfs_nv_read(cfs_object_handle_ptr object,
                 uint8_t *data,
@@ -103,12 +102,12 @@ int cfs_nv_read(cfs_object_handle_ptr object,
     }
 
     int result_len = 
-        cfs_middle_data_read(_this.object_list, read_in_past, data, len);
+        cfs_middle_data_read(object_list, read_in_past, data, len);
     
     return result_len;
 }
 
-// HACK: 新
+
 //@def 清除指定对象的存储空间
 bool cfs_nv_clear(cfs_object_handle_ptr object)
 {
@@ -123,7 +122,7 @@ bool cfs_nv_clear(cfs_object_handle_ptr object)
     return true;
 }
 
-// HACK: 新
+
 //@def 返回目前存储对象的ID
 cfs_data_id_t cfs_nv_get_current_id(cfs_object_handle_ptr object)
 {
@@ -136,7 +135,7 @@ cfs_data_id_t cfs_nv_get_current_id(cfs_object_handle_ptr object)
     return cfs_middle_get_current_id(object_list);
 }
 
-// HACK: 新
+
 //@def 返回目前存储对象的可用ID
 cfs_data_id_t cfs_nv_get_current_valid_id(cfs_object_handle_ptr object)
 {

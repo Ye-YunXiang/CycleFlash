@@ -35,11 +35,15 @@
 #include <stdint.h>
 #include <limits.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
 
 #include "cfs_user_config.h"
 
 // 函数返回错误
 #define CFS_RETURN_ERROR        (-1)
+
 
 // 存储区状态, 用于判断是否为变长数据状。
 // 这里判断“cfs_object_type”的“data_size”大小，符合下面要求就是变长数据格式。
@@ -78,30 +82,26 @@ typedef struct cfs_object *cfs_object_handle_ptr;
 // 定义存储区的数据类型
 typedef enum cfs_object_type
 {
-    //@def 没有数据类型
-    CFS_OBJECT_TYPE_NULL,
-    //@def 初始化结束标志，没有存入数据
-    CFS_OBJECT_TYPE_INIT,
     //@def 存储固定长度数据
     /**
      * 定长数据存储的数据类型为 ID+数据长度+数据+crc。
      * 注意：校验的CRC只校验有效数据，也就是只校验从'ID'一直到指定数据长度的数据。
      * 也就是如果存入的数据长度没有到分配的长度，就只会校验指定长度的数据。
     */
-    CFS_OBJECT_TYPE_FIXED_DATA_STORAGE,
+    CFS_OBJECT_TYPE_FIXED_DATA_STORAGE = 0,
     //@def 循环变长长度数据/ 预留，还未实现
-    CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE,
+    CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE = 1,
 }cfs_object_type_t;
 
 
 /*系统的存储对象，不定长对象记录每个存储区对象的内容*/
 typedef struct cfs_object
 {
-    const uint8_t *name;             // 对象的名字
-    const uint32_t address;          // 文件系统在flash中的句柄
-    const uint32_t sector_count;     // 扇区数量，建议至少3页
-    const uint16_t data_size;        // 存入的数据大小
-    const uint8_t data_fill;         // 数据填充大小
+    const uint8_t *name;                // 对象的名字
+    const uint32_t address;             // 文件系统在flash中的句柄
+    const uint32_t sector_count;        // 扇区数量，建议至少3页
+    const uint16_t data_size;           // 存入的数据大小
+    const cfs_object_type_t data_type;  // 写入的数据类型
 } cfs_object_t;
 
 /*存储对象 - 对象类型 - 数据ID 单链表键值对*/
@@ -110,18 +110,21 @@ typedef struct cfs_object_list
     struct cfs_object_list *next;     // 链表对象
     struct cfs_object *object_handle; // 存储对象
 
-    uint8_t *name;                    // 对象的名字
+    const uint8_t *name;                    // 对象的名字
     cfs_data_id_t data_id;            // 数据块ID，这里从1开始有效
     cfs_data_id_t valid_id;           // 有效ID个数
     uint16_t data_buffer_size;        // 数据存入大小
 } cfs_object_list_t;
 
-// // 通用数据块存入缓存区，用于存入数据块，数据块大小用对象中最长的大小。
-// typedef struct cfs_block_buffer
-// {
-//     uint8_t *buffer_ptr;         // 数据块缓存指针
-//     uint16_t buffer_size;       // 数据块缓存大小
-// } cfs_block_buffer_t;
+
+#if CFS_FLASH_READ_MODE == 1
+// 通用数据块存入缓存区，用于存入数据块，数据块大小用对象中最长的大小。
+typedef struct cfs_read_buffer
+{
+    uint8_t *buffer_ptr;         // 数据块缓存指针
+    uint16_t buffer_size;       // 数据块缓存大小
+} cfs_read_buffer_t;
+#endif // CFS_FLASH_READ_MODE
 
 // 这里要重新定义存入数据的格式
 // 这里打算让后面分配好的地址直接分配过来这个结构体。

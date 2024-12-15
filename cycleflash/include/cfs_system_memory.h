@@ -27,10 +27,6 @@
 #ifndef __CFS_SYSTEM_MEMORY_H__
 #define __CFS_SYSTEM_MEMORY_H__
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdlib.h>
-
 #include "cfs_system_define.h"
 
 typedef enum
@@ -48,7 +44,10 @@ typedef enum
 }cfs_oc_action_data_result;
 
 
-// HACK: 新
+// 数据块缓存区初始化
+void cfs_memory_general_block_buffer_init(uint16_t data_buffer_size);
+
+
 // 计算需要填充的字节数
 uint8_t cfs_memory_compute_memory_fill_length(uint16_t data_size);
 
@@ -69,17 +68,14 @@ cfs_data_id_t cfs_memory_fixe_valid_id_number(
 //@def 写入和读取数据 —— 接口
 
 
-// HACK: 新
+
 //@def 在遍历ID阶段，遍历指定位置的数据，得到位置id
 /**
  * 直接校验对象缓存长度的数据，对比读取出来的数据长度。
  * 返回： 如果数据有效，返回数据长度，否则返回0
  */
-// TODO: 这里后面需要兼容自定义读取函数，后面在做
-uint16_t cfs_memory_read_verify_flash_data_id(const cfs_object_list_t *object_list,
-                                              const uint32_t address,
-          
-                                              cfs_data_id_t get_id);
+cfs_data_id_t cfs_memory_read_verify_flash_data_id(
+    const cfs_object_list_t *object_list, const uint32_t address);
 
 //@def 读取内存中指定的内存大小，经过数据校验正确后返回给中间层解析。
 /**
@@ -89,11 +85,11 @@ uint16_t cfs_memory_read_verify_flash_data_id(const cfs_object_list_t *object_li
  */
 int cfs_memory_read_flash_fixed_data(const cfs_object_list_t *object_list,
                                      const uint32_t address,
-                                     const data_max_len,
+                                     const uint16_t data_max_len,
                                      uint8_t *data_buffer);
 
 
-// HACK: 新
+
 bool cfs_memory_flash_data_clear(const cfs_object_list_t *object_list);
 
 

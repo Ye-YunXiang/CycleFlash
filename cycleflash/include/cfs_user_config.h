@@ -15,17 +15,16 @@
 
 /** XXX: 是否自行实现读取数据，设置错误会有位置情况
  *  下方模式从小到大依次兼容上一层
- *  value: (0u)    (uint8_t *)(arrdess)”的方式取flash值，
- *                  用于大部分32位MCU内置flash，请自行判断。
- *                  保留是因为效率能大大提高。
+ *  value: (0u)     定制使用32位MCU内置flash模式。
+ *                  (uint8_t *)(arrdess)”的方式取flash值，用于大部分32位MCU内置flash，请自行判断。
+ *                  保留能大大能大大提高效率,去除了拷贝内存的步骤，同时节省了内部读取的缓存区。
  * 
- * TODO: 自行读取的部分还没实现
- *  value: (1u)    自行实现读取数据，这里需要实现两个，
- *                 一个是读取一个数据，一个是读取指定长度数据。
+ *  value: (1u)     自定义模式。
+ *                  自行实现接口的读取数据函数，开启后会创建数据缓存区，用于读取数据。
  * 注意： 一旦选择自行实现读取，读写速度会变慢。
  * 注意： 如果没有开启，请自行判断用的mcu可否使用“(uint8_t *)(arrdess)”的方式取flash值。
 */
-#define CFS_FLASH_READ_MODE (0u)
+#define CFS_FLASH_READ_MODE (1u)
 
 
 /* 循环储存的ID使用类型，这里是全局修改.
@@ -34,7 +33,6 @@
  * value: (32)     这里设置为 uint32_t
  * value: (64)     这里设置为 uint64_t
 */
-// TODO:还没做到项目里
 #define CFS_ID_DATA_TYPE (32u)
 
 
@@ -50,14 +48,17 @@
 // 可使用写入方式，没有的请注释
 // 配置好可用的方式之后，请去port文件中去实现它。
 /**
+ * value: (0u)     关闭
+ * value: (1u)     打开
+ * 
  * XXX: 这里说清楚，至少要实现上面说的最小颗粒存储大小的。
  * XXX: 然后这里有用到请一定一定打开。
- * XXX: 没用到的请一定一定注释, 不然出现未知错误。
+ * XXX: 没用到的请一定一定关闭, 不然出现未知错误。
 */
-#define CFS_WRITE_PORT_ONE_BYTE             // 1 byte
-#define CFS_WRITE_PORT_HALF_WORD            // 2 byte
-#define CFS_WRITE_PORT_ONE_WORD             // 4 byte
-// #define CFS_WRITE_PORT_DOUBLE_WORD       // 8 byte
+#define CFS_WRITE_PORT_ONE_BYTE      (1u) // 1 byte
+#define CFS_WRITE_PORT_HALF_WORD     (1u) // 2 byte
+#define CFS_WRITE_PORT_ONE_WORD      (1u) // 4 byte
+#define CFS_WRITE_PORT_DOUBLE_WORD   (0u) // 8 byte
 
 
 // 定义初始化内存的方式
@@ -78,22 +79,25 @@
 // 定义在 "cfs_system_utils.h" 中的 
 // "uint16_t cfs_system_utils_check(const uint8_t *data, uint32_t data_length)"
 /* 库里有三个添加校验方式，校验值类型一定要对上：
- * value:0      CHECK_SUM       (结果按位取反)
- * value:1      CRC16_XMODEM    (结果按位取反)
- * value:2      CRC16_XMODEM 查表法(占用256Byte的RAM) (结果按位取反)
- * value:3      用户自定义，自己去实现
+ * value:(0u)      CHECK_SUM       (结果按位取反)
+ * value:(1u)      CRC16_XMODEM    
+ * value:(2u)      CRC16_XMODEM 查表法(占用256Byte的RAM)
+ * value:(3u)      用户自定义，自己去实现
  * 
  * 注释：上面按位取反是防止数据都是 0x00 的时候会校验不出来。
 */ 
-#define CFS_CHECK 0
+#define CFS_CHECK (1u)
 
 
 /* 打开全局页缓存选项，添加和‘CFS_FLASH_SECTOR_SIZE’一样大小的缓存区.
  * 打开后可以对指定ID进行修改，这里擦除页后，重写页。
- * 默认注释不使用，因为用不到，同时可以减少对RAM的负担。
+ * 默认不使用，因为用不到，同时可以减少对RAM的负担。
+ *
+ * value: (0u)     关闭
+ * value: (1u)     打开
 */
-// TODO: 还没做相关的函数
-//  #define CFS_FLASH_SECTOR_BUFFER_DEF
+// TODO: 正在做
+#define CFS_FLASH_SECTOR_BUFFER_DEF (0u)
 
 
 /* 打开变长存储的限制，可以存入变长长数据，开放几个专门使用变长存储的函数。
@@ -102,9 +106,11 @@
  * 对于数据出错，会尝试找到下一个数据在哪里。
  * 如果寻找失败会直接使用最后读取到的数据，并直接对内存进行整理，有丢失数据的风险。
  * 然后这里维护的数据表格为最大回溯10条数据，所以本模式请谨慎使用。
- * 默认注释不使用，减少对RAM的负担。
+ * 默认不使用，减少对RAM的负担。
+ * 
+ * value: (0u)     关闭
+ * value: (1u)     打开
 */
 // TODO: 还没做相关的函数,这里预留，后面在添加。
-//  #define CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
-
+#define CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL (0u)
 #endif //__CFS_USER_CONFIG_H__
