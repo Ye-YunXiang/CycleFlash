@@ -248,27 +248,6 @@ bool cfs_middle_check_address(const uint32_t address, const uint32_t sector_coun
     return true;
 }
 
-
-cfs_data_id_t cfs_middle_get_object_id(cfs_object_list_t *object_list)
-{
-    if (_this.object_list_head == NULL)
-    {
-        return CFS_CONFIG_NOT_LINKED_DATA_ID;
-    }
-
-    return object_list->data_id;
-}
-
-cfs_data_id_t cfs_middle_get_object_valid_id(cfs_object_list_t *object_list)
-{
-    if (_this.object_list_head == NULL)
-    {
-        return CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
-    }
-
-    return object_list->valid_id;
-}
-
 // 上层接口层 ------------------------------------------------------------------
 
 //@def 初始化数据对象
@@ -413,10 +392,20 @@ int cfs_middle_data_fixed_write(cfs_object_list_t *object_list,
         return CFS_RETURN_ERROR;
     }
 
-    cfs_data_id_t write = 0;
+    //cfs_data_id_t write = 0;
     if (object_list->data_id < CFS_CONFIG_DATA_ID_UPPER_LIMIT)
     {
-        write++;
+        object_list->data_id++;
+    }
+    else if (object_list->data_id == CFS_CONFIG_NOT_LINKED_DATA_ID)
+    {
+        object_list->data_id = 0;
+    }
+    else if (object_list->data_id > CFS_CONFIG_DATA_ID_UPPER_LIMIT)
+    {
+        cfs_memory_flash_data_clear(object_list);
+        object_list->data_id = 0;
+        object_list->valid_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     }
 
     uint32_t address = 
@@ -426,11 +415,8 @@ int cfs_middle_data_fixed_write(cfs_object_list_t *object_list,
     int result = 
         cfs_memory_read_flash_fixed_data(object_list, address, len, data);
 
-    if (result == CFS_RETURN_ERROR)
-    {
-        // 清空给的数据区
-        memset(data, 0, len);
-    }
+    object_list->valid_id = 
+        cfs_memory_fixe_valid_id_number(object_list, object_list->data_id);
 
     return result;
 }
@@ -440,11 +426,11 @@ bool cfs_system_oc_flash_data_clear(cfs_object_list_t *object_list)
 {
     object_list->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
     object_list->valid_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
-    memset(object_list->buffer, 0,object_list->object_handle->data_size);
+    cfs_memory_flash_data_clear(object_list);
 
     return true;
 }
-
+3
 //@def 返回目前存储对象的ID
 uint32_t cfs_middle_get_current_id(const cfs_object_list_t *object_list)
 {
@@ -453,7 +439,6 @@ uint32_t cfs_middle_get_current_id(const cfs_object_list_t *object_list)
         return CFS_CONFIG_NOT_LINKED_DATA_ID;
     }
 
-    // return cfs_system_oc_object_id_get(object_list);
     return object_list->data_id;
 }
 
@@ -465,7 +450,6 @@ uint32_t cfs_middle_get_current_valid_id(const cfs_object_list_t *object_list)
         return CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     }
 
-    //return cfs_system_oc_object_valid_id_get(object_list);
     return object_list->valid_id;
 }
 

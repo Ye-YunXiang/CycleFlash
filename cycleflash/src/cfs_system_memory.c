@@ -37,22 +37,22 @@
 // ************************************************************************
 //@def 写入和读取数据 —— 内部处理
 
-static bool __read_flash_data_block(
-    volatile uint32_t addr, cfs_data_block * block, cfs_system *temp_cfs)
-{
-    cfs_port_system_flash_read(
-        addr, (uint8_t *)(&block->data_id), sizeof(block->data_id));
+// static bool __read_flash_data_block(
+//     volatile uint32_t addr, cfs_data_block * block, cfs_system *temp_cfs)
+// {
+//     cfs_port_system_flash_read(
+//         addr, (uint8_t *)(&block->data_id), sizeof(block->data_id));
 
-    addr += sizeof(block->data_id);
-    cfs_port_system_flash_read(
-        addr, block->data_pointer, block->data_len);
+//     addr += sizeof(block->data_id);
+//     cfs_port_system_flash_read(
+//         addr, block->data_pointer, block->data_len);
         
-    addr += temp_cfs->data_size;
-    cfs_port_system_flash_read(
-        addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
+//     addr += temp_cfs->data_size;
+//     cfs_port_system_flash_read(
+//         addr, (uint8_t *)(&block->data_crc_16), sizeof(block->data_crc_16));
 
-    return true;
-}
+//     return true;
+// }
 
 // HACK: 新
 static bool _erasing_flash_page( volatile uint32_t addr, uint16_t page)
@@ -69,69 +69,69 @@ static bool _erasing_flash_page( volatile uint32_t addr, uint16_t page)
 static bool _write_flash_data(
     volatile uint32_t addr, uint8_t * buffer, uint16_t len)
 {
-    uint16_t write_byte_len = 0;
     uint16_t write_byte_all_len = 0;
+
+#ifdef CFS_WRITE_PORT_DOUBLE_WORD
+    const uint16_t WRITE_DOUBLR_WORD_LEN = (len - write_byte_all_len) / 8;
+    write_byte_all_len += WRITE_DOUBLR_WORD_LEN * 8;
+#endif // CFS_WRITE_PORT_DOUBLE_WORD
+
+#ifdef CFS_WRITE_PORT_ONE_WORD
+    const uint16_t WRITE_WORD_LEN = (len - write_byte_all_len) / 4;
+    write_byte_all_len += WRITE_WORD_LEN * 4;
+#endif // CFS_WRITE_PORT_ONE_WORD
+
+#ifdef CFS_WRITE_PORT_HALF_WORD
+    const uint16_t WRITE_HALF_WORD_LEN = (len - write_byte_all_len) / 2;
+    write_byte_all_len += WRITE_HALF_WORD_LEN * 2;
+#endif // CFS_WRITE_PORT_HALF_WORD
+
+#ifdef CFS_WRITE_PORT_ONE_BYTE
+    const uint16_t WRITE_BYTE_LEN = len - write_byte_all_len;
+    write_byte_all_len += WRITE_BYTE_LEN;
+#endif // CFS_WRITE_PORT_ONE_BYTE
+
+
+    if (write_byte_all_len != len)
+    {
+        return false;
+    }
 
     cfs_port_system_flash_lock_enable();
 
-    // while(len != 0)
-    // {
-    //     if(addr % 4 == 0 && len >= 4)
-    //     {
-    //         cfs_port_system_flash_write_word(addr, buffer, len / 4);
-    //         buffer += (len / 4) * 4;
-    //         addr += (len / 4) * 4;
-    //         len -= (len / 4) * 4;
-    //     }
-    //     else if(addr % 2 == 0 && len >= 2)
-    //     {
-    //         cfs_port_system_flash_write_half_word(addr, buffer, len / 2);
-    //         buffer += (len / 2) * 2;
-    //         addr += (len / 2) * 2;
-    //         len -= (len / 2) * 2;
-    //     }
-    //     else
-    //     {
-    //         cfs_port_system_flash_write_byte(addr, buffer, 1);
-    //         buffer++;
-    //         addr++;
-    //         len--;
-    //     }
-    // }
-
-    if ()
-
-    if (len >= 8)
+#ifdef CFS_WRITE_PORT_ONE_BYTE
+    if (WRITE_BYTE_LEN != 0)
     {
-        write_byte_len = len / 8;
-        cfs_port_system_flash_write_double_word(addr, buffer, write_byte_len);
-        len -= write_byte_len * 8;
-        addr += write_byte_len * 8;
-        buffer += write_byte_len * 8;
+        cfs_port_system_flash_write_byte(addr, buffer, WRITE_BYTE_LEN);
+        addr += WRITE_BYTE_LEN;
+        buffer += WRITE_BYTE_LEN;
     }
+#endif // CFS_WRITE_PORT_ONE_BYTE
 
-    if (len >= 4)
+#ifdef CFS_WRITE_PORT_HALF_WORD
+    if (WRITE_HALF_WORD_LEN != 0)
     {
-        write_byte_len = len / 4;
-        cfs_port_system_flash_write_word(addr, buffer, write_byte_len);
-        len -= write_byte_len * 4;
-        addr += write_byte_len * 4;
-        buffer += write_byte_len * 4;
+        cfs_port_system_flash_write_byte(addr, buffer, WRITE_HALF_WORD_LEN);
+        addr += WRITE_HALF_WORD_LEN * 2;
+        buffer += WRITE_HALF_WORD_LEN * 2;
     }
+#endif // CFS_WRITE_PORT_HALF_WORD
 
-    if (len >= 2)
+#ifdef CFS_WRITE_PORT_ONE_WORD
+    if (WRITE_WORD_LEN != 0)
     {
-        write_byte_len = len / 2;
-        cfs_port_system_flash_write_half_word(addr, buffer, write_byte_len);
-        len -= write_byte_len * 2;
-        addr += write_byte_len * 2;
-        buffer += write_byte_len * 2;
+        cfs_port_system_flash_write_byte(addr, buffer, WRITE_WORD_LEN);
+        addr += WRITE_WORD_LEN * 4;
+        buffer += WRITE_WORD_LEN * 4;
     }
+#endif // CFS_WRITE_PORT_ONE_WORD
 
-    if (len != 0)
+#ifdef CFS_WRITE_PORT_DOUBLE_WORD
+    if (WRITE_DOUBLR_WORD_LEN != 0)
     {
-        cfs_port_system_flash_write_byte(addr, buffer, len);
+        cfs_port_system_flash_write_byte(addr, buffer, WRITE_DOUBLR_WORD_LEN);
     }
+#endif // CFS_WRITE_PORT_DOUBLE_WORD
 
     cfs_port_system_flash_lock_disable();
 
@@ -141,7 +141,7 @@ static bool _write_flash_data(
 
 // HACK: 新
 static bool _write_flash_data_block(
-    volatile uint32_t addr, cosnt cfs_data_block_t *write_block)
+    volatile uint32_t addr, const cfs_data_block_t *write_block)
 {   
     const uint16_t DATA_FILL = cfs_memory_compute_memory_fill_length(write_block->data_len);
     bool result = false;
@@ -513,262 +513,93 @@ int cfs_memory_add_write_flash_fixed_data(const cfs_object_list_t *object_list,
 }
 
 
-
-//@def 往内存中写入新的数据，增加式
-cfs_oc_action_data_result cfs_system_oc_add_write_flash_data( \
-    const cfs_object_list_t *temp_object, cfs_data_block * buffer)
+// HACK: 新
+bool cfs_memory_flash_data_clear(const cfs_object_list_t *object_list)
 {
-    assert(buffer != NULL && 
-        buffer->data_len >= 1 && buffer->data_id != CFS_CONFIG_NOT_LINKED_DATA_ID);
-
-    cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
-    cfs_system *temp_cfs = cfs_system_oc_system_object_get(temp_object);
-    const uint32_t data_addr = 
-        cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
-    const uint32_t start_addr = 
-        (data_addr / temp_cfs->sector_size) * temp_cfs->sector_size;
-    const uint32_t max_addr = start_addr + temp_cfs->sector_size;
-    const uint32_t data_block_lent = 
-        temp_cfs->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
-
-    buffer->data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer, true);
-
-    if(data_addr == temp_cfs->addr_handle && 
-        temp_cfs->struct_type != CFS_FILESYSTEM_OBJECT_TYPE_FIXED_DATA_STORAGE) 
-    {
-        __erasing_flash_page(data_addr, 1);
-    }
-    else if((data_addr + data_block_lent) >= max_addr && max_addr < 
-        (temp_cfs->addr_handle + temp_cfs->sector_size * temp_cfs->sector_count))
-    {
-        __erasing_flash_page(max_addr, 1);
-    }
-    __write_flash_data_block(data_addr, buffer, temp_cfs);
-
-    if(_contrast_flash_data_block(data_addr, buffer, temp_cfs) == false)
-    {
-        read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
-    }
-    else
-    {
-        read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED;
-    }
-
-    return read_result;
+    _erasing_flash_page(object_list->object_handle->address,
+                        object_list->object_handle->sector_count);
+    return true;
 }
 
-//@def 修改内存中的数据
-cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( 
-    const cfs_object_list_t *temp_object, cfs_data_block * buffer)
-{
-    assert(buffer != NULL && 
-        buffer->data_len >= 1 && buffer->data_id != CFS_CONFIG_NOT_LINKED_DATA_ID);
+
+
+// //@def 修改内存中的数据
+// cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( 
+//     const cfs_object_list_t *temp_object, cfs_data_block * buffer)
+// {
+//     assert(buffer != NULL && 
+//         buffer->data_len >= 1 && buffer->data_id != CFS_CONFIG_NOT_LINKED_DATA_ID);
         
-    cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
-    cfs_system *temp_cfs_objecr = cfs_system_oc_system_object_get(temp_object);
-    //@def 数据地址
-    const uint32_t data_addr = 
-        cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
-    //@def 数据所在页开始地址
-    const uint32_t start_addr = 
-        (data_addr / temp_cfs_objecr->sector_size) * temp_cfs_objecr->sector_size;
-    //@def 数据块的长度
-    const uint32_t data_block_lent = 
-        temp_cfs_objecr->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
+//     cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
+//     cfs_system *temp_cfs_objecr = cfs_system_oc_system_object_get(temp_object);
+//     //@def 数据地址
+//     const uint32_t data_addr = 
+//         cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
+//     //@def 数据所在页开始地址
+//     const uint32_t start_addr = 
+//         (data_addr / temp_cfs_objecr->sector_size) * temp_cfs_objecr->sector_size;
+//     //@def 数据块的长度
+//     const uint32_t data_block_lent = 
+//         temp_cfs_objecr->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
 
-    uint8_t *read_sector_data = NULL;
-    uint8_t *temo_read_sector_data = NULL;
-    uint16_t read_page_count = 1;
+//     uint8_t *read_sector_data = NULL;
+//     uint8_t *temo_read_sector_data = NULL;
+//     uint16_t read_page_count = 1;
  
-    read_sector_data = &data_buffer_temp[0];
-    temo_read_sector_data = read_sector_data;
-    buffer->data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer, true);
+//     read_sector_data = &data_buffer_temp[0];
+//     temo_read_sector_data = read_sector_data;
+//     buffer->data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer, true);
 
-    //@def 减一得到结束地址
-    if((data_addr + data_block_lent - 1) >= start_addr + temp_cfs_objecr->sector_size)
-    {
-        cfs_port_system_flash_read(start_addr, read_sector_data, temp_cfs_objecr->sector_size);
-        memset(read_sector_data + data_addr - start_addr, CFS_FLASH_SECTOR_SIZE, 
-            start_addr + temp_cfs_objecr->sector_size - data_addr);
+//     //@def 减一得到结束地址
+//     if((data_addr + data_block_lent - 1) >= start_addr + temp_cfs_objecr->sector_size)
+//     {
+//         cfs_port_system_flash_read(start_addr, read_sector_data, temp_cfs_objecr->sector_size);
+//         memset(read_sector_data + data_addr - start_addr, CFS_FLASH_SECTOR_SIZE, 
+//             start_addr + temp_cfs_objecr->sector_size - data_addr);
 
-        __erasing_flash_page(start_addr, 1);
-        __write_flash_data(\
-            start_addr, read_sector_data, temp_cfs_objecr->sector_size);
-        cfs_port_system_flash_lock_disable();
+//         __erasing_flash_page(start_addr, 1);
+//         __write_flash_data(\
+//             start_addr, read_sector_data, temp_cfs_objecr->sector_size);
+//         cfs_port_system_flash_lock_disable();
 
-        cfs_port_system_flash_read(start_addr + temp_cfs_objecr->sector_size, read_sector_data, temp_cfs_objecr->sector_size);
-        memset(read_sector_data, CFS_FLASH_SECTOR_SIZE, data_addr - start_addr + data_block_lent - temp_cfs_objecr->sector_size);
+//         cfs_port_system_flash_read(start_addr + temp_cfs_objecr->sector_size, read_sector_data, temp_cfs_objecr->sector_size);
+//         memset(read_sector_data, CFS_FLASH_SECTOR_SIZE, data_addr - start_addr + data_block_lent - temp_cfs_objecr->sector_size);
 
-        __erasing_flash_page(start_addr + temp_cfs_objecr->sector_size, 1);
-        __write_flash_data( start_addr + temp_cfs_objecr->sector_size, read_sector_data, temp_cfs_objecr->sector_size);
+//         __erasing_flash_page(start_addr + temp_cfs_objecr->sector_size, 1);
+//         __write_flash_data( start_addr + temp_cfs_objecr->sector_size, read_sector_data, temp_cfs_objecr->sector_size);
 
-        __write_flash_data_block(data_addr, buffer, temp_cfs_objecr);
-        cfs_port_system_flash_lock_disable();
-    }
-    else
-    {
-        cfs_port_system_flash_read(start_addr, read_sector_data, \
-            temp_cfs_objecr->sector_size * read_page_count);
-        temo_read_sector_data = read_sector_data + data_addr - start_addr;
-        memset(temo_read_sector_data, CFS_FLASH_SECTOR_SIZE, data_block_lent);
-        memcpy(temo_read_sector_data, &buffer->data_id, sizeof(buffer->data_id));
-        temo_read_sector_data += sizeof(buffer->data_id);
-        memcpy(temo_read_sector_data, buffer->data_pointer, buffer->data_len);
-        temo_read_sector_data += temp_cfs_objecr->data_size;
-        memcpy(temo_read_sector_data, &buffer->data_crc_16, sizeof(buffer->data_crc_16));
+//         __write_flash_data_block(data_addr, buffer, temp_cfs_objecr);
+//         cfs_port_system_flash_lock_disable();
+//     }
+//     else
+//     {
+//         cfs_port_system_flash_read(start_addr, read_sector_data, \
+//             temp_cfs_objecr->sector_size * read_page_count);
+//         temo_read_sector_data = read_sector_data + data_addr - start_addr;
+//         memset(temo_read_sector_data, CFS_FLASH_SECTOR_SIZE, data_block_lent);
+//         memcpy(temo_read_sector_data, &buffer->data_id, sizeof(buffer->data_id));
+//         temo_read_sector_data += sizeof(buffer->data_id);
+//         memcpy(temo_read_sector_data, buffer->data_pointer, buffer->data_len);
+//         temo_read_sector_data += temp_cfs_objecr->data_size;
+//         memcpy(temo_read_sector_data, &buffer->data_crc_16, sizeof(buffer->data_crc_16));
 
-        __erasing_flash_page(start_addr, read_page_count);
-        __write_flash_data(\
-            start_addr, read_sector_data, temp_cfs_objecr->sector_size);
+//         __erasing_flash_page(start_addr, read_page_count);
+//         __write_flash_data(\
+//             start_addr, read_sector_data, temp_cfs_objecr->sector_size);
 
-    }
+//     }
 
-    if(cfs_port_system_flash_read_contrast( \
-        start_addr, read_sector_data, \
-        temp_cfs_objecr->sector_size * read_page_count) == false)
-    {
-        read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
-    }
-    else
-    {
-        read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED;
-    }
+//     if(cfs_port_system_flash_read_contrast( \
+//         start_addr, read_sector_data, \
+//         temp_cfs_objecr->sector_size * read_page_count) == false)
+//     {
+//         read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
+//     }
+//     else
+//     {
+//         read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED;
+//     }
 
-    return read_result;
-}
+//     return read_result;
+// }
 
-bool cfs_system_oc_flash_data_clear(const cfs_object_list_t *temp_object)
-{
-    __erasing_flash_page( \
-        temp_object->object_handle->addr_handle, \
-        temp_object->object_handle->sector_count);
-    return true;
-}
-
-bool cfs_system_oc_object_delete(cfs_object_list_t *temp_object)
-{
-    if(temp_object == NULL)
-    {
-        return false;
-    }
-
-    if(temp_object->object_handle != NULL)
-    {
-        CFS_FREE(temp_object->object_handle);
-        temp_object->object_handle = NULL;
-    }
-
-    if(temp_object->buffer != NULL)
-    {
-        CFS_FREE(temp_object->buffer);
-        temp_object->buffer = NULL;
-    }
-
-    if(cfs_system_object_head == temp_object)
-    {
-        if(cfs_system_object_tail == temp_object)
-        {
-            cfs_system_object_head = NULL;
-            cfs_system_object_tail = NULL;
-        }
-        else
-        {
-            cfs_system_object_head = temp_object->next;
-            temp_object->next->prior = NULL;
-        }
-    }
-    else
-    {
-        if(cfs_system_object_tail == temp_object)
-        {
-            cfs_system_object_tail = temp_object->prior;
-        }
-        else
-        {
-            temp_object->prior->next = temp_object->next;
-            temp_object->next->prior = temp_object->prior;
-        }
-    }
-
-    CFS_FREE(temp_object);
-    return true;
-}
-
-// *****************************************************************************************************
-// 设置和获取对象 —— 接口
-
-/*设置数据数据对象的ID*/
-bool cfs_system_oc_object_id_set( \
-    cfs_object_list_t * temp_cfs_handle, uint32_t temp_id)
-{
-    temp_cfs_handle->data_id = temp_id;
-    return true;
-}
-
-
-/* 得到数据数据对象的ID */
-uint32_t cfs_system_oc_object_id_get(const cfs_object_list_t *temp_cfs_handle)
-{
-    return temp_cfs_handle->data_id;
-} 
-
-/*设置数据数据对象的可用ID*/
-bool cfs_system_oc_object_valid_id_set( \
-    cfs_object_list_t * temp_cfs_handle, uint16_t temp_id)
-{
-    temp_cfs_handle->valid_id = temp_id;
-    return true;
-}
-
-
-/* 得到数据数据对象的可用ID */
-uint16_t cfs_system_oc_object_valid_id_get( \
-    const cfs_object_list_t *temp_cfs_handle)
-{
-    return temp_cfs_handle->valid_id;
-} 
-
-/* 得到数据对象的类型*/
-uint8_t cfs_system_oc_object_struct_type_get( \
-    const cfs_object_list_t *temp_cfs_handle)
-{
-    return (uint8_t)temp_cfs_handle->object_handle->struct_type;
-} 
-
-
-/*得到系统数据对象指针*/
-cfs_system *cfs_system_oc_system_object_get(const cfs_object_list_t *temp_object)
-{
-    return temp_object->object_handle;
-}
-
-
-/*使用初始化链表对象后返回的句柄，在通过crc-16-xmodem标识验证链表对象是否存在*/
-//@def 存在返回链表对象，不存在返回NULL
-cfs_object_list_t * cfs_system_oc_object_linked_crc_16_verify( \
-    cfs_object_handle_ptr temp_cfs_handle)
-{
-    cfs_object_list_t *temp_object = \
-        (cfs_object_list_t *)((uint32_t)(temp_cfs_handle>>16));
-    uint16_t temp_crc_16 = (uint16_t)(temp_cfs_handle);
-
-    if(temp_object->this_linked_addr_crc_16 == temp_crc_16)
-    {
-        return temp_object;
-    }
-
-    return NULL;
-}
-
-
-/*设置数据数据对象的可用ID*/
-bool cfs_system_oc_object_block_buffer_set( \
-    cfs_object_list_t * temp_cfs_handle, cfs_data_block *temp_block)
-{
-    memset(temp_cfs_handle->buffer, 0, temp_cfs_handle->object_handle->data_size);
-
-    temp_block->data_pointer = temp_cfs_handle->buffer;
-    temp_block->data_len = temp_cfs_handle->object_handle->data_size;
-
-    return true;
-}

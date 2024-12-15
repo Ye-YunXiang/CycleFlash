@@ -59,7 +59,7 @@ typedef struct cfs_object *cfs_object_handle_ptr;
 // 经过思考，ID的正式使用从0开始。
 #if CFS_ID_DATA_TYPE==(32u)
     #define CFS_CONFIG_NOT_LINKED_DATA_ID   (UINT_MAX)
-    #define CFS_CONFIG_DATA_ID_UPPER_LIMIT  (UINT_MAX - 5u)
+    #define CFS_CONFIG_DATA_ID_UPPER_LIMIT  (UINT_MAX - 10u)
     // SIZEOF(data_id) + SIZEOF(data_len) + SIZEOF(data_crc_16)
     #define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN (8u)
     // 读取数据块的偏移长度
@@ -67,7 +67,7 @@ typedef struct cfs_object *cfs_object_handle_ptr;
     #define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN (6u)
 #elif CFS_ID_DATA_TYPE==(64u)
     #define CFS_CONFIG_NOT_LINKED_DATA_ID   (ULLONG_MAX)
-    #define CFS_CONFIG_DATA_ID_UPPER_LIMIT  (ULLONG_MAX - 5u)
+    #define CFS_CONFIG_DATA_ID_UPPER_LIMIT  (ULLONG_MAX - 10u)
     #define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN (12u)
     #define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN (10u)
 #endif  // CFS_FLASH_ERASURE

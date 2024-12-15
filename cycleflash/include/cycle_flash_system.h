@@ -50,10 +50,9 @@ cfs_object_handle_ptr cfs_nv_object_init(
  * \param uint32_t 要读取的ID
  * \param uint8_t 写入数据的指针
  * \param uint32_t 写入数据长度
- * \return 写入成功返回写入的数据个数，如果写入失败返回 0。
+ * \return 写入成功返回写入的数据个数，如果写入失败返回 -1。
  */
-int cfs_nv_write(cfs_object_handle_ptr object, \
-	uint32_t temp_id, uint8_t *data, uint16_t len);
+int cfs_nv_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len);
 
 
 // HACK: 新
@@ -70,12 +69,13 @@ int cfs_nv_read(cfs_object_handle_ptr object,
                 uint16_t len,
                 cfs_data_id_t read_in_past);
 
+// HACK: 新
 /** 清除指定对象的存储空间
  *
  * \param cfs_object_handle_ptr 存储空间的句柄
  * \return 擦除成功返回true，反则为flash
  */
-bool cfs_nv_clear(cfs_object_handle_ptr temp_object_handle);
+bool cfs_nv_clear(cfs_object_handle_ptr object)
 
 
 // HACK: 新

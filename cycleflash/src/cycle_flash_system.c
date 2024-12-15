@@ -35,120 +35,6 @@
 #include "cfs_system_utils.h"
 
 
-
-//@def 存储固定数据——写入数据,写入成功返回写入的原始数据长度
-static uint32_t cfs_filesystem_fixed_data_write( \
-    cfs_object_list_t *temp_object, \
-    uint32_t write_id, uint8_t *data, uint16_t len)
-{
-    cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
-    cfs_system *temp_cfs_object = cfs_system_oc_system_object_get(temp_object);
-    const uint32_t  temp_max_id = \
-        temp_cfs_object->sector_size * temp_cfs_object->sector_count / \
-        (temp_cfs_object->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN);
-
-    bool flash_data_block_is_null = true;  
-    if(write_id >= temp_max_id)
-    {
-        //@def 固定存储，ID不能超过最大ID数
-        assert(write_id < temp_max_id);
-        return NULL;
-    }
-
-    //@def 填充数据
-    cfs_data_block temp_data_block;
-    temp_data_block.data_id = write_id;
-    cfs_system_oc_object_block_buffer_set(temp_object, &temp_data_block);
-    memcpy(temp_data_block.data_pointer, data, len);
-
-    flash_data_block_is_null = \
-        cfs_system_oc_flash_checking_null_values(temp_object, &temp_data_block);
-    
-    if( flash_data_block_is_null == true)
-    {
-        read_result = cfs_system_oc_add_write_flash_data(temp_object, &temp_data_block);
-    }
-    else
-    {
-        read_result = cfs_system_oc_set_write_flash_data(temp_object, &temp_data_block);
-    }
-    
-    if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
-    {
-        return len;
-    }
-    
-    return NULL;
-}
-
-//@def 循环存储数据——写入数据,写入成功返回写入的原始数据长度
-static uint32_t cfs_filesystem_cycle_data_write( \
-    cfs_object_list_t *temp_object, \
-    uint32_t write_id, uint8_t *data, uint16_t len)
-{
-    cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
-    uint32_t temp_id = cfs_system_oc_object_id_get(temp_object);
-    uint16_t temp_valid_id = cfs_system_oc_object_valid_id_get(temp_object);
-
-    // 填充数据
-    cfs_data_block temp_data_block;
-    temp_data_block.data_id = write_id;
-    cfs_system_oc_object_block_buffer_set(temp_object, &temp_data_block);
-    memcpy(temp_data_block.data_pointer, data, len);
-
-    // 每次增加的ID不能跳，只能一个一个往上加
-    if((write_id > temp_id && ((write_id - temp_id) == 1))|| \
-        (temp_id == CFS_CONFIG_NOT_LINKED_DATA_ID && write_id == 0))
-    {
-        read_result = cfs_system_oc_add_write_flash_data(temp_object, &temp_data_block);
-
-        if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
-        {
-            cfs_system_oc_object_id_set(temp_object, write_id);
-            cfs_system_oc_object_valid_id_set( \
-                temp_object, cfs_system_oc_valid_data_number(temp_object));
-        }
-    }
-    else if((temp_id-temp_valid_id) < write_id && write_id <= temp_id)
-    {
-        read_result = cfs_system_oc_set_write_flash_data(temp_object, &temp_data_block);
-    }
-
-    if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
-    {
-        return len;
-    }
-
-    /*user designation codes*/
-    return NULL;
-}
-
-//@def 读取数据,读取成功返回读取的原始数据长度
-static uint32_t cfs_filesystem_flsh_data_read( \
-    cfs_object_list_t *temp_object, \
-    uint32_t read_id, uint8_t *data, uint16_t len)
-{
-    cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
-    
-    cfs_data_block temp_data_block;
-    temp_data_block.data_id = read_id;
-    cfs_system_oc_object_block_buffer_set(temp_object, &temp_data_block);
-
-    //@def 读取内存中的数据,会验证crc8
-    read_result = cfs_system_oc_read_flash_data(temp_object, &temp_data_block);
-
-    if(read_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
-    {
-        memcpy(data, temp_data_block.data_pointer, len);
-        return len;
-    }
-    
-    return false;
-}
-
-
-
-
 //*********************************************************************************
 //-- 对外接口  
 //*********************************************************************************
@@ -188,13 +74,7 @@ cfs_object_handle_ptr cfs_nv_object_init(
     return object_handle;
 }
 
-/**
- * 这里说以下小构思：
- * 1. 第一层负责校验参数是否正确，选择内核的哪个处理函数
- * 2. 第二层负责处理数据，得到读取/写入数据的结果，并且填充进缓存返回结果。
- * 3. 第三层负责对接底层读写函数接口，以及数据校验是否正确。
- */
-
+// HACK: 新
 //@def 根据id往内存中写入数据
 int cfs_nv_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len)
 {
@@ -204,7 +84,7 @@ int cfs_nv_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len)
         return CFS_RETURN_ERROR;
     }
 
-    int result_len = cfs_middle_data_read(object_list, data, len);
+    int result_len = cfs_middle_data_fixed_write(object_list, data, len);
     
     return result_len;
 }
@@ -228,27 +108,17 @@ int cfs_nv_read(cfs_object_handle_ptr object,
     return result_len;
 }
 
+// HACK: 新
 //@def 清除指定对象的存储空间
-bool cfs_nv_clear(cfs_object_handle_ptr temp_object_handle)
+bool cfs_nv_clear(cfs_object_handle_ptr object)
 {
-    cfs_object_list_t *temp_object = \
-        cfs_system_oc_object_linked_crc_16_verify(temp_object_handle);
-    if(temp_object == NULL)
+    cfs_object_list_t *object_list = cfs_middle_find_object(object);
+    if(object_list == NULL)
     {
         return false;
     }
 
-    if(cfs_system_oc_flash_data_clear(temp_object) == true)
-    {
-        temp_object->data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
-        temp_object->valid_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
-    }
-    else
-    {
-        //@def 不应该到这里
-        assert(false);
-        return false;
-    }
+    cfs_system_oc_flash_data_clear(object_list);
     
     return true;
 }
@@ -257,26 +127,24 @@ bool cfs_nv_clear(cfs_object_handle_ptr temp_object_handle)
 //@def 返回目前存储对象的ID
 cfs_data_id_t cfs_nv_get_current_id(cfs_object_handle_ptr object)
 {
-    cfs_object_list_t *object_list = \
-        cfs_middle_find_object(object);
+    cfs_object_list_t *object_list = cfs_middle_find_object(object);
     if(object_list == NULL)
     {
         return CFS_CONFIG_NOT_LINKED_DATA_ID;
     }
 
-    return cfs_middle_get_object_id(object_list);
+    return cfs_middle_get_current_id(object_list);
 }
 
 // HACK: 新
 //@def 返回目前存储对象的可用ID
 cfs_data_id_t cfs_nv_get_current_valid_id(cfs_object_handle_ptr object)
 {
-    cfs_object_list_t *object_list = \
-        cfs_middle_find_object(object);
+    cfs_object_list_t *object_list = cfs_middle_find_object(object);
     if(object_list == NULL)
     {
-        return CFS_CONFIG_NOT_LINKED_DATA_ID;
+        return CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     }
 
-    return cfs_middle_get_object_valid_id(object_list);
+    return cfs_middle_get_current_valid_id(object_list);
 }

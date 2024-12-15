@@ -39,11 +39,6 @@ cfs_object_t * cfs_middle_add_object_init(
 //@def 检查重复地址是否通过
 bool cfs_middle_check_address(const uint32_t address, const uint32_t sector_count);
 
-cfs_data_id_t cfs_middle_get_object_id(cfs_object_list_t *object_list);
-
-cfs_data_id_t cfs_middle_get_object_valid_id(cfs_object_list_t *object_list);
-
-
 //@def 初始化遍历ID
 bool cfs_middle_object_id_init(const cfs_object_t *object);
 
