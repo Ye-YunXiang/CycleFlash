@@ -109,7 +109,7 @@ static cfs_data_id_t
         // 遍历区，如果错误，在往下遍历一位
         for (uint8_t j=0; j<3; j++)
         {
-            if (data_traversal_id[0] >= FLASH_MAX_ID_COUNT)
+            if (data_traversal_id[0] > FLASH_MAX_ID_COUNT)
             {
                 // 这里表示ID号超过了弹出结束
                 break;
@@ -143,10 +143,11 @@ static cfs_data_id_t
     //@def 如果读出来的结果是有ID的，遍历ID最大的这一页，寻找ID的最大值
     if (data_max_id[1] != CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
-        const cfs_data_id_t LASR_TRAVERSE_MAX_ID = 
-            (CFS_FLASH_SECTOR_SIZE * 2 
-            / object_list->data_buffer_size) + data_max_id[0];
-        data_traversal_id[0] = data_max_id[0];
+        const cfs_data_id_t LASR_TRAVERSE_MAX_ID =  
+            (CFS_FLASH_SECTOR_SIZE / object_list->data_buffer_size) 
+            + data_max_id[0] + 1;
+        
+        data_traversal_id[0] = data_max_id[0] + 1;
 
         while (data_traversal_id[0] < FLASH_MAX_ID_COUNT
             && data_traversal_id[0] < LASR_TRAVERSE_MAX_ID)
@@ -155,7 +156,7 @@ static cfs_data_id_t
             if (read_id_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED
                 && data_traversal_id[1] != CFS_CONFIG_NOT_LINKED_DATA_ID)
             {
-                if (data_traversal_id[1] > data_max_id[1])
+                if (data_traversal_id[1] >= data_max_id[1])
                 {
                     data_max_id[1] = data_traversal_id[1];
                 }
@@ -164,7 +165,7 @@ static cfs_data_id_t
                     break;
                 }
             }
-            data_traversal_id[0] += 0;
+            data_traversal_id[0] += 1;
             data_traversal_id[1] = CFS_CONFIG_NOT_LINKED_DATA_ID;
         }
     }
@@ -184,7 +185,7 @@ bool cfs_middle_check_address(const uint32_t address, const uint32_t sector_coun
 {
     if (_this.object_list_head == NULL)
     {
-        return false;
+        return true;
     }
 
     cfs_object_list_t *list_pointer = _this.object_list_head->next;
@@ -376,8 +377,8 @@ int cfs_middle_data_fixed_write(cfs_object_list_t *object_list,
         cfs_memory_calculate_fixed_id_flash_address(
             object_list, object_list->data_id);
 
-    int result = 
-        cfs_memory_read_flash_fixed_data(object_list, address, len, data);
+    int result = cfs_memory_add_write_flash_fixed_data(
+        object_list, address, object_list->data_id,len, data);
 
     object_list->valid_id = 
         cfs_memory_fixe_valid_id_number(object_list, object_list->data_id);

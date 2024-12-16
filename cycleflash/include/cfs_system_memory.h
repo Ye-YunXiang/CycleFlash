@@ -88,6 +88,16 @@ int cfs_memory_read_flash_fixed_data(const cfs_object_list_t *object_list,
                                      const uint16_t data_max_len,
                                      uint8_t *data_buffer);
 
+//@def 添加式写入数据，确认写入正确后返回。
+/**
+ * 如果写入失败，会检测以下写入区域是否无数据，如果无数据就在尝试写入一次。
+ * 以上全部失败，把本区域全部置为初始值的相反值，在返回错误。
+ */
+int cfs_memory_add_write_flash_fixed_data(const cfs_object_list_t *object_list,
+                                          const uint32_t address,
+                                          const cfs_data_id_t input_id,
+                                          const uint16_t data_len,
+                                          uint8_t *data_buffer);
 
 
 bool cfs_memory_flash_data_clear(const cfs_object_list_t *object_list);

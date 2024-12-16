@@ -41,7 +41,7 @@
  * \return 成功返回true，否则false
  */
 bool cfs_port_system_flash_write_byte(
-    volatile uint32_t addr, volatile uint8_t * data, uint16_t len);
+    volatile uint32_t addr, uint8_t * data, uint16_t len);
 
 
 /** 往flash中存储数据(半字写)
@@ -54,7 +54,7 @@ bool cfs_port_system_flash_write_byte(
  * \return 成功返回true，否则false
  */
 bool cfs_port_system_flash_write_half_word(
-    volatile uint32_t addr, volatile uint8_t * data, const uint16_t len);
+    volatile uint32_t addr, uint8_t * data, const uint16_t len);
 
 
 /** 往flash中存储数据(字写)
@@ -67,7 +67,7 @@ bool cfs_port_system_flash_write_half_word(
  * \return 成功返回true，否则false
  */
 bool cfs_port_system_flash_write_word( 
-    volatile uint32_t addr, volatile uint8_t * data, const uint16_t len);
+    volatile uint32_t addr, uint8_t * data, const uint16_t len);
 
 
 /** 往flash中存储数据(双字写)
@@ -80,7 +80,7 @@ bool cfs_port_system_flash_write_word(
  * \return 成功返回true，否则false
  */
 bool cfs_port_system_flash_write_double_word(
-    volatile uint32_t addr, volatile uint8_t * data, uint16_t len);
+    volatile uint32_t addr, uint8_t * data, uint16_t len);
 
 
 /** 往flash中读取数据

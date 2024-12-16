@@ -24,7 +24,7 @@
  * 注意： 一旦选择自行实现读取，读写速度会变慢。
  * 注意： 如果没有开启，请自行判断用的mcu可否使用“(uint8_t *)(arrdess)”的方式取flash值。
 */
-#define CFS_FLASH_READ_MODE (1u)
+#define CFS_FLASH_READ_MODE (0u)
 
 
 /* 循环储存的ID使用类型，这里是全局修改.
@@ -34,15 +34,6 @@
  * value: (64)     这里设置为 uint64_t
 */
 #define CFS_ID_DATA_TYPE (32u)
-
-
-/* 可写入的最小颗粒，这里只能设定三个值.
- * 根据芯片手册进行修改。
- * value: 1    1Byte
- * value: 2    半字
- * value: 4    1字
-*/
-#define CFS_WRITE_MIN_PARTICLE      (1u)
 
 
 // 可使用写入方式，没有的请注释

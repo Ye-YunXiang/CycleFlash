@@ -51,17 +51,27 @@
 
 /*存储初始化文件系统返回的对象句柄*/
 typedef struct cfs_object *cfs_object_handle_ptr;
+
+// 可写入的最小颗粒
+#if CFS_WRITE_PORT_ONE_BYTE != 0
+    #define CFS_WRITE_MIN_PARTICLE  (1u)
+#elif CFS_WRITE_PORT_HALF_WORD != 0
+    #define CFS_WRITE_MIN_PARTICLE  (2u)
+#elif CFS_WRITE_PORT_ONE_WORD != 0
+    #define CFS_WRITE_MIN_PARTICLE  (4u)
+#elif CFS_WRITE_PORT_DOUBLE_WORD != 0
+    #define CFS_WRITE_MIN_PARTICLE  (8u)
+#else
+    #error "您没有对可用写入方式宏进行配置！"
+#endif
+
+
 // 数据定义-----------------
-#if CFS_ID_DATA_TYPE == (32u)
-    typedef uint32_t cfs_data_id_t;
-#elif CFS_FLASH_ERASURE == (0x00)
-    typedef uint64_t cfs_data_id_t;
-#endif  // CFS_ID_DATA_TYPE
-
-
 /*无ID状态, 这里为uint32_t*/
 // 经过思考，ID的正式使用从0开始。
 #if CFS_ID_DATA_TYPE==(32u)
+
+    typedef uint32_t cfs_data_id_t;
     #define CFS_CONFIG_NOT_LINKED_DATA_ID   (UINT_MAX)
     #define CFS_CONFIG_DATA_ID_UPPER_LIMIT  (UINT_MAX - 10u)
     // SIZEOF(data_id) + SIZEOF(data_len) + SIZEOF(data_crc_16)
@@ -69,12 +79,19 @@ typedef struct cfs_object *cfs_object_handle_ptr;
     // 读取数据块的偏移长度
     // SSIZEOF(data_id) + SIZEOF(data_len)
     #define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN (6u)
+
 #elif CFS_ID_DATA_TYPE==(64u)
+
+    typedef uint64_t cfs_data_id_t;
     #define CFS_CONFIG_NOT_LINKED_DATA_ID   (ULLONG_MAX)
     #define CFS_CONFIG_DATA_ID_UPPER_LIMIT  (ULLONG_MAX - 10u)
     #define CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN (12u)
     #define CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN (10u)
-#endif  // CFS_FLASH_ERASURE
+
+#else
+    #error "您没有对循环储存的ID使用类型宏进行配置！"
+#endif  // CFS_ID_DATA_TYPE
+
 /*无有效ID*/
 #define CFS_CONFIG_NOT_LINKED_VALID_DATA_ID (0u)
 

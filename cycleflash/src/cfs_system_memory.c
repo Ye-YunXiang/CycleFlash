@@ -56,12 +56,13 @@ static struct
 // ************************************************************************
 //@def 写入和读取数据 —— 内部处理
 
+#if CFS_FLASH_READ_MODE == 1
 static bool _read_flash_data(
     const uint32_t address, uint8_t *buffer, uint16_t read_len)
 {
     return cfs_port_system_flash_read(address, buffer, read_len);
 }
-
+#endif
 
 static bool _erasing_flash_page( volatile uint32_t addr, uint16_t page)
 {
@@ -77,70 +78,145 @@ static bool _erasing_flash_page( volatile uint32_t addr, uint16_t page)
 static bool _write_flash_data(
     volatile uint32_t addr, uint8_t * buffer, uint16_t len)
 {
-    uint16_t write_byte_all_len = 0;
+    //XXX: 请处理好内存对齐问题后在放进来。
+    
+//     uint16_t write_byte_all_len = 0;
 
-#ifdef CFS_WRITE_PORT_DOUBLE_WORD
-    const uint16_t WRITE_DOUBLR_WORD_LEN = (len - write_byte_all_len) / 8;
-    write_byte_all_len += WRITE_DOUBLR_WORD_LEN * 8;
-#endif // CFS_WRITE_PORT_DOUBLE_WORD
+// #if CFS_WRITE_PORT_DOUBLE_WORD != 0
+//     const uint16_t WRITE_DOUBLR_WORD_LEN = (len - write_byte_all_len - (addr % 8)) / 8;
+//     write_byte_all_len += WRITE_DOUBLR_WORD_LEN * 8;
+// #endif // CFS_WRITE_PORT_DOUBLE_WORD
 
-#ifdef CFS_WRITE_PORT_ONE_WORD
-    const uint16_t WRITE_WORD_LEN = (len - write_byte_all_len) / 4;
-    write_byte_all_len += WRITE_WORD_LEN * 4;
-#endif // CFS_WRITE_PORT_ONE_WORD
+// #if CFS_WRITE_PORT_ONE_WORD != 0
+//     const uint16_t WRITE_WORD_LEN = (len - write_byte_all_len - (addr % 4)) / 4;
+//     write_byte_all_len += WRITE_WORD_LEN * 4;
+// #endif // CFS_WRITE_PORT_ONE_WORD
 
-#ifdef CFS_WRITE_PORT_HALF_WORD
-    const uint16_t WRITE_HALF_WORD_LEN = (len - write_byte_all_len) / 2;
-    write_byte_all_len += WRITE_HALF_WORD_LEN * 2;
-#endif // CFS_WRITE_PORT_HALF_WORD
+// #if CFS_WRITE_PORT_HALF_WORD != 0
+//     uint16_t WRITE_HALF_WORD_LEN = (len - write_byte_all_len - (addr % 2)) / 2;
+//     write_byte_all_len += WRITE_HALF_WORD_LEN * 2;
+// #endif // CFS_WRITE_PORT_HALF_WORD
 
-#ifdef CFS_WRITE_PORT_ONE_BYTE
-    const uint16_t WRITE_BYTE_LEN = len - write_byte_all_len;
-    write_byte_all_len += WRITE_BYTE_LEN;
-#endif // CFS_WRITE_PORT_ONE_BYTE
+// #if CFS_WRITE_PORT_ONE_BYTE != 0
+//     uint16_t WRITE_BYTE_LEN = len - write_byte_all_len;
+//     write_byte_all_len += WRITE_BYTE_LEN;
+// #endif // CFS_WRITE_PORT_ONE_BYTE
 
-
-    if (write_byte_all_len != len)
-    {
-        return false;
-    }
+//     if (write_byte_all_len != len)
+//     {
+//         return false;
+//     }
 
     cfs_port_system_flash_lock_enable();
-
-#ifdef CFS_WRITE_PORT_ONE_BYTE
-    if (WRITE_BYTE_LEN != 0)
+    
+    while(len != 0)
     {
-        cfs_port_system_flash_write_byte(addr, buffer, WRITE_BYTE_LEN);
-        addr += WRITE_BYTE_LEN;
-        buffer += WRITE_BYTE_LEN;
-    }
-#endif // CFS_WRITE_PORT_ONE_BYTE
 
-#ifdef CFS_WRITE_PORT_HALF_WORD
-    if (WRITE_HALF_WORD_LEN != 0)
-    {
-        cfs_port_system_flash_write_byte(addr, buffer, WRITE_HALF_WORD_LEN);
-        addr += WRITE_HALF_WORD_LEN * 2;
-        buffer += WRITE_HALF_WORD_LEN * 2;
-    }
-#endif // CFS_WRITE_PORT_HALF_WORD
-
-#ifdef CFS_WRITE_PORT_ONE_WORD
-    if (WRITE_WORD_LEN != 0)
-    {
-        cfs_port_system_flash_write_byte(addr, buffer, WRITE_WORD_LEN);
-        addr += WRITE_WORD_LEN * 4;
-        buffer += WRITE_WORD_LEN * 4;
-    }
-#endif // CFS_WRITE_PORT_ONE_WORD
-
-#ifdef CFS_WRITE_PORT_DOUBLE_WORD
-    if (WRITE_DOUBLR_WORD_LEN != 0)
-    {
-        cfs_port_system_flash_write_byte(addr, buffer, WRITE_DOUBLR_WORD_LEN);
-    }
+#if CFS_WRITE_PORT_DOUBLE_WORD != 0
+        if ((addr % 8 == 0) && (len >= 8))
+        {
+            cfs_port_system_flash_write_double_word(addr, buffer, (len / 8));
+            buffer += (len / 8) * 8;
+            addr += (len / 8) * 8;
+            len -= (len / 8) * 8;
+            continue;
+        }
 #endif // CFS_WRITE_PORT_DOUBLE_WORD
 
+#if CFS_WRITE_PORT_ONE_WORD != 0
+        if ((addr % 4 == 0) && (len >= 4))
+        {
+            cfs_port_system_flash_write_word(addr, buffer, (len / 4));
+            buffer += (len / 4) * 4;
+            addr += (len / 4) * 4;
+            len -= (len / 4) * 4;
+            continue;
+        }
+#endif // CFS_WRITE_PORT_ONE_WORD
+
+#if CFS_WRITE_PORT_HALF_WORD != 0
+        if ((addr % 2 == 0) && (len >= 2))
+        {
+            cfs_port_system_flash_write_half_word(addr, buffer, (len / 2));
+            buffer += (len / 2) * 2;
+            addr += (len / 2) * 2;
+            len -= (len / 2) * 2;
+            continue;
+        }
+#endif // CFS_WRITE_PORT_HALF_WORD
+
+#if CFS_WRITE_PORT_ONE_BYTE != 0
+    #if (CFS_WRITE_PORT_DOUBLE_WORD != 0 \
+        || CFS_WRITE_PORT_ONE_WORD != 0 \
+        || CFS_WRITE_PORT_HALF_WORD != 0)
+
+        cfs_port_system_flash_write_byte(addr, buffer, 1);
+        buffer += 1;
+        addr += 1;
+        len -= 1;
+
+    #else
+
+        cfs_port_system_flash_write_byte(addr, buffer, len);
+        break;
+
+    #endif
+#endif // CFS_WRITE_PORT_ONE_BYTE
+
+    }
+
+//     while(write_byte_all_len != len)
+//     {
+
+// #if CFS_WRITE_PORT_DOUBLE_WORD != 0
+//         if (write_doublr_word_len != 0 && (addr + write_byte_all_len) % 8 == 0)
+//         {
+//             cfs_port_system_flash_write_double_word(addr + write_byte_all_len,
+//                                                     buffer + write_byte_all_len,
+//                                                     write_doublr_word_len);
+//             write_byte_all_len += write_doublr_word_len * 8;
+//             write_doublr_word_len = 0;
+//             continue;
+//         }
+// #endif // CFS_WRITE_PORT_DOUBLE_WORD
+
+// #if CFS_WRITE_PORT_ONE_WORD != 0
+//         if (write_word_len != 0 && (addr + write_byte_all_len) % 4 == 0)
+//         {
+//             cfs_port_system_flash_write_word(addr + write_byte_all_len,
+//                                              buffer + write_byte_all_len,
+//                                              write_word_len);
+//             write_byte_all_len += write_word_len * 4;
+//             write_word_len = 0;
+//             continue;
+//         }
+// #endif // CFS_WRITE_PORT_ONE_WORD
+
+// #if CFS_WRITE_PORT_HALF_WORD != 0
+//         if (write_half_word_len != 0 && (addr + write_byte_all_len) % 2 == 0)
+//         {
+//             cfs_port_system_flash_write_half_word(addr + write_byte_all_len,
+//                                                   buffer + write_byte_all_len,
+//                                                   write_half_word_len);
+//             write_byte_all_len += write_half_word_len * 2;
+//             write_half_word_len = 0;
+//             continue;
+//         }
+// #endif // CFS_WRITE_PORT_HALF_WORD
+
+// #if CFS_WRITE_PORT_ONE_BYTE != 0
+//         if (write_byte_len != 0)
+//         {
+//             cfs_port_system_flash_write_byte(addr + write_byte_all_len,
+//                                              buffer + write_byte_all_len,
+//                                              write_byte_len);
+//             write_byte_all_len += write_byte_len;
+//             write_byte_len = 0;
+//             continue;
+//         }
+// #endif // CFS_WRITE_PORT_ONE_BYTE
+
+//     }
     cfs_port_system_flash_lock_disable();
 
     return true;
@@ -202,7 +278,7 @@ static bool _contrast_flash_data_block(
             continue;
         }
 
-        if (0 != memcmp((uint8_t *)(addr + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN),
+        if (0 == memcmp((uint8_t *)(addr + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN),
                         contrast_block->data_ptr,
                         contrast_block->data_len))
         {
@@ -222,7 +298,7 @@ static bool _contrast_flash_data_block(
         _read_flash_data(addr + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN,
                         buffer,
                         contrast_block->data_len);
-        if (0 != memcmp(buffer,
+        if (0 == memcmp(buffer,
                         contrast_block->data_ptr,
                         contrast_block->data_len))
         {
@@ -569,6 +645,7 @@ int cfs_memory_read_flash_fixed_data(const cfs_object_list_t *object_list,
  */
 int cfs_memory_add_write_flash_fixed_data(const cfs_object_list_t *object_list,
                                           const uint32_t address,
+                                          const cfs_data_id_t input_id,
                                           const uint16_t data_len,
                                           uint8_t *data_buffer)
 {
@@ -579,10 +656,17 @@ int cfs_memory_add_write_flash_fixed_data(const cfs_object_list_t *object_list,
         // 数据长度的错误情况判断
         return CFS_RETURN_ERROR;
     }
+    
+#if CFS_FLASH_READ_MODE == 0
+    uint8_t * data_read_buffer_per = NULL;
+#else
+    uint8_t * data_read_buffer_per = _this.data_read_buffer.buffer_ptr;
+#endif // CFS_FLASH_READ_MODE
 
     int write_result = CFS_RETURN_ERROR;
     cfs_data_block_t write_block = {0};
     write_block.data_ptr = data_buffer;
+    write_block.data_id = input_id;
     write_block.data_len = data_len;
     write_block.data_check = cfs_system_utils_check(
         (uint8_t *)&write_block, CFS_DATA_BLOCK_READ_USER_DATA_OFFSET_LEN, NULL);
@@ -616,14 +700,15 @@ int cfs_memory_add_write_flash_fixed_data(const cfs_object_list_t *object_list,
         _write_flash_data_block(address, &write_block);
 
         if(true == _contrast_flash_data_block(
-            address, &write_block, _this.data_read_buffer.buffer_ptr))
+            address, &write_block, data_read_buffer_per))
         {
             write_result = data_len;
+            break;
         }
         else if (false == _checking_flash_block_is_null_values(
                 address, 
                 data_len + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN, 
-                _this.data_read_buffer.buffer_ptr))
+                data_read_buffer_per))
         {
             write_result = CFS_RETURN_ERROR;
             break;
