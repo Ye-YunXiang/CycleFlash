@@ -27,7 +27,7 @@
 #ifndef __CFS_SYSTEM_MEMORY_H__
 #define __CFS_SYSTEM_MEMORY_H__
 
-#include "cfs_system_define.h"
+#include "cfs_user_define.h"
 
 typedef enum
 {

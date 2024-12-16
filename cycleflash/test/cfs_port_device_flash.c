@@ -21,6 +21,9 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * Function: It is the definitions head file for this library.
+ * Created on: 2024-7-26
  */
 // Encoding:UTF-8
 
@@ -29,8 +32,11 @@
 #include "flash.h"
 
 
+// 下方代码是根据HC32L176写的案例，仅供参考
+
+static bool cfs_port_flash_init_flag = false;
 bool cfs_port_system_flash_write_byte(
-    volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
+    volatile uint32_t addr, uint8_t * data, uint16_t len)
 {
     uint16_t i;
     for(i=0; i< len; i++)
@@ -45,12 +51,14 @@ bool cfs_port_system_flash_write_byte(
 
 
 bool cfs_port_system_flash_write_half_word(
-    volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
+    volatile uint32_t addr, uint8_t * data, uint16_t len)
 {
     uint16_t i;
+    volatile uint16_t write_u16data = 0;
     for(i=0; i< len; i++)
     {
-        Flash_WriteHalfWord(addr, data);
+        memcpy((uint8_t *)&write_u16data, data, 2);
+        Flash_WriteHalfWord(addr, write_u16data);
         addr += 2u;
         data += 2u;
     }
@@ -60,13 +68,14 @@ bool cfs_port_system_flash_write_half_word(
 
 
 bool cfs_port_system_flash_write_word(
-    volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
+    volatile uint32_t addr, uint8_t * data, uint16_t len)
 {
     uint16_t i;
     volatile uint32_t write_u32data = 0;
     for(i=0; i< len; i++)
     {
-        Flash_WriteWord(addr, data);
+        memcpy((uint8_t *)&write_u32data, data, 4);
+        Flash_WriteWord(addr, write_u32data);
         addr += 4u;
         data += 4u;
     }
@@ -76,7 +85,7 @@ bool cfs_port_system_flash_write_word(
 
 
 bool cfs_port_system_flash_write_double_word(
-    volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
+    volatile uint32_t addr, uint8_t * data, uint16_t len)
 {
     return true;
 }
@@ -117,3 +126,4 @@ bool cfs_port_system_flash_erasing_page(volatile uint32_t addr, uint16_t page)
 
     return true;
 }
+

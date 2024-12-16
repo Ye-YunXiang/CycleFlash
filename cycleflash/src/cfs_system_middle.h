@@ -27,7 +27,7 @@
 #ifndef __CYCLE_MIDDLE_H__
 #define __CYCLE_MIDDLE_H__
 
-#include "cfs_system_define.h"
+#include "cfs_user_define.h"
 
 //@def 初始化数据对象
 cfs_object_t *cfs_middle_add_object_init(uint8_t *name,

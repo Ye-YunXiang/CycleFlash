@@ -27,7 +27,7 @@
 #ifndef __CYCLE_FLASH_SYSTEM_H__
 #define __CYCLE_FLASH_SYSTEM_H__
 
-#include "cfs_system_define.h"
+#include "cfs_user_define.h"
 
 /** 初始化文件管理系统对象
  *
