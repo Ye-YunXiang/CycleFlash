@@ -34,21 +34,29 @@
  * \param cfs_nv_system 初始化结构体指针
  * \return cfs_object_handle_ptr 初始化后的句柄，如果初始化失败返回 false。
  */
-cfs_object_handle_ptr cfs_nv_object_init(uint8_t *name,
+#if CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL != 0
+// 包含数据类型初始化
+cfs_object_handle_ptr cfs_nv_object_init(char *name,
                                          uint32_t address,
                                          uint32_t sector_count,
                                          uint16_t data_size,
                                          cfs_object_type_t data_tpye);
+#else
+// 不包含数据类型初始化
+cfs_object_handle_ptr cfs_nv_object_init(char *name,
+                                         uint32_t address,
+                                         uint32_t sector_count,
+                                         uint16_t data_size);
+#endif // CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
 
-/** 根据id往内存中写入数据
+/** 往内存中添加写入数据
  *
  * \param cfs_object_handle_ptr 存储空间的句柄
- * \param uint32_t 要读取的ID
  * \param uint8_t 写入数据的指针
  * \param uint32_t 写入数据长度
  * \return 写入成功返回写入的数据个数，如果写入失败返回 -1。
  */
-int cfs_nv_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len);
+int cfs_nv_add_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len);
 
 
 /** 根据ID读取内存中的数据

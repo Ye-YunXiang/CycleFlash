@@ -61,10 +61,10 @@
 #define CFS_NAME_LEN_MAX    (10u)
 
 
-// DeBug 部分,不需要注释
-// TODO:还没对这部分做定义
-#define CFS_DEBUG
-#define CFS_DEBUG_OUT(x) printf(x)
+// // DeBug 部分,不需要注释
+// // TODO:还没对这部分做定义
+// #define CFS_DEBUG
+// #define CFS_DEBUG_OUT(x) printf(x)
 
 
 // 定义在 "cfs_system_utils.h" 中的 
@@ -80,15 +80,15 @@
 #define CFS_CHECK (1u)
 
 
-/* 打开全局页缓存选项，添加和‘CFS_FLASH_SECTOR_SIZE’一样大小的缓存区.
- * 打开后可以对指定ID进行修改，这里擦除页后，重写页。
- * 默认不使用，因为用不到，同时可以减少对RAM的负担。
- *
- * value: (0u)     关闭
- * value: (1u)     打开
-*/
-// TODO: 正在做
-#define CFS_FLASH_SECTOR_BUFFER_DEF (0u)
+// /* 打开全局页缓存选项，添加和‘CFS_FLASH_SECTOR_SIZE’一样大小的缓存区, 开放set内存的权限.
+//  * 打开后可以对指定ID进行修改，这里擦除页后，重写页。
+//  * 默认不使用，因为用不到，同时可以减少对RAM的负担。
+//  *
+//  * value: (0u)     关闭
+//  * value: (1u)     打开
+// */
+// // TODO: 抛弃修改选项，不符合设计的初衷
+// #define CFS_FLASH_SECTOR_BUFFER_DEF (1u)
 
 
 /* 打开变长存储的限制，可以存入变长长数据，开放几个专门使用变长存储的函数。

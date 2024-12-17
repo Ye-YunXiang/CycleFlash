@@ -29,29 +29,17 @@
 #include "cfs_system_utils.h"
 
 // XXX:这里负责缓存管理。。。。。。。。。。。。。
+#if CFS_FLASH_READ_MODE != 0
 static struct
 {
-#if CFS_FLASH_SECTOR_BUFFER_DEF != 0
-    uint8_t flash_one_sector_buffer[CFS_FLASH_SECTOR_SIZE];
-#endif // CFS_FLASH_SECTOR_BUFFER_DEF
-
-#if CFS_FLASH_READ_MODE != 0
     cfs_read_buffer_t data_read_buffer;
-#endif // CFS_FLASH_READ_MODE
-
 }_this = {
-
-#if CFS_FLASH_SECTOR_BUFFER_DEF != 0
-    .flash_one_sector_buffer = {0},
-#endif // CFS_FLASH_SECTOR_BUFFER_DEF
-
-#if CFS_FLASH_READ_MODE != 0
     .data_read_buffer = {
         .buffer_ptr = NULL,
         .buffer_size = 0,
     }
-#endif // CFS_FLASH_READ_MODE
 };
+#endif // CFS_FLASH_READ_MODE
 
 // ************************************************************************
 //@def 写入和读取数据 —— 内部处理
@@ -79,33 +67,6 @@ static bool _write_flash_data(
     volatile uint32_t addr, uint8_t * buffer, uint16_t len)
 {
     //XXX: 请处理好内存对齐问题后在放进来。
-    
-//     uint16_t write_byte_all_len = 0;
-
-// #if CFS_WRITE_PORT_DOUBLE_WORD != 0
-//     const uint16_t WRITE_DOUBLR_WORD_LEN = (len - write_byte_all_len - (addr % 8)) / 8;
-//     write_byte_all_len += WRITE_DOUBLR_WORD_LEN * 8;
-// #endif // CFS_WRITE_PORT_DOUBLE_WORD
-
-// #if CFS_WRITE_PORT_ONE_WORD != 0
-//     const uint16_t WRITE_WORD_LEN = (len - write_byte_all_len - (addr % 4)) / 4;
-//     write_byte_all_len += WRITE_WORD_LEN * 4;
-// #endif // CFS_WRITE_PORT_ONE_WORD
-
-// #if CFS_WRITE_PORT_HALF_WORD != 0
-//     uint16_t WRITE_HALF_WORD_LEN = (len - write_byte_all_len - (addr % 2)) / 2;
-//     write_byte_all_len += WRITE_HALF_WORD_LEN * 2;
-// #endif // CFS_WRITE_PORT_HALF_WORD
-
-// #if CFS_WRITE_PORT_ONE_BYTE != 0
-//     uint16_t WRITE_BYTE_LEN = len - write_byte_all_len;
-//     write_byte_all_len += WRITE_BYTE_LEN;
-// #endif // CFS_WRITE_PORT_ONE_BYTE
-
-//     if (write_byte_all_len != len)
-//     {
-//         return false;
-//     }
 
     cfs_port_system_flash_lock_enable();
     
@@ -165,58 +126,6 @@ static bool _write_flash_data(
 
     }
 
-//     while(write_byte_all_len != len)
-//     {
-
-// #if CFS_WRITE_PORT_DOUBLE_WORD != 0
-//         if (write_doublr_word_len != 0 && (addr + write_byte_all_len) % 8 == 0)
-//         {
-//             cfs_port_system_flash_write_double_word(addr + write_byte_all_len,
-//                                                     buffer + write_byte_all_len,
-//                                                     write_doublr_word_len);
-//             write_byte_all_len += write_doublr_word_len * 8;
-//             write_doublr_word_len = 0;
-//             continue;
-//         }
-// #endif // CFS_WRITE_PORT_DOUBLE_WORD
-
-// #if CFS_WRITE_PORT_ONE_WORD != 0
-//         if (write_word_len != 0 && (addr + write_byte_all_len) % 4 == 0)
-//         {
-//             cfs_port_system_flash_write_word(addr + write_byte_all_len,
-//                                              buffer + write_byte_all_len,
-//                                              write_word_len);
-//             write_byte_all_len += write_word_len * 4;
-//             write_word_len = 0;
-//             continue;
-//         }
-// #endif // CFS_WRITE_PORT_ONE_WORD
-
-// #if CFS_WRITE_PORT_HALF_WORD != 0
-//         if (write_half_word_len != 0 && (addr + write_byte_all_len) % 2 == 0)
-//         {
-//             cfs_port_system_flash_write_half_word(addr + write_byte_all_len,
-//                                                   buffer + write_byte_all_len,
-//                                                   write_half_word_len);
-//             write_byte_all_len += write_half_word_len * 2;
-//             write_half_word_len = 0;
-//             continue;
-//         }
-// #endif // CFS_WRITE_PORT_HALF_WORD
-
-// #if CFS_WRITE_PORT_ONE_BYTE != 0
-//         if (write_byte_len != 0)
-//         {
-//             cfs_port_system_flash_write_byte(addr + write_byte_all_len,
-//                                              buffer + write_byte_all_len,
-//                                              write_byte_len);
-//             write_byte_all_len += write_byte_len;
-//             write_byte_len = 0;
-//             continue;
-//         }
-// #endif // CFS_WRITE_PORT_ONE_BYTE
-
-//     }
     cfs_port_system_flash_lock_disable();
 
     return true;
@@ -736,86 +645,3 @@ bool cfs_memory_flash_data_clear(const cfs_object_list_t *object_list)
                         object_list->object_handle->sector_count);
     return true;
 }
-
-
-
-// //@def 修改内存中的数据
-// cfs_oc_action_data_result cfs_system_oc_set_write_flash_data( 
-//     const cfs_object_list_t *temp_object, cfs_data_block * buffer)
-// {
-//     assert(buffer != NULL && 
-//         buffer->data_len >= 1 && buffer->data_id != CFS_CONFIG_NOT_LINKED_DATA_ID);
-        
-//     cfs_oc_action_data_result read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
-//     cfs_system *temp_cfs_objecr = cfs_system_oc_system_object_get(temp_object);
-//     //@def 数据地址
-//     const uint32_t data_addr = 
-//         cfs_system_oc_via_id_calculate_addr(temp_object, buffer->data_id);
-//     //@def 数据所在页开始地址
-//     const uint32_t start_addr = 
-//         (data_addr / temp_cfs_objecr->sector_size) * temp_cfs_objecr->sector_size;
-//     //@def 数据块的长度
-//     const uint32_t data_block_lent = 
-//         temp_cfs_objecr->data_size + CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN;
-
-//     uint8_t *read_sector_data = NULL;
-//     uint8_t *temo_read_sector_data = NULL;
-//     uint16_t read_page_count = 1;
- 
-//     read_sector_data = &data_buffer_temp[0];
-//     temo_read_sector_data = read_sector_data;
-//     buffer->data_crc_16 = cfs_system_utils_crc16_xmodem_check_data_block(buffer, true);
-
-//     //@def 减一得到结束地址
-//     if((data_addr + data_block_lent - 1) >= start_addr + temp_cfs_objecr->sector_size)
-//     {
-//         cfs_port_system_flash_read(start_addr, read_sector_data, temp_cfs_objecr->sector_size);
-//         memset(read_sector_data + data_addr - start_addr, CFS_FLASH_SECTOR_SIZE, 
-//             start_addr + temp_cfs_objecr->sector_size - data_addr);
-
-//         __erasing_flash_page(start_addr, 1);
-//         __write_flash_data(\
-//             start_addr, read_sector_data, temp_cfs_objecr->sector_size);
-//         cfs_port_system_flash_lock_disable();
-
-//         cfs_port_system_flash_read(start_addr + temp_cfs_objecr->sector_size, read_sector_data, temp_cfs_objecr->sector_size);
-//         memset(read_sector_data, CFS_FLASH_SECTOR_SIZE, data_addr - start_addr + data_block_lent - temp_cfs_objecr->sector_size);
-
-//         __erasing_flash_page(start_addr + temp_cfs_objecr->sector_size, 1);
-//         __write_flash_data( start_addr + temp_cfs_objecr->sector_size, read_sector_data, temp_cfs_objecr->sector_size);
-
-//         __write_flash_data_block(data_addr, buffer, temp_cfs_objecr);
-//         cfs_port_system_flash_lock_disable();
-//     }
-//     else
-//     {
-//         cfs_port_system_flash_read(start_addr, read_sector_data, \
-//             temp_cfs_objecr->sector_size * read_page_count);
-//         temo_read_sector_data = read_sector_data + data_addr - start_addr;
-//         memset(temo_read_sector_data, CFS_FLASH_SECTOR_SIZE, data_block_lent);
-//         memcpy(temo_read_sector_data, &buffer->data_id, sizeof(buffer->data_id));
-//         temo_read_sector_data += sizeof(buffer->data_id);
-//         memcpy(temo_read_sector_data, buffer->data_pointer, buffer->data_len);
-//         temo_read_sector_data += temp_cfs_objecr->data_size;
-//         memcpy(temo_read_sector_data, &buffer->data_crc_16, sizeof(buffer->data_crc_16));
-
-//         __erasing_flash_page(start_addr, read_page_count);
-//         __write_flash_data(\
-//             start_addr, read_sector_data, temp_cfs_objecr->sector_size);
-
-//     }
-
-//     if(cfs_port_system_flash_read_contrast( \
-//         start_addr, read_sector_data, \
-//         temp_cfs_objecr->sector_size * read_page_count) == false)
-//     {
-//         read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
-//     }
-//     else
-//     {
-//         read_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED;
-//     }
-
-//     return read_result;
-// }
-

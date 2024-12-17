@@ -217,14 +217,14 @@ bool cfs_middle_check_address(const uint32_t address, const uint32_t sector_coun
 // 上层接口层 ------------------------------------------------------------------
 
 //@def 初始化数据对象
-cfs_object_t *cfs_middle_add_object_init(uint8_t *name,
+cfs_object_t *cfs_middle_add_object_init(char *name,
                                          uint32_t address,
                                          uint16_t sector_count,
                                          uint16_t data_size,
                                          cfs_object_type_t data_tpye)
 {
     // name malloc******
-    uint8_t *name_ptr = (uint8_t *)CFS_MALLOC(STRING_ALL_SIZE(name));
+    char *name_ptr = (char *)CFS_MALLOC(STRING_ALL_SIZE(name));
     APPLY_MEMORY_FAIL_DISPOSE(name_ptr);
     memcpy(name_ptr, name, STRING_ALL_SIZE(name));
 
@@ -306,7 +306,7 @@ cfs_object_list_t *cfs_middle_find_object(const cfs_object_t *object)
     cfs_object_list_t *find_object = _this.object_list_head;
     while (find_object != NULL)
     {
-        if (strcmp((char *)find_object->object_handle->name, (char *)object->name) == 0)
+        if (strcmp(find_object->object_handle->name, object->name) == 0)
         {
             break;
         }
@@ -333,7 +333,7 @@ int cfs_middle_data_read(cfs_object_list_t *object_list,
     uint32_t address = 
         cfs_memory_calculate_fixed_id_flash_address(
             object_list, object_list->data_id - read_in_past);
-
+    
     int result = 
         cfs_memory_read_flash_fixed_data(object_list, address, len, data);
 
@@ -348,15 +348,17 @@ int cfs_middle_data_read(cfs_object_list_t *object_list,
 
 
 //@def 写入数据
-int cfs_middle_data_fixed_write(cfs_object_list_t *object_list,
-                                uint8_t *data,
-                                uint16_t len)
+int cfs_middle_add_data_write(cfs_object_list_t *object_list,
+                              uint8_t *data,
+                              uint16_t len)
 {
     // XXX: 外层要把参数处理干净在传入进来。
     if (len > object_list->object_handle->data_size)
     {
         return CFS_RETURN_ERROR;
     }
+
+    int result = CFS_RETURN_ERROR;
 
     if (object_list->data_id < CFS_CONFIG_DATA_ID_UPPER_LIMIT)
     {
@@ -373,18 +375,28 @@ int cfs_middle_data_fixed_write(cfs_object_list_t *object_list,
         object_list->valid_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
     }
 
-    uint32_t address = 
-        cfs_memory_calculate_fixed_id_flash_address(
-            object_list, object_list->data_id);
+    // TODO: 这里后续需要区分是变长还是定长 
+    if (object_list->object_handle->data_type == CFS_OBJECT_TYPE_FIXED_DATA_STORAGE)
+    {
+        uint32_t address = 
+            cfs_memory_calculate_fixed_id_flash_address(
+                object_list, object_list->data_id);
+        
+        result = cfs_memory_add_write_flash_fixed_data(
+            object_list, address, object_list->data_id,len, data);
 
-    int result = cfs_memory_add_write_flash_fixed_data(
-        object_list, address, object_list->data_id,len, data);
-
-    object_list->valid_id = 
-        cfs_memory_fixe_valid_id_number(object_list, object_list->data_id);
+        object_list->valid_id = 
+            cfs_memory_fixe_valid_id_number(object_list, object_list->data_id);
+    }
+    else if (object_list->object_handle->data_type 
+            == CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE)
+    {
+        // 这里是变长的数据
+    }
 
     return result;
 }
+
 
 //@def 清除本对象数据
 bool cfs_system_oc_flash_data_clear(cfs_object_list_t *object_list)

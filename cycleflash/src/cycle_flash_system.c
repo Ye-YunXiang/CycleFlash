@@ -32,22 +32,31 @@
 //-- 对外接口  
 //*********************************************************************************
 
-cfs_object_handle_ptr cfs_nv_object_init(uint8_t *name,
+#if CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL != 0
+// 包含数据类型初始化
+cfs_object_handle_ptr cfs_nv_object_init(char *name,
                                          uint32_t address,
                                          uint32_t sector_count,
                                          uint16_t data_size,
                                          cfs_object_type_t data_tpye)
+#else
+// 不包含数据类型初始化
+cfs_object_handle_ptr cfs_nv_object_init(char *name,
+                                         uint32_t address,
+                                         uint32_t sector_count,
+                                         uint16_t data_size)
+#endif // CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
+
 {
-    if (data_tpye == CFS_OBJECT_TYPE_VARIABLE_DATA_STORAGE
-        && CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL == 0)
-    {
-        return NULL;
-    }
+
+#if CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL == 0
+    cfs_object_type_t data_tpye = CFS_OBJECT_TYPE_FIXED_DATA_STORAGE;
+#endif // CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
 
     //@def 判断参数有效性
     assert(name != NULL);
     //@def 判断名称长度
-    assert(strlen((char *)name) < CFS_NAME_LEN_MAX);
+    assert(strlen(name) < CFS_NAME_LEN_MAX);
 
     //@def 在判断地址有没有重复，没通过返回false
     if (false == cfs_middle_check_address(address, sector_count))
@@ -75,7 +84,7 @@ cfs_object_handle_ptr cfs_nv_object_init(uint8_t *name,
 
 
 //@def 根据id往内存中写入数据
-int cfs_nv_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len)
+int cfs_nv_add_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len)
 {
     cfs_object_list_t *object_list = cfs_middle_find_object(object);
     if (object==NULL || data==NULL || len==0 || object_list==NULL)
@@ -83,7 +92,7 @@ int cfs_nv_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len)
         return CFS_RETURN_ERROR;
     }
 
-    int result_len = cfs_middle_data_fixed_write(object_list, data, len);
+    int result_len = cfs_middle_add_data_write(object_list, data, len);
     
     return result_len;
 }
@@ -147,3 +156,5 @@ cfs_data_id_t cfs_nv_get_current_valid_id(cfs_object_handle_ptr object)
 
     return cfs_middle_get_current_valid_id(object_list);
 }
+
+

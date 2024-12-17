@@ -17,7 +17,8 @@
         "climits": "c",
         "stdbool.h": "c",
         "string.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "typeinfo": "c"
     },
     "files.encoding": "utf8"
 }

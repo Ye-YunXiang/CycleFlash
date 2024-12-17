@@ -30,7 +30,7 @@
 #include "cfs_user_define.h"
 
 //@def 初始化数据对象
-cfs_object_t *cfs_middle_add_object_init(uint8_t *name,
+cfs_object_t *cfs_middle_add_object_init(char *name,
                                          uint32_t address,
                                          uint16_t sector_count,
                                          uint16_t data_size,
@@ -56,9 +56,10 @@ int cfs_middle_data_read(
     uint16_t len);
 
 //@def 写入数据
-int cfs_middle_data_fixed_write(cfs_object_list_t *object_list,
-                                     uint8_t *data,
-                                     uint16_t len);
+int cfs_middle_add_data_write(cfs_object_list_t *object_list,
+                              uint8_t *data,
+                              uint16_t len);
+
 
 //@def 清除本对象数据
 bool cfs_system_oc_flash_data_clear(cfs_object_list_t *object_list);

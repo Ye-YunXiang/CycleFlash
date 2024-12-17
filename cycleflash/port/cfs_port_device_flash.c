@@ -26,19 +26,18 @@
 
 #include "cfs_user_define.h"
 #include "cfs_port_device_flash.h"
-#include "flash.h"
 
 
 bool cfs_port_system_flash_write_byte(
     volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
 {
-    uint16_t i;
-    for(i=0; i< len; i++)
-    {
-        Flash_WriteByte(addr, *data);
-        addr += 1u;
-        data += 1u;
-    }
+    // uint16_t i;
+    // for(i=0; i< len; i++)
+    // {
+    //     Flash_WriteByte(addr, *data);
+    //     addr += 1u;
+    //     data += 1u;
+    // }
 
     return true;
 }
@@ -47,13 +46,13 @@ bool cfs_port_system_flash_write_byte(
 bool cfs_port_system_flash_write_half_word(
     volatile uint32_t addr, volatile uint8_t * data, uint16_t len)
 {
-    uint16_t i;
-    for(i=0; i< len; i++)
-    {
-        Flash_WriteHalfWord(addr, data);
-        addr += 2u;
-        data += 2u;
-    }
+    // uint16_t i;
+    // for(i=0; i< len; i++)
+    // {
+    //     Flash_WriteHalfWord(addr, data);
+    //     addr += 2u;
+    //     data += 2u;
+    // }
 
     return true;
 }
@@ -108,12 +107,12 @@ bool cfs_port_system_flash_lock_disable(void)
 
 bool cfs_port_system_flash_erasing_page(volatile uint32_t addr, uint16_t page)
 {
-    uint16_t i = 0;
-    for(i = 0; i < page; i++)
-    {
-        addr = addr + (i * 512);
-        while(Ok != Flash_SectorErase(addr)){};
-    }
+    // uint16_t i = 0;
+    // for(i = 0; i < page; i++)
+    // {
+    //     addr = addr + (i * 512);
+    //     while(Ok != Flash_SectorErase(addr)){};
+    // }
 
     return true;
 }

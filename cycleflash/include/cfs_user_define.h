@@ -114,7 +114,7 @@ typedef enum cfs_object_type
 /*系统的存储对象，不定长对象记录每个存储区对象的内容*/
 typedef struct cfs_object
 {
-    const uint8_t *name;                // 对象的名字
+    const char *name;                // 对象的名字
     const uint32_t address;             // 文件系统在flash中的句柄
     const uint32_t sector_count;        // 扇区数量，建议至少3页
     const uint16_t data_size;           // 存入的数据大小
@@ -127,7 +127,7 @@ typedef struct cfs_object_list
     struct cfs_object_list *next;     // 链表对象
     struct cfs_object *object_handle; // 存储对象
 
-    const uint8_t *name;                    // 对象的名字
+    const char *name;                    // 对象的名字
     cfs_data_id_t data_id;            // 数据块ID，这里从1开始有效
     cfs_data_id_t valid_id;           // 有效ID个数
     uint16_t data_buffer_size;        // 数据存入大小
