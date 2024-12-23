@@ -84,7 +84,10 @@ cfs_object_handle_ptr cfs_nv_object_init(char *name,
 
 
 //@def 根据id往内存中写入数据
-int cfs_nv_add_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len)
+int cfs_nv_write(cfs_object_handle_ptr object,
+                 uint8_t *data,
+                 uint16_t len,
+                 uint8_t error_retry)
 {
     cfs_object_list_t *object_list = cfs_middle_find_object(object);
     if (object==NULL || data==NULL || len==0 || object_list==NULL)
@@ -92,7 +95,12 @@ int cfs_nv_add_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len)
         return CFS_RETURN_ERROR;
     }
 
-    int result_len = cfs_middle_add_data_write(object_list, data, len);
+    int result_len = CFS_RETURN_ERROR;
+    
+    do{
+        result_len = cfs_middle_add_data_write(object_list, data, len);
+    }
+    while(result_len == CFS_RETURN_ERROR && error_retry-- > 0);
     
     return result_len;
 }

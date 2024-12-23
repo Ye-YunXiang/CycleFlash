@@ -63,7 +63,7 @@ int cfs_demo_write_product_nv(void* data, uint32_t len)
         return false;
     }
 
-    const int bytes_written = cfs_nv_add_write(product_filesystem, data, len);
+    const int bytes_written = cfs_nv_write(product_filesystem, data, len);
 
     // 用于固定长度的DEMO
     if (bytes_written != len)

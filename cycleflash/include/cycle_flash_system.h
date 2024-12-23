@@ -60,9 +60,13 @@ cfs_object_handle_ptr cfs_nv_object_init(char *name,
  * \param cfs_object_handle_ptr 存储空间的句柄
  * \param uint8_t 写入数据的指针
  * \param uint32_t 写入数据长度
+ * \param uint8_t 写入失败重试次数,每次重试都会向上累加ID。
  * \return 写入成功返回写入的数据个数，如果写入失败返回 -1。
  */
-int cfs_nv_add_write(cfs_object_handle_ptr object, uint8_t *data, uint16_t len);
+int cfs_nv_write(cfs_object_handle_ptr object,
+                 uint8_t *data,
+                 uint16_t len,
+                 uint8_t error_retry);
 
 
 /** 根据ID读取内存中的数据
