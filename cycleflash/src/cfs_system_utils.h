@@ -31,8 +31,16 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#ifdef __cplusplus
+    extern "C" {
+#endif // __cplusplus
+
 uint16_t cfs_system_utils_check(
     const uint8_t *data, uint32_t data_length, uint8_t *get_data);
 
+
+#ifdef __cplusplus
+    }
+#endif // __cplusplus
 
 #endif /* __CFS_SYSTEM_UTILS_H__ */

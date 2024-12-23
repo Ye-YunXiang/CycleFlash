@@ -41,6 +41,14 @@
 
 #include "cfs_user_config.h"
 
+
+#ifdef __cplusplus
+    extern "C" {
+#endif // __cplusplus
+
+// 版本号
+#define CFS_VERSION ("2.0")
+
 // 函数返回错误
 #define CFS_RETURN_ERROR        (-1)
 
@@ -159,5 +167,12 @@ typedef struct cfs_data_block
 
 // 错误定义判断---------------------------------------------
 // TODO: 需要对用户定义部分做判断
+
+
+
+#ifdef __cplusplus
+    }
+#endif // __cplusplus
+
 
 #endif /* __CFS_SYSTEM_DEFINE_H__ */

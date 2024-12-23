@@ -29,6 +29,12 @@
 
 #include "cfs_user_define.h"
 
+
+#ifdef __cplusplus
+    extern "C" {
+#endif // __cplusplus
+
+
 /** 初始化文件管理系统对象
  *
  * \param cfs_nv_system 初始化结构体指针
@@ -94,5 +100,10 @@ cfs_data_id_t cfs_nv_get_current_id(cfs_object_handle_ptr object);
  * \return 获取当成功就返回ID，反则为flash
  */
 cfs_data_id_t cfs_nv_get_current_valid_id(cfs_object_handle_ptr object);
+
+
+#ifdef __cplusplus
+    }
+#endif // __cplusplus
 
 #endif /* __CYCLE_FLASH_SYSTEM_H__ */

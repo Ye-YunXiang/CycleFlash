@@ -51,7 +51,7 @@ static struct
 // 三层处理接口 ----------------------------------------------------------------------
 // 获取内存中的ID，专用函数，用于初始化遍历ID时。
 // 参数 read_id[0]:要读取的ID； read_id[1]：读取到的ID。
-static cfs_oc_action_data_result _read_fixed_flash_id(
+static bool _read_fixed_flash_id(
     const cfs_object_list_t *object_list, cfs_data_id_t read_id[2])
 {
     // XXX: 这个暂时是用于读取定长设计的
@@ -63,13 +63,13 @@ static cfs_oc_action_data_result _read_fixed_flash_id(
 
     if (read_id[1] != CFS_CONFIG_NOT_LINKED_DATA_ID)
     {
-        return CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED;
+        return true;
     }
     else
     {
         read_id[1] = CFS_CONFIG_NOT_LINKED_DATA_ID;
 
-        return CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE;
+        return false;
     }
 }
 
@@ -90,7 +90,7 @@ static cfs_data_id_t
 
     // 一临时的处理变量
     cfs_data_id_t data_compute_id = 0;
-    cfs_oc_action_data_result read_id_result = CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL;
+    bool read_id_result = false;
     
     //@def 遍历每一页第一位的值，考虑到如果第一位数据存储错误的情况，往后累加3位
     // 
@@ -116,7 +116,7 @@ static cfs_data_id_t
             }
 
             read_id_result = _read_fixed_flash_id(object_list, data_traversal_id);
-            if (read_id_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED)
+            if (read_id_result == true)
             {
                 // 解码成功
                 break;
@@ -153,7 +153,7 @@ static cfs_data_id_t
             && data_traversal_id[0] < LASR_TRAVERSE_MAX_ID)
         {
             read_id_result = _read_fixed_flash_id(object_list, data_traversal_id);
-            if (read_id_result == CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED
+            if (read_id_result == true
                 && data_traversal_id[1] != CFS_CONFIG_NOT_LINKED_DATA_ID)
             {
                 if (data_traversal_id[1] >= data_max_id[1])

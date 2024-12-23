@@ -29,20 +29,10 @@
 
 #include "cfs_user_define.h"
 
-typedef enum
-{
-    //@def cfs操作的数据为空
-    CFS_OC_READ_OR_WRITE_DATA_RESULT_NULL       = 0,
-    //@def cfs数据页非空
-    CFS_OC_READ_OR_WRITE_DATA_RESULT_NONEMPTY   = 1,
-    //@def cfs写入或读取数据错误
-    CFS_OC_READ_OR_WRITE_DATA_RESULT_ERROE      = 2,
-    //@def cfs写入或读取数据有效
-    CFS_OC_READ_OR_WRITE_DATA_RESULT_SUCCEED    = 3,
-    //@def cfs读取数据的内存区为无效块
-    CFS_OC_READ_DATA_RESULT_INVALID_BLOCK       = 4,
-}cfs_oc_action_data_result;
 
+#ifdef __cplusplus
+    extern "C" {
+#endif // __cplusplus
 
 // 数据块缓存区初始化
 void cfs_memory_general_block_buffer_init(uint16_t data_buffer_size);
@@ -101,6 +91,11 @@ int cfs_memory_add_write_flash_fixed_data(const cfs_object_list_t *object_list,
 
 
 bool cfs_memory_flash_data_clear(const cfs_object_list_t *object_list);
+
+
+#ifdef __cplusplus
+    }
+#endif // __cplusplus
 
 
 #endif /* __CFS_SYSTEM_MEMORY_H__ */

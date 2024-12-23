@@ -31,6 +31,10 @@
 #include <stdint.h>
 
 
+#ifdef __cplusplus
+    extern "C" {
+#endif // __cplusplus
+
 /** 往flash中存储数据(字节写)
  * 
  * 要能实现指定长度存入内存(1字节速度存入)
@@ -120,6 +124,11 @@ bool cfs_port_system_flash_lock_disable(void);
  * \return 成功返回true，否则false
  */
 bool cfs_port_system_flash_erasing_page(volatile uint32_t addr, uint16_t page);
+
+
+#ifdef __cplusplus
+    }
+#endif // __cplusplus
 
 
 #endif /* __CFS_PORT_DEVICE_FLASH_H__ */
