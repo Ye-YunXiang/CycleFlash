@@ -154,6 +154,8 @@ static bool _write_flash_data_block(
     {
         // 计算填充字节并存入
         uint8_t fill_data[CFS_WRITE_MIN_PARTICLE] = {0};
+        memset(fill_data, CFS_FLASH_ERASURE, CFS_WRITE_MIN_PARTICLE);
+
         const uint16_t SUBSECTION_DATA_LEM =
             write_block->data_len - (CFS_WRITE_MIN_PARTICLE - DATA_FILL);
         result = _write_flash_data(addr, write_block->data_ptr, SUBSECTION_DATA_LEM);
@@ -161,9 +163,8 @@ static bool _write_flash_data_block(
         memcpy(fill_data,
                &write_block->data_ptr[SUBSECTION_DATA_LEM],
                write_block->data_len - SUBSECTION_DATA_LEM);
-        result = _write_flash_data(addr += SUBSECTION_DATA_LEM,
-                          write_block->data_ptr,
-                          SUBSECTION_DATA_LEM);
+        result = _write_flash_data(
+            addr += SUBSECTION_DATA_LEM, fill_data, CFS_WRITE_MIN_PARTICLE);
     }
 
     cfs_port_system_flash_lock_disable();

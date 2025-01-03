@@ -47,7 +47,7 @@
 #endif // __cplusplus
 
 // 版本号
-#define CFS_VERSION ("2.0")
+#define CFS_VERSION ("2.0.1")
 
 // 函数返回错误
 #define CFS_RETURN_ERROR        (-1)
