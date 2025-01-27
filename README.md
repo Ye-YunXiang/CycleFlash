@@ -4,6 +4,8 @@ It is used to circulate data into the specified area of FLASH in MCU to ensure d
 > 已经开始迭代 v2 版本，本版本做了很多无用的功夫，以及存入flash的数据结构也有些不满意，V2版本重点关注解决存入的数据结构问题等。
 > v2 版本请切换当前项目的分支到 CycleFlash_v2。
 
+> ## 请使用 V2 版本，本版本弃用。
+
 ## 1、介绍
 
 CycleFlash 是一个用于管理MCU内置flash的轻量级管理系统，有简陋的循环写入某个片区的功能，只要实现了相关的接口，就可以实现通过ID把数据存入内存中，做了写平衡、数据错误校验、内存可用数据回溯的功能。
@@ -13,8 +15,11 @@ CycleFlash 是一个用于管理MCU内置flash的轻量级管理系统，有简�
 
 ## 2、使用介绍
 
-> **注意：**使用的时候要预留够两页flash大小 + 0.1K大小的RAM。
+> **注意**： 使用的时候要预留够两页flash大小 + 0.1K大小的RAM。
 > 两页FLASH大小是因为如果跨页修改数据会动态申请两页大小的内存，0.1K大小的RAM是初始化的时候固定动态申请使用。
+> 存入数据的长度不要超过1页大小。
+> 存入flash数据的1byte\2byte\4byte的接口都要实现。
+> 设置存入数据长度计算：ID_4byte + **用数据_任意byte** + CRC16_2byte
 
 使用时先实现 cycleflash\port_device_flash.h 的接口。
 使用时包含头文件 #include "cycle_flash_system.h" 即可。
