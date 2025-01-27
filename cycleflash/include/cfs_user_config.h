@@ -61,10 +61,30 @@
 #define CFS_NAME_LEN_MAX    (10u)
 
 
-// // DeBug 部分,不需要注释
-// // TODO:还没对这部分做定义
-// #define CFS_DEBUG
-// #define CFS_DEBUG_OUT(x) printf(x)
+// DeBug 部分,不需请设置 CFS_DEBUG (0u)
+/* DeBug 部分
+ * CFS_DEBUG (0u)      不启用DEBUG
+ * CFS_DEBUG (1u)      启用DEBUG
+ * 
+ * 注释：如果启用了DEBUG，自己按需修改下方的宏 "CFS_DEBUG_OUT" 和 "CFS_ASSERT"。
+*/ 
+// TODO:还在完备中
+#define CFS_DEBUG (1u)
+
+#ifdef CFS_DEBUG == (1u)
+    /** 对于下方两个宏参数的解释
+     * x ：断言的条件，直接填入条件即可，结果为否触发断言。
+     * y ：断言失败后的输出信息，输入为字符串。
+    */
+    // 打印日志出来
+    #define CFS_DEBUG_OUT(y)    {}  // 这里可以自定义输出方式    
+    // 下方为上方DEBUG定义后的断言方式。
+    // 可自定义-----------------------
+    #define CFS_ASSERT(x,y) if (!x) {    \
+        CFS_DEBUG_OUT(y);               \
+        while(1);                       \
+    }
+#endif  // CFS_DEBUG
 
 
 // 定义在 "cfs_system_utils.h" 中的 
@@ -78,17 +98,6 @@
  * 注释：上面按位取反是防止数据都是 0x00 的时候会校验不出来。
 */ 
 #define CFS_CHECK (1u)
-
-
-// /* 打开全局页缓存选项，添加和‘CFS_FLASH_SECTOR_SIZE’一样大小的缓存区, 开放set内存的权限.
-//  * 打开后可以对指定ID进行修改，这里擦除页后，重写页。
-//  * 默认不使用，因为用不到，同时可以减少对RAM的负担。
-//  *
-//  * value: (0u)     关闭
-//  * value: (1u)     打开
-// */
-// // TODO: 抛弃修改选项，不符合设计的初衷
-// #define CFS_FLASH_SECTOR_BUFFER_DEF (1u)
 
 
 /* 打开变长存储的限制，可以存入变长长数据，开放几个专门使用变长存储的函数。

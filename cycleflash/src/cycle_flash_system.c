@@ -53,16 +53,22 @@ cfs_object_handle_ptr cfs_nv_object_init(char *name,
     cfs_object_type_t data_tpye = CFS_OBJECT_TYPE_FIXED_DATA_STORAGE;
 #endif // CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL
 
-    //@def 判断参数有效性
-    assert(name != NULL);
-    //@def 判断名称长度
-    assert(strlen(name) < CFS_NAME_LEN_MAX);
+    #ifdef CFS_DEBUG == (1u)
+        //@def 判断参数有效性
+        //@def 判断名称长度
+        CFS_ASSERT((name!=NULL && strlen(name) < CFS_NAME_LEN_MAX), 
+            "name is not exist or too long");
+    #endif  // CFS_DEBUG
 
     //@def 在判断地址有没有重复，没通过返回false
     if (false == cfs_middle_check_address(address, sector_count))
     {
-        /*内存参数交叉了！*/
-        assert(cfs_middle_check_address(address, sector_count));
+        #ifdef CFS_DEBUG == (1u)
+            /*内存参数交叉了！*/
+            CFS_ASSERT(cfs_middle_check_address(address, sector_count), 
+                "address is not exist or too long");
+        #endif  // CFS_DEBUG
+
         return false;
     }
 
@@ -71,7 +77,10 @@ cfs_object_handle_ptr cfs_nv_object_init(char *name,
         cfs_middle_add_object_init(name, address, sector_count, data_size, data_tpye);
     if(object_handle == false)
     {
-        assert(object_handle);
+        #ifdef CFS_DEBUG == (1u)
+            CFS_ASSERT(object_handle, "object init fail");
+        #endif  // CFS_DEBUG
+
         return false;
     }
 

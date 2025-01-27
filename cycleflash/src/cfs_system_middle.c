@@ -253,9 +253,12 @@ cfs_object_t *cfs_middle_add_object_init(char *name,
     cfs_list->data_buffer_size = CFS_DATA_BLOCK_ACCOMPANYING_DATA_BLOCK_LEN
         + cfs_object->data_size + cfs_memory_compute_memory_fill_length(data_size);
 
-    // 判断数据大小不能大于存储区
-    assert(cfs_list->data_buffer_size 
-        < (cfs_object->sector_count*CFS_FLASH_SECTOR_SIZE));
+    #ifdef CFS_DEBUG == (1u)
+        // 判断数据大小不能大于存储区
+        CFS_ASSERT(cfs_list->data_buffer_size 
+            < (cfs_object->sector_count*CFS_FLASH_SECTOR_SIZE), 
+            "add object init data size is too big");
+    #endif  // CFS_DEBUG
 
     // 重新分配数据块的缓存区
     cfs_memory_general_block_buffer_init(cfs_list->data_buffer_size);
@@ -267,7 +270,10 @@ cfs_object_t *cfs_middle_add_object_init(char *name,
 bool cfs_middle_object_id_init(const cfs_object_t *object)
 {
     cfs_object_list_t *list_object_ptr = cfs_middle_find_object(object);
-    assert(list_object_ptr!=NULL && object!=NULL);
+
+    #ifdef CFS_DEBUG == (1u)
+        CFS_ASSERT((list_object_ptr!=NULL && object!=NULL), "object is not exist");
+    #endif  // CFS_DEBUG
 
     cfs_data_id_t data_id = CFS_CONFIG_NOT_LINKED_DATA_ID;
     cfs_data_id_t vakud_id = CFS_CONFIG_NOT_LINKED_VALID_DATA_ID;
@@ -295,8 +301,9 @@ bool cfs_middle_object_id_init(const cfs_object_t *object)
 //@def 查找对象对象
 cfs_object_list_t *cfs_middle_find_object(const cfs_object_t *object)
 {
-    assert(object != NULL);
-    assert(object->name != NULL);
+    #ifdef CFS_DEBUG == (1u)
+        CFS_ASSERT((object->name!=NULL && object!=NULL), "find object is not exist");
+    #endif  // CFS_DEBUG  
     
     if (_this.object_list_head == NULL)
     {

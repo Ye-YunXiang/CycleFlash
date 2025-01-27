@@ -44,8 +44,10 @@
  * \param uint16_t  数据块长度 
  * \return 成功返回true，否则false
  */
+#ifdef CFS_WRITE_PORT_ONE_BYTE == (1u)
 bool cfs_port_system_flash_write_byte(
     volatile uint32_t addr, uint8_t * data, uint16_t len);
+#endif // CFS_WRITE_PORT_ONE_BYTE
 
 
 /** 往flash中存储数据(半字写)
@@ -57,8 +59,10 @@ bool cfs_port_system_flash_write_byte(
  * \param uint16_t  数据块长度 
  * \return 成功返回true，否则false
  */
+#ifdef CFS_WRITE_PORT_ONE_BYTE == (1u)
 bool cfs_port_system_flash_write_half_word(
     volatile uint32_t addr, uint8_t * data, const uint16_t len);
+#endif // CFS_WRITE_PORT_HALF_WORD
 
 
 /** 往flash中存储数据(字写)
@@ -70,8 +74,10 @@ bool cfs_port_system_flash_write_half_word(
  * \param uint16_t  数据块长度 
  * \return 成功返回true，否则false
  */
+#ifdef CFS_WRITE_PORT_ONE_WORD == (1u)
 bool cfs_port_system_flash_write_word( 
     volatile uint32_t addr, uint8_t * data, const uint16_t len);
+#endif // CFS_WRITE_PORT_ONE_WORD
 
 
 /** 往flash中存储数据(双字写)
@@ -83,8 +89,10 @@ bool cfs_port_system_flash_write_word(
  * \param uint16_t  数据块长度 
  * \return 成功返回true，否则false
  */
+#ifdef CFS_WRITE_PORT_DOUBLE_WORD == (1u)
 bool cfs_port_system_flash_write_double_word(
     volatile uint32_t addr, uint8_t * data, uint16_t len);
+#endif // CFS_WRITE_PORT_DOUBLE_WORD
 
 
 /** 往flash中读取数据
@@ -96,8 +104,10 @@ bool cfs_port_system_flash_write_double_word(
  * \param uint16_t  数据块长度 
  * \return 成功返回true，否则false
  */
+#ifdef CFS_FLASH_READ_MODE == (1u)
 bool cfs_port_system_flash_read(
     volatile uint32_t addr, uint8_t * buffer, uint16_t len);
+#endif // CFS_FLASH_READ_MODE
 
 
 /** 上操作flash保护锁。
@@ -107,6 +117,7 @@ bool cfs_port_system_flash_read(
  * \return 成功返回true，否则false
  */
 bool cfs_port_system_flash_lock_enable(void);
+
 
 /** 解除操作flash保护锁。
  * 

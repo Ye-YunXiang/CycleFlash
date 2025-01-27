@@ -24,7 +24,6 @@
  */
 // Encoding:UTF-8
 
-#include <assert.h>
 #include <stddef.h>
 
 #include "cfs_system_utils.h"

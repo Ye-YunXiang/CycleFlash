@@ -294,8 +294,10 @@ static bool _erasing_page_flash_data(uint32_t addr, uint16_t page)
 void cfs_memory_general_block_buffer_init(uint16_t data_buffer_size)
 {
     #if CFS_FLASH_READ_MODE != 0
-        // 判断一下不能为0
-        assert(data_buffer_size != 0);
+        #ifdef CFS_DEBUG == (1u)
+            // 判断一下不能为0
+            CFS_ASSERT(data_buffer_size != 0, "data_buffer_size is 0");
+        #endif  // CFS_DEBUG
 
         if (_this.data_read_buffer.buffer_size > data_buffer_size)
         {
@@ -309,7 +311,9 @@ void cfs_memory_general_block_buffer_init(uint16_t data_buffer_size)
 
         if (_this.data_read_buffer.buffer_ptr == NULL)
         {
-            assert(_this.data_read_buffer.buffer_ptr);
+            #ifdef CFS_DEBUG == (1u)
+                CFS_ASSERT(_this.data_read_buffer.buffer_ptr, "malloc error");
+            #endif  // CFS_DEBUG
             while(1);
         }
     #else
@@ -324,7 +328,10 @@ void cfs_memory_general_block_buffer_init(uint16_t data_buffer_size)
 uint8_t cfs_memory_compute_memory_fill_length(uint16_t data_size)
 {
     // 判断一下不能为0
-    assert(data_size != 0);
+    #ifdef CFS_DEBUG == (1u)
+        CFS_ASSERT(data_size != 0, "compute fill data_size is 0");
+    #endif  // CFS_DEBUG
+    
     uint8_t data_fill_len = data_size % CFS_WRITE_MIN_PARTICLE;
     if (data_fill_len == 0)
     {
