@@ -1,0 +1,116 @@
+#ifndef __CFS_USER_CONFIG_H__
+#define __CFS_USER_CONFIG_H__
+
+// 一页FLASH大小
+#define CFS_FLASH_SECTOR_SIZE (512u)
+
+
+/** 擦除FLASH的默认值，这里只能两个值.
+ *  根据芯片手册进行修改。
+ *  value: (0xFF)     一般默认都是FF
+ *  value: (0x00)    个别带有硬件校验的为00
+*/
+#define CFS_FLASH_ERASURE (0xFF)
+
+
+/** XXX: 是否自行实现读取数据，设置错误会有位置情况
+ *  下方模式从小到大依次兼容上一层
+ *  value: (0u)     定制使用32位MCU内置flash模式。
+ *                  (uint8_t *)(arrdess)”的方式取flash值，用于大部分32位MCU内置flash，请自行判断。
+ *                  保留能大大能大大提高效率,去除了拷贝内存的步骤，同时节省了内部读取的缓存区。
+ * 
+ *  value: (1u)     自定义模式。
+ *                  自行实现接口的读取数据函数，开启后会创建数据缓存区，用于读取数据。
+ * 注意： 一旦选择自行实现读取，读写速度会变慢。
+ * 注意： 如果没有开启，请自行判断用的mcu可否使用“(uint8_t *)(arrdess)”的方式取flash值。
+*/
+#define CFS_FLASH_READ_MODE (0u)
+
+
+/* 循环储存的ID使用类型，这里是全局修改.
+ * 默认使用uint32_t 类型，这里可以设置为uint64_t.
+ * 请自己计算是否用到这么多的ID，减少每个数据块占用的大小。
+ * value: (32)     这里设置为 uint32_t
+ * value: (64)     这里设置为 uint64_t
+*/
+#define CFS_ID_DATA_TYPE (32u)
+
+
+// 可使用写入方式，没有的请注释
+// 配置好可用的方式之后，请去port文件中去实现它。
+/**
+ * value: (0u)     关闭
+ * value: (1u)     打开
+ * 
+ * XXX: 这里说清楚，至少要实现上面说的最小颗粒存储大小的。
+ * XXX: 然后这里有用到请一定一定打开。
+ * XXX: 没用到的请一定一定关闭, 不然出现未知错误。
+*/
+#define CFS_WRITE_PORT_ONE_BYTE      (1u) // 1 byte
+#define CFS_WRITE_PORT_HALF_WORD     (1u) // 2 byte
+#define CFS_WRITE_PORT_ONE_WORD      (1u) // 4 byte
+#define CFS_WRITE_PORT_DOUBLE_WORD   (0u) // 8 byte
+
+
+// 定义初始化内存的方式
+#define CFS_MALLOC      malloc 
+#define CFS_FREE        free
+
+
+// 名字的最大长度
+#define CFS_NAME_LEN_MAX    (10u)
+
+
+// DeBug 部分,不需请设置 CFS_DEBUG (0u)
+/* DeBug 部分
+ * CFS_DEBUG (0u)      不启用DEBUG
+ * CFS_DEBUG (1u)      启用DEBUG
+ * 
+ * 注释：如果启用了DEBUG，自己按需修改下方的宏 "CFS_DEBUG_OUT" 和 "CFS_ASSERT"。
+*/ 
+// TODO:还在完备中
+#define CFS_DEBUG (1u)
+
+#ifdef CFS_DEBUG == (1u)
+    /** 对于下方两个宏参数的解释
+     * x ：断言的条件，直接填入条件即可，结果为否触发断言。
+     * y ：断言失败后的输出信息，输入为字符串。
+    */
+    // 打印日志出来
+    #define CFS_DEBUG_OUT(y)    {}  // 这里可以自定义输出方式    
+    // 下方为上方DEBUG定义后的断言方式。
+    // 可自定义-----------------------
+    #define CFS_ASSERT(x,y) if (!x) {    \
+        CFS_DEBUG_OUT(y);               \
+        while(1);                       \
+    }
+#endif  // CFS_DEBUG
+
+
+// 定义在 "cfs_system_utils.h" 中的 
+// "uint16_t cfs_system_utils_check(const uint8_t *data, uint32_t data_length)"
+/* 库里有三个添加校验方式，校验值类型一定要对上：
+ * value:(0u)      CHECK_SUM       (结果按位取反)
+ * value:(1u)      CRC16_XMODEM    
+ * value:(2u)      CRC16_XMODEM 查表法(占用256Byte的RAM)
+ * value:(3u)      用户自定义，自己去实现
+ * 
+ * 注释：上面按位取反是防止数据都是 0x00 的时候会校验不出来。
+*/ 
+#define CFS_CHECK (1u)
+
+
+/* 打开变长存储的限制，可以存入变长长数据，开放几个专门使用变长存储的函数。
+ * 变长数据会在内存中维护属于自己的数据检索表。
+ * 由于变长数据，这里初始化的时候会检索flash中所有的数据，所以效率会比定长的慢很多。
+ * 对于数据出错，会尝试找到下一个数据在哪里。
+ * 如果寻找失败会直接使用最后读取到的数据，并直接对内存进行整理，有丢失数据的风险。
+ * 然后这里维护的数据表格为最大回溯10条数据，所以本模式请谨慎使用。
+ * 默认不使用，减少对RAM的负担。
+ * 
+ * value: (0u)     关闭
+ * value: (1u)     打开
+*/
+// TODO: 还没做相关的函数,这里预留，后面在添加。
+#define CFS_FILESYSTEM_TYPE_VARIABLE_DATA_MODEL (0u)
+#endif //__CFS_USER_CONFIG_H__

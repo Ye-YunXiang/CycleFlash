@@ -1,0 +1,24 @@
+{
+    "files.associations": {
+        "stdint.h": "c",
+        "cycle_flash_system.h": "c",
+        "cfs_user_define.h": "c",
+        "type_traits": "c",
+        "cfs_port_device_flash.h": "c",
+        "cfs_system_oc.h": "c",
+        "cfs_system_utils.h": "c",
+        "limits.h": "c",
+        "assert.h": "c",
+        "cfs_user_config.h": "c",
+        "cfs_system_abstract.h": "c",
+        "cfs_system_middle.h": "c",
+        "cfs_system_memoryh": "cpp",
+        "cfs_system_memory.h": "c",
+        "climits": "c",
+        "stdbool.h": "c",
+        "string.h": "c",
+        "stdlib.h": "c",
+        "typeinfo": "c"
+    },
+    "files.encoding": "utf8"
+}
