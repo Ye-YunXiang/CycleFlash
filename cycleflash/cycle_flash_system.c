@@ -224,9 +224,18 @@ static void _flash_write(uint32_t addr, const uint8_t *buf, uint16_t len)
 #endif
 
 #if CFS_WRITE_PORT_ONE_BYTE != 0
-        // 基本到这步，能被上面优先存储的已经被存完了，剩下的一次性存储就好
+    #if (CFS_WRITE_PORT_DOUBLE_WORD != 0 \
+        || CFS_WRITE_PORT_ONE_WORD != 0 \
+        || CFS_WRITE_PORT_HALF_WORD != 0)
+
+        cfs_port_write_byte(addr, buf, 1);
+        buf++; 
+        addr++; 
+        len--;
+    #else
         cfs_port_write_byte(addr, buf, len);
         break;
+    #endif
 #endif // CFS_WRITE_PORT_ONE_BYTE
 
     }

@@ -27,78 +27,52 @@
  */
 // Encoding:UTF-8
 
-#include "cfs_port_device_flash.h"
+#include "cfs_port.h"
+
+#include "storage_hal.h"
 #include "flash.h"
 
 
-// 下方代码是根据HC32L176写的案例，仅供参考
+// 这里自行实现。。。。
 
 //static bool cfs_port_flash_init_flag = false;
-bool cfs_port_system_flash_write_byte(
-    volatile uint32_t addr, uint8_t * data, uint16_t len)
+bool cfs_port_write_byte(volatile uint32_t addr, const uint8_t *data, uint16_t len)
 {
-    uint16_t i;
-    for(i=0; i< len; i++)
-    {
-        Flash_WriteByte(addr, *data);
-        addr += 1u;
-        data += 1u;
-    }
+	ProgramPage(addr, len, data);
+    return true;
+}
+
+
+bool cfs_port_write_half_word(volatile uint32_t addr, const uint8_t *data, uint16_t len)
+{
+	ProgramPage(addr, (len * 2), data);
+	
+    return true;
+}
+
+
+bool cfs_port_write_word(volatile uint32_t addr, const uint8_t *data, uint16_t len)
+{
+    ProgramPage(addr, (len * 4), data);
 
     return true;
 }
 
 
-bool cfs_port_system_flash_write_half_word(
-    volatile uint32_t addr, uint8_t * data, uint16_t len)
-{
-    uint16_t i;
-    volatile uint16_t write_u16data = 0;
-    for(i=0; i< len; i++)
-    {
-        memcpy((uint8_t *)&write_u16data, data, 2);
-        Flash_WriteHalfWord(addr, write_u16data);
-        addr += 2u;
-        data += 2u;
-    }
-
-    return true;
-}
-
-
-bool cfs_port_system_flash_write_word(
-    volatile uint32_t addr, uint8_t * data, uint16_t len)
-{
-    uint16_t i;
-    volatile uint32_t write_u32data = 0;
-    for(i=0; i< len; i++)
-    {
-        memcpy((uint8_t *)&write_u32data, data, 4);
-        Flash_WriteWord(addr, write_u32data);
-        addr += 4u;
-        data += 4u;
-    }
-
-    return true;
-}
-
-
-bool cfs_port_system_flash_write_double_word(
-    volatile uint32_t addr, uint8_t * data, uint16_t len)
+bool cfs_port_write_double_word(volatile uint32_t addr, const uint8_t *data, uint16_t len)
 {
     return true;
 }
 
 
-bool cfs_port_system_flash_read(
-    volatile uint32_t addr, uint8_t * buffer, uint16_t len)
+bool cfs_port_read(volatile uint32_t addr, uint8_t *buf, uint16_t len)
 {
-    memcpy(buffer, (uint8_t *)addr, len);
+    memcpy(buf, (uint8_t *)addr, len);
     return true;
 }
 
 
-bool cfs_port_system_flash_lock_enable(void)
+bool cfs_port_lock_enable(void)
 {
     /*User initialization code*/
 
@@ -106,7 +80,7 @@ bool cfs_port_system_flash_lock_enable(void)
 }
 
 
-bool cfs_port_system_flash_lock_disable(void)
+bool cfs_port_lock_disable(void)
 {
     /*User initialization code*/
 
@@ -114,12 +88,12 @@ bool cfs_port_system_flash_lock_disable(void)
 }
 
 
-bool cfs_port_system_flash_erasing_page(volatile uint32_t addr, uint16_t page)
+bool cfs_port_erase_page(volatile uint32_t addr, uint16_t page)
 {
     uint16_t i = 0;
     for(i = 0; i < page; i++)
     {
-        while(Ok != Flash_SectorErase(addr + (i * 512))){};
+        while(0 != EraseSector(addr + (i * 512))){};
     }
 
     return true;

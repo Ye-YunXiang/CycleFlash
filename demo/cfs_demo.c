@@ -30,30 +30,26 @@
 #include <assert.h>
 #include <string.h>
 #include <errno.h>
+#include <stdbool.h>
 
 #include "cfs_demo.h"
 #include "cycle_flash_system.h"
 
 
-static cfs_object_handle_ptr product_filesystem = NULL;
+static cfs_object_t product_filesystem = {0};
 
-static bool filesystem_success_init = false;
 // 内存初始化
 bool cfs_demo_init(void)
 {	
-    if (filesystem_success_init == true)
-    {
-        return true;
-    }
+    // 写入地址
+    bool state = cfs_nv_object_init(
+        &product_filesystem, 
+        (0x8010000),     // 写入地址 
+        3,              // 几页
+        25              // 数据大小
+    );
 
-    product_filesystem = cfs_nv_object_init("0", (0x11800), 3, 25);
-    if(product_filesystem == false)
-    {
-        return false;
-    }
-
-    filesystem_success_init = true;
-    return true;
+    return state;
 }
 
 int cfs_demo_write_product_nv(void* data, uint32_t len)
@@ -63,9 +59,8 @@ int cfs_demo_write_product_nv(void* data, uint32_t len)
         return false;
     }
 
-    const int bytes_written = cfs_nv_write(product_filesystem, data, len);
+    const int bytes_written = cfs_nv_write(&product_filesystem, data, len, 0);
 
-    // 用于固定长度的DEMO
     if (bytes_written != len)
     {
         return false;
@@ -83,7 +78,7 @@ int cfs_demo_read_product_nv(
         return false;
     }
 
-    const int bytes_read = cfs_nv_read(product_filesystem, (uint8_t *)data, len, read_in_past);
+    const int bytes_read = cfs_nv_read(&product_filesystem, (uint8_t *)data, len, read_in_past);
 
     // 用于固定长度的DEMO
     if (bytes_read != len)
@@ -98,17 +93,17 @@ int cfs_demo_read_product_nv(
 // 擦除内存中的设备信息
 bool cfs_demo_erase_product_nv(void)
 {
-    return cfs_nv_clear(product_filesystem);
+    return cfs_nv_clear(&product_filesystem);
 }
 
 
 uint32_t cfs_demo_product_current_id_get(void)
 {
-    return cfs_nv_get_current_id(product_filesystem);
+    return cfs_nv_get_current_id(&product_filesystem);
 }
 
 uint32_t cfs_demo_product_current_valid_id_get(void)
 {
-    return cfs_nv_get_current_valid_id(product_filesystem);
+    return cfs_nv_get_current_valid_id(&product_filesystem);
 }
 
