@@ -31,51 +31,52 @@
 
 #include "cfs_port.h"
 
-bool cfs_port_write_byte(volatile uint32_t addr, const uint8_t *data, uint16_t len)
+
+CFS_WEAK bool cfs_port_write_byte(volatile uint32_t addr, const uint8_t *data, uint16_t len)
 {
     (void)addr; (void)data; (void)len;
     // Flash_WriteByte(addr, *data);
     return true;
 }
 
-bool cfs_port_write_half_word(volatile uint32_t addr, const uint8_t *data, uint16_t len)
+CFS_WEAK bool cfs_port_write_half_word(volatile uint32_t addr, const uint8_t *data, uint16_t len)
 {
     (void)addr; (void)data; (void)len;
     // Flash_WriteHalfWord(addr, data);
     return true;
 }
 
-bool cfs_port_write_word(volatile uint32_t addr, const uint8_t *data, uint16_t len)
+CFS_WEAK bool cfs_port_write_word(volatile uint32_t addr, const uint8_t *data, uint16_t len)
 {
     (void)addr; (void)data; (void)len;
     // Flash_WriteWord(addr, data);
     return true;
 }
 
-bool cfs_port_write_double_word(volatile uint32_t addr, const uint8_t *data, uint16_t len)
+CFS_WEAK bool cfs_port_write_double_word(volatile uint32_t addr, const uint8_t *data, uint16_t len)
 {
     (void)addr; (void)data; (void)len;
     return true;
 }
 
-bool cfs_port_read(volatile uint32_t addr, uint8_t *buf, uint16_t len)
+CFS_WEAK bool cfs_port_read(volatile uint32_t addr, uint8_t *buf, uint16_t len)
 {
     (void)addr; (void)buf; (void)len;
     // memcpy(buf, (uint8_t *)addr, len);
     return true;
 }
 
-bool cfs_port_lock_enable(void)
+CFS_WEAK bool cfs_port_lock_enable(void)
 {
     return true;
 }
 
-bool cfs_port_lock_disable(void)
+CFS_WEAK bool cfs_port_lock_disable(void)
 {
     return true;
 }
 
-bool cfs_port_erase_page(volatile uint32_t addr, uint16_t pages)
+CFS_WEAK bool cfs_port_erase_page(volatile uint32_t addr, uint16_t pages)
 {
     (void)addr; (void)pages;
     // Flash_SectorErase(addr);

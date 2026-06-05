@@ -35,6 +35,10 @@
 #include "cfs_demo.h"
 #include "cycle_flash_system.h"
 
+#include "cfs_port.h"
+#include "storage_hal.h"
+#include "flash.h"
+
 
 static cfs_object_t product_filesystem = {0};
 
@@ -107,3 +111,53 @@ uint32_t cfs_demo_product_current_valid_id_get(void)
     return cfs_nv_get_current_valid_id(&product_filesystem);
 }
 
+
+
+
+// 根据CycleFlash的定义，初始化相关写入函数和擦除函数-------------------------------------------
+// 没用到的就不管 
+bool cfs_port_write_byte(volatile uint32_t addr, const uint8_t *data, uint16_t len)
+{
+	ProgramPage(addr, len, data);
+    return true;
+}
+
+
+bool cfs_port_write_half_word(volatile uint32_t addr, const uint8_t *data, uint16_t len)
+{
+	ProgramPage(addr, (len * 2), data);
+	
+    return true;
+}
+
+
+bool cfs_port_write_word(volatile uint32_t addr, const uint8_t *data, uint16_t len)
+{
+    ProgramPage(addr, (len * 4), data);
+
+    return true;
+}
+
+
+bool cfs_port_write_double_word(volatile uint32_t addr, const uint8_t *data, uint16_t len)
+{
+    return true;
+}
+
+
+// bool cfs_port_read(volatile uint32_t addr, uint8_t *buf, uint16_t len)
+// {
+//     memcpy(buf, (uint8_t *)addr, len);
+//     return true;
+// }
+
+bool cfs_port_erase_page(volatile uint32_t addr, uint16_t page)
+{
+    uint16_t i = 0;
+    for(i = 0; i < page; i++)
+    {
+        while(0 != EraseSector(addr + (i * 512))){};
+    }
+
+    return true;
+}

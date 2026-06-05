@@ -38,28 +38,30 @@
 extern "C" {
 #endif
 
+#define CFS_WEAK __attribute__((weak))
+
 // 往flash中存储数据(字节写)
-bool cfs_port_write_byte     (volatile uint32_t addr, const uint8_t *data, uint16_t len);
+bool cfs_port_write_byte(volatile uint32_t addr, const uint8_t *data, uint16_t len);
 
 // 往flash中存储数据(半字写)
 bool cfs_port_write_half_word(volatile uint32_t addr, const uint8_t *data, uint16_t len);
 
 // 往flash中存储数据(字写)
-bool cfs_port_write_word     (volatile uint32_t addr, const uint8_t *data, uint16_t len);
+bool cfs_port_write_word(volatile uint32_t addr, const uint8_t *data, uint16_t len);
 
 // 往flash中存储数据(双字写)
 bool cfs_port_write_double_word(volatile uint32_t addr, const uint8_t *data, uint16_t len);
 
 // 往flash中读取数据
-bool cfs_port_read           (volatile uint32_t addr, uint8_t *buf, uint16_t len);
+bool cfs_port_read(volatile uint32_t addr, uint8_t *buf, uint16_t len);
 
 // 上操作flash保护锁
-bool cfs_port_lock_enable    (void);
+bool cfs_port_lock_enable(void);
 // 解除操作flash保护锁。
-bool cfs_port_lock_disable   (void);
+bool cfs_port_lock_disable(void);
 
 // 擦除指定页面的数据
-bool cfs_port_erase_page     (volatile uint32_t addr, uint16_t pages);
+bool cfs_port_erase_page(volatile uint32_t addr, uint16_t pages);
 
 #ifdef __cplusplus
 }
